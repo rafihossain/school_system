@@ -1,0 +1,272 @@
+<?php
+
+namespace App\Http\Controllers\backend;
+
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Hash;
+use App\Models\BloodGroup;
+use App\Models\User;
+use App\Models\ClassModal;
+use App\Models\Section;
+use App\Models\TeacherAdditionalInfo;
+use App\Models\TeacherDocumentChecklist;
+use App\Models\Department;
+use App\Models\Designation;
+use File;
+use Image;
+use DataTables;
+use App\Traits\UserRollPermissionTrait;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+
+class TeacherController extends Controller
+{
+    use UserRollPermissionTrait;
+
+    public function __construct()
+    {
+        $this->module_name = 'users';
+    }
+
+    public function teacherIndex(Request $request)
+    {
+        if ($request->ajax()) {
+            //dd($request->all());
+            $query = DB::table('teacher_additional_info')
+                ->leftJoin('users', 'teacher_additional_info.user_id', 'users.id')
+                ->leftJoin('departments', 'teacher_additional_info.department_id', 'departments.id')
+                ->leftJoin('designations', 'teacher_additional_info.designation_id', 'designations.id')
+                ->where('users.user_role', 6);
+            if ($request->department_id) {
+                $query->where('teacher_additional_info.department_id', $request->department_id);
+            }
+
+            if ($request->designation_id) {
+                $query->where('teacher_additional_info.designation_id', $request->designation_id);
+            }
+
+            if ($request->status) {
+                $query->where('users.status', $request->status);
+            }
+            $teachers = $query->get();
+            return datatables()->of($teachers)
+                ->addIndexColumn()
+                ->addColumn('action', function ($row) {
+
+                    $btn = '<a href="' . route('backend.edit.teacher', $row->user_id) . '" class="btn btn-sm btn-primary waves-effect waves-light teacher_info_edit"><i class="mdi mdi-square-edit-outline"></i></a>
+                    <a href="' . route('backend.teacher.delete', $row->user_id) . '" id="delete" class="btn btn-sm btn-danger waves-effect waves-light"><i class="mdi mdi-trash-can-outline"></i></a>';
+                    return $btn;
+                })
+                ->rawColumns(['action'])
+                ->make(true);
+        }
+
+        $departments = Department::all();
+        $designations = Designation::all();
+        return view('backend.users.teacher.index', compact('departments', 'designations'));
+    }
+
+    public function addTeacher()
+    {
+        $sections = Section::all();
+        $classes = ClassModal::all();
+        return view('backend.users.teacher.addTeacher', compact('sections', 'classes'));
+    }
+
+    public function authenticated_redirected()
+    {
+        if (Auth::User()->user_role == 8) {
+            return redirect()->route('backend.add.teacher')->with('success', 'Successfully Teacher Created!');
+        } else {
+            return redirect()->route('backend.teacher.index')->with('success', 'Successfully Teacher Created!');
+        }
+    }
+
+    public function save_teacher_csv(Request $request)
+    {
+        // dd($_FILES);
+
+        $csvUpload = $request->file('teacher_csv');
+        if ($csvUpload) {
+            $fileType = $csvUpload->getClientOriginalExtension();
+            $fileName = 'teacher_' . Str::random(10) . '.' . $fileType;
+            $csvUpload->move('csv/upload/', $fileName);
+
+            $handle = fopen(public_path('csv/upload/' . $fileName), "r");
+
+            $module_name = 'users';
+            $module_name_singular = Str::singular($module_name);
+
+            $i = 1;
+            while ($row = fgetcsv($handle)) {
+                if ($i != 1) {
+
+                    $user = new User();
+                    $user->name = $row[0];
+                    $user->email = $row[1];
+                    $user->password = Hash::make($row[2]);
+                    $user->mobile = $row[3];
+                    $user->gender = $row[4];
+                    $user->first_name = '';
+                    $user->last_name = '';
+                    $user->user_role = 6;
+                    $user->save();
+
+                    $TeacherAdditionalInfo = new TeacherAdditionalInfo();
+                    $TeacherAdditionalInfo->user_id = $user->id;
+                    $TeacherAdditionalInfo->save();
+
+                    $TeacherDocumentChecklist = new TeacherDocumentChecklist();
+                    $TeacherDocumentChecklist->user_id = $user->id;
+                    $TeacherDocumentChecklist->save();
+
+                    $this->userRollPermission($request, $user);
+
+                    // echo "<pre>"; print_r($row);
+                }
+                $i++;
+            }
+        }
+        return redirect()->route('backend.teacher.index')->with('success', 'Successfully Teacher Created!');
+    }
+
+    public function saveTeacher(Request $request)
+    {
+        //create_teacher_user
+        $this->create_teacher_user($request);
+        return $this->authenticated_redirected();
+    }
+
+    public function teacherDelete($id)
+    {
+        $success = DB::table('users')->where('id', $id)->delete();
+
+        if ($success) {
+            $notification = array(
+                'delete' => 'User Successfully deleted!',
+            );
+            return redirect()->back()->with($notification);
+        }
+    }
+
+    public function editTeacher($id)
+    {
+        $teacher_edit = User::find($id);
+        $departments = Department::all();
+        $designations = Designation::all();
+        $bloods = BloodGroup::all();
+
+        $teacher_additional_info = TeacherAdditionalInfo::where('user_id', $id)->first();
+        // dd($teacher_additional_info);
+
+        $TeacherDocumentChecklist = TeacherDocumentChecklist::where('user_id', $id)->first();
+        return view('backend.users.teacher.editTeacher', compact('teacher_edit', 'teacher_additional_info', 'TeacherDocumentChecklist', 'departments', 'designations', 'bloods'));
+    }
+
+    protected function teacherupdateValidate($request)
+    {
+        $request->validate([
+            'name' => 'required',
+            'email' => 'required',
+            'phone' => 'required|min:11',
+            'gender' => 'required'
+        ]);
+    }
+
+    protected function teacherupdateValidate_new($request)
+    {
+        $request->validate([
+            'name' => 'required',
+            'email' => 'required|unique:users,email',
+            'phone' => 'required|min:11',
+            'gender' => 'required'
+        ]);
+    }
+
+    protected function teacherProfileImageUpload($request)
+    {
+        // echo 11; die();
+        $teacher_profile_pic = $request->file('teacher_profile_pic');
+
+        $image = Image::make($teacher_profile_pic);
+        $fileType = $teacher_profile_pic->getClientOriginalExtension();
+        $imageName = 'teacher_' . time() . '_' . rand(10000, 999999) . '.' . $fileType;
+        $directory = 'images/teacher/';
+        $imageUrl = $directory . $imageName;
+        $image->save($imageUrl);
+
+        return $imageName;
+    }
+
+    public function updateBasicInfoTeacher(Request $request)
+    {
+        $id = $request->user_id;
+        $user = User::find($id)->toArray();
+        
+        if ($user['email'] == $request->email) {
+            $this->teacherupdateValidate($request);
+        } else {
+            $this->teacherupdateValidate_new($request);
+        }
+
+        $teacher_profile_pic = $request->file('teacher_profile_pic');
+        $user_info = user::find($request->user_id);
+        if ($teacher_profile_pic) {
+            if ($user_info->user_Image) {
+                $image_path = public_path() . '/images/teacher/' . $user_info->user_Image;
+                if (File::exists($image_path)) {
+                    unlink($image_path);
+                }
+            }
+            $imageUrl = $this->teacherProfileImageUpload($request);
+        }
+
+        $user = User::find($id);
+        $user->name = $request->name;
+        $user->email = $request->email;
+
+        if($request->password != ''){
+            $user->password = Hash::make($request->password);
+        }
+
+        $user->mobile = $request->phone;
+        $user->gender = $request->gender;
+        $user->user_Image = (isset($imageUrl)) ? $imageUrl : $user_info->user_Image;
+        $user->save();
+
+        return redirect()->route('backend.teacher.index')->with('success', 'Successfully Updated');
+    }
+
+    protected function update_studentAdditional_Info_validation($request)
+    {
+        $request->validate([
+            'date_of_birth' => 'required',
+            'blood_id' => 'required',
+            'present_address' => 'required',
+        ]);
+    }
+
+    public function teacher_additional_info_update(Request $request)
+    {
+        // dd($request->all());
+        $this->update_studentAdditional_Info_validation($request);
+        User::where('id', $request->user_id)->update(['status' => $request->status]);
+
+        $data = $request->except('_token', 'status');
+
+        TeacherAdditionalInfo::where('user_id', $request->user_id)->update($data);
+        return redirect()->route('backend.teacher.index')->with('success', 'Successfully Updated');
+    }
+
+
+
+    public function teacher_document_checklist_update(Request $request)
+    {
+        //dd($request->all());
+        $data = $request->except('_token');
+        TeacherDocumentChecklist::where('user_id', $request->user_id)->update($data);
+        return redirect()->route('backend.teacher.index')->with('success', 'Successfully Updated');
+    }
+}
