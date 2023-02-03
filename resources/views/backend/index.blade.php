@@ -329,7 +329,7 @@
                             <select name="class_id" id="class_id" class="form-control">
                                 <option value="">Select Class</option>
                                 @foreach($classes as $classe)
-                                    <option value="{{$classe->id}}">{{$classe->class_name}}</option>
+                                <option value="{{$classe->id}}">{{$classe->class_name}}</option>
                                 @endforeach
                             </select>
                             <span class="text-danger stdatd_class_name_error"></span>
@@ -708,14 +708,13 @@
 <script src="{{ asset('assets/libs/flatpickr/flatpickr.min.js') }}"></script>
 
 <script type="text/javascript">
-
     // @todo: CSRF Token Constant
     const CSRF_TOKEN = {
         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
     }
 
     // @todo: Async Request Handler
-    const asyncHandler = function(route, method, resCallback, errCallback=null, object = {}) {
+    const asyncHandler = function(route, method, resCallback, errCallback = null, object = {}) {
         $.ajax({
             headers: CSRF_TOKEN,
             url: route,
@@ -724,6 +723,12 @@
             success: (res) => resCallback(res),
             error: (err) => errCallback(err)
         })
+    }
+
+    const errorHandler = (param) => {
+        for (let i=0; i <= param.length; i++) {
+            $(param[i].name).text(param[i].data);
+        }
     }
 
 
@@ -738,7 +743,7 @@
             asyncHandler("{{route('backend.add-user-modal')}}", "GET", (res) => {
                 $('#add_user_modal_data').html(res);
                 $('#addUser').modal('show');
-            },(err) => {
+            }, (err) => {
                 console.log(err);
             });
 
@@ -790,9 +795,9 @@
                 }
             })
         });
-        $(document).delegate('#parents_id', 'keyup', function(e) {            
+        $(document).delegate('#parents_id', 'keyup', function(e) {
             // alert('click');
-            
+
             var parent_name = $(this).val();
             $.ajax({
                 url: "{{route('backend.admin-parent-search')}}",
@@ -807,42 +812,22 @@
         });
         $(document).delegate('.parentinfosave', 'click', function(e) {
             e.preventDefault();
-
             let fromData = $("#add_parent").serializeArray();
-            console.log(fromData);
+            return asyncHandler("{{route('backend.admin-save-parent')}}", "POST", (res) => $('#addUser').modal('hide'), (err) => {
 
-            return asyncHandler("{{route('backend.admin-save-parent')}}", "POST", (res) => $('#addUser').modal('hide'),(err) => {
-                $('.parent_name_error').text(err.responseJSON.errors.name);
-                $('.parent_email_error').text(err.responseJSON.errors.email);
-                $('.parent_password_error').text(err.responseJSON.errors.password);
-                $('.parent_phone_error').text(err.responseJSON.errors.phone);
-                $('.parent_gender_error').text(err.responseJSON.errors.gender);
-            },fromData);
+                return errorHandler([
+                    {name: '.parent_name_error', data: err.responseJSON.errors.name},
+                    {name: '.parent_email_error', data: err.responseJSON.errors.email},
+                    {name: '.parent_password_error', data: err.responseJSON.errors.password},
+                    {name: '.parent_phone_error', data: err.responseJSON.errors.phone},
+                    {name: '.parent_gender_error', data: err.responseJSON.errors.gender},
+                ])
 
-
-            // $.ajax({
-            //     url: " route('backend.admin-save-parent')",
-            //     type: "POST",
-            //     data: fromData,
-            //     cache: false,
-            //     contentType: false,
-            //     processData: false,
-            //     headers: {
-            //         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            //     },
-            //     success: function(response) {
-            //         $('#addUser').modal('hide');
-            //     },
-            //     error: function(response) {
-            //         $('.parent_name_error').text(response.responseJSON.errors.name);
-            //         $('.parent_email_error').text(response.responseJSON.errors.email);
-            //         $('.parent_password_error').text(response.responseJSON.errors.password);
-            //         $('.parent_phone_error').text(response.responseJSON.errors.phone);
-            //         $('.parent_gender_error').text(response.responseJSON.errors.gender);
-            //     }
-            // });
+            }, fromData);
         });
-        $(document).delegate('.studentinfosave', 'click', function(e) { 
+
+
+        $(document).delegate('.studentinfosave', 'click', function(e) {
             e.preventDefault();
             var serialize = $('#add_student').serialize();
             $.ajax({
@@ -955,7 +940,7 @@
         });
         $(document).delegate('.saveroutineinfo', 'click', function(e) {
             // alert('hi');
-             var fromData = new FormData(document.getElementById("routineFrom"));
+            var fromData = new FormData(document.getElementById("routineFrom"));
             $.ajax({
                 url: "{{route('backend.save-class-routine')}}",
                 type: "POST",
@@ -983,7 +968,7 @@
         })
         $(document).delegate('.examscheduleinfo', 'click', function(e) {
             // alert('hi');
-             var fromData = new FormData(document.getElementById("examSchedule"));
+            var fromData = new FormData(document.getElementById("examSchedule"));
             $.ajax({
                 url: "{{route('backend.save-examschedule-info')}}",
                 type: "POST",
@@ -1011,7 +996,7 @@
         })
         $(document).delegate('#submitSyllabus', 'click', function(e) {
             // alert('hi');
-             var fromData = new FormData(document.getElementById("formSyllabus"));
+            var fromData = new FormData(document.getElementById("formSyllabus"));
             $.ajax({
                 url: "{{route('backend.save-syllabus-info')}}",
                 type: "POST",
@@ -1036,7 +1021,7 @@
         })
         $(document).delegate('.savefeebasicinfo', 'click', function(e) {
             // alert('hi');
-             var fromData = new FormData(document.getElementById("feeFrom"));
+            var fromData = new FormData(document.getElementById("feeFrom"));
             $.ajax({
                 url: "{{route('backend.save-feebasic-info')}}",
                 type: "POST",
@@ -1183,7 +1168,7 @@
         $('#addClass').find('.submitClass').removeClass('submitClass');
         $('#createRoutineModal').modal('hide');
     });
-    
+
     $("body").on("click", ".NewClassRoutineSubmit", function() {
         var serialize = $('#formClass').serialize();
         $.ajax({
@@ -1220,10 +1205,10 @@
             url: "{{route('backend.section-response')}}",
             success: function(data) {
                 $('#section_response_data').html(data);
-                
+
                 $('#addSection').modal('show');
                 $('#createRoutineModal').modal('hide');
-                
+
                 $('#addSection').find('.submitSection').addClass('NewRoutineSactionSubmit');
                 $('#addSection').find('.submitSection').removeClass('submitSection');
                 $('#addSection').find('.addSectionClass').addClass('addSectionRoutineClass');
@@ -1231,7 +1216,7 @@
             },
         })
 
-    }); 
+    });
     $("body").on("click", ".addSectionRoutineClass", function() {
 
         $.ajax({
@@ -1288,7 +1273,7 @@
                 $('#createRoutineModal').modal('show');
                 $('#addSection').find('.NewRoutineSactionSubmit').addClass('submitSection');
                 $('#addSection').find('.NewRoutineSactionSubmit').removeClass('NewRoutineSactionSubmit');
-                
+
             },
             error: function(response) {
                 $('.class_name_error').text(response.responseJSON.errors.class_id);
@@ -1308,9 +1293,9 @@
             url: "{{route('backend.admin-save-department')}}",
             type: 'POST',
             data: formdata,
-            cache : false,
-            contentType : false,
-            processData : false,
+            cache: false,
+            contentType: false,
+            processData: false,
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             },
@@ -1361,7 +1346,7 @@
 
                 $('#addSection').modal('hide');
                 $('#addUser').modal('show');
-                
+
             },
             error: function(response) {
                 $('.class_name_error').text(response.responseJSON.errors.class_id);
@@ -1396,7 +1381,7 @@
             },
             success: function(data) {
                 $('#section_response_data').html(data);
-                
+
                 $('#addSection').modal('show');
                 $('#addClass').modal('hide');
                 $('#addClass').find('.NewClassSactionSubmit').addClass('submitClass');
@@ -1522,7 +1507,7 @@
             },
             success: function(data) {
                 $('#exam_schedule_response_modal_data').html(data);
-                
+
                 $('#AddExamSchedule').modal('show');
                 $('#addExam').modal('hide');
             },
@@ -1552,7 +1537,7 @@
             },
             success: function(data) {
                 $('#exam_schedule_response_modal_data').html(data);
-                
+
                 $('#AddExamSchedule').modal('show');
                 $('#addClass').modal('hide');
                 $('#addClass').find('.NewClassExamSubmit').addClass('submitClass');
@@ -1588,7 +1573,7 @@
             url: "{{route('backend.class-response')}}",
             success: function(data) {
                 $('#class_response_data').html(data);
-                
+
                 $('#addClass').modal('show');
                 $('#addSection').modal('hide');
 
@@ -1599,7 +1584,7 @@
 
     });
     $("body").on("click", ".submitExamSectionClass", function() {
-        
+
         var serialize = $("#formClass").serialize();
         $.ajax({
             url: "{{route('backend.exam-schedule-class')}}",
@@ -1610,7 +1595,7 @@
             },
             success: function(data) {
                 $('#section_response_data').html(data);
-                
+
                 $('#addClass').modal('hide');
                 $('#addSection').modal('show');
 
@@ -1641,7 +1626,7 @@
                 $('#addSection').modal('hide');
                 $('#addSection').find('.submitExamSectionData').addClass('submitSection');
                 $('#addSection').find('.submitExamSectionData').removeClass('submitExamSectionData');
-                
+
             },
             error: function(response) {
                 $('.class_name_error').text(response.responseJSON.errors.class_id);
@@ -1667,7 +1652,7 @@
             },
             success: function(data) {
                 $('#exam_schedule_response_modal_data').html(data);
-                
+
                 $('#AddExamSchedule').modal('hide');
                 $('#AddClassRoom').modal('show');
                 $('#AddClassRoom').find('.submitClassroom').addClass('submitExamClassroom');
@@ -1725,7 +1710,7 @@
         $('#addClass').find('.submitClass').removeClass('submitClass');
     });
     $("body").on("click", ".submitSyllabusClass", function() {
-        
+
         var serialize = $("#formClass").serialize();
         $.ajax({
             url: "{{route('backend.save-syllabus-class')}}",
@@ -1736,7 +1721,7 @@
             },
             success: function(data) {
                 $('#syllabus_response_modal_data').html(data);
-                
+
                 $('#addSyllabus').modal('show');
                 $('#addClass').modal('hide');
 
@@ -1780,7 +1765,7 @@
             },
             success: function(data) {
                 $('#syllabus_response_modal_data').html(data);
-                
+
                 $('#addSection').modal('hide');
                 $('#addSyllabus').modal('show');
                 $('#addSection').find('.submitSyllabusSection').addClass('submitSection');
@@ -1792,7 +1777,7 @@
                 $('.section_capacity_error').text(response.responseJSON.errors.section_capacity);
             }
         });
-        
+
     });
     $("body").on("click", ".addSyllabusSectionClass", function() {
 
@@ -1807,7 +1792,7 @@
                 $('#addClass').find('.submitClass').removeClass('submitClass');
             },
         })
-        
+
     });
     $("body").on("click", ".submitSyllabusSectionClass", function() {
 
@@ -1821,7 +1806,7 @@
             },
             success: function(data) {
                 $('#section_response_data').html(data);
-                
+
                 $('#addSection').modal('show');
                 $('#addClass').modal('hide');
                 $('#addClass').find('.submitSyllabusSectionClass').addClass('addSyllabusSectionClass');
@@ -1854,7 +1839,7 @@
             },
             success: function(data) {
                 $('#syllabus_response_modal_data').html(data);
-                
+
                 $('#AddSubject').modal('hide');
                 $('#addSyllabus').modal('show');
                 $('#AddSubject').find('.submitSyllabusSubjectClass').addClass('AddSubjectSubmit');
@@ -1890,15 +1875,15 @@
             url: "{{route('backend.save-fee-feetype')}}",
             type: "POST",
             data: formData,
-            cache : false,
-            contentType : false,
-            processData : false,
+            cache: false,
+            contentType: false,
+            processData: false,
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             },
             success: function(data) {
                 $('#fee_response_modal_data').html(data);
-                
+
                 $('#addFeetype').modal('hide');
                 $('#addFee').modal('show');
             },
@@ -1907,7 +1892,7 @@
                 $('.feetype_image_error').text(response.responseJSON.errors.feetype_image);
             }
         });
-        
+
     });
     $("body").on("click", ".AddfeeClass", function() {
         $('#addFee').modal('hide');
@@ -1927,12 +1912,12 @@
             },
             success: function(data) {
                 $('#fee_response_modal_data').html(data);
-                
+
                 $('#addFee').modal('show');
                 $('#addClass').modal('hide');
                 $('#addClass').find('.submitfeeClass').addClass('submitClass');
                 $('#addClass').find('.submitfeeClass').removeClass('submitfeeClass');
-                
+
             },
             error: function(response) {
                 $('.class_name_error').text(response.responseJSON.errors.class_name);
@@ -1970,7 +1955,7 @@
             },
             success: function(data) {
                 $('#fee_response_modal_data').html(data);
-                
+
                 $('#addSection').modal('hide');
                 $('#addFee').modal('show');
                 $('#addSection').find('.submitFeeSection').addClass('submitSection');
@@ -2011,7 +1996,7 @@
             },
             success: function(data) {
                 $('#section_response_data').html(data);
-                
+
                 $('#addSection').modal('show');
                 $('#addClass').modal('hide');
                 $('#addClass').find('.submitfeeClasss').addClass('submitClass');
@@ -2182,11 +2167,11 @@
                 success: function(data) {
 
                     // $('#teacher_attendance_response_list').html(data);
-                    
-                    if(data.success){
+
+                    if (data.success) {
                         iziToast.success({
                             message: 'Teacher attendance update Successfully!',
-                            position: 'topRight', 
+                            position: 'topRight',
                         })
                     }
 
