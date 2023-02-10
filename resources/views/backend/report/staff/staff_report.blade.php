@@ -37,10 +37,10 @@
                 url: "{{ route('backend.report.staff') }}",
             },
             columns: [
-                { data: 'get_user.name', name: 'get_user.name' },
-                { data: 'get_user.email', name: 'get_user.email' },
-                { data: 'get_user.gender', name: 'get_user.gender' },
-                { data: 'get_user.mobile', name: 'get_user.mobile'},
+                { data: 'name', name: 'name' },
+                { data: 'email', name: 'email' },
+                { data: 'gender', name: 'gender' },
+                { data: 'mobile', name: 'mobile'},
                 {
                     data:'action',
                     name:'action',

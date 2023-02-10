@@ -29,7 +29,7 @@
 <div class="card">
     <div class="card-body">
         <h4 class="m-0 header-title text-end float-end">
-            <a href="javascript:void(0)" class="btn btn-primary create_report"><i class="mdi mdi-plus"></i>Create</a>
+            
         </h4>
     </div>
 </div>

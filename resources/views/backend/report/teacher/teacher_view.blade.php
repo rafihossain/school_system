@@ -27,7 +27,6 @@
                         <p>{{$teacher->getTeacher->mobile}}</p>
                         <p>{{$teacher->getTeacher->mobile}}</p>
                         <p>{{$teacher->present_address}}</p>
-
                     </div>
                 </div>
 

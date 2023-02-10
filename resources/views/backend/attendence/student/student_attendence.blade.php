@@ -108,6 +108,7 @@
 
         $(document).delegate('.save_student_attendance', 'click', function() {
             var fromData = $("#save_student_attendance").serialize();
+            console.log(fromData);
             $.ajax({
                 url: "{{route('backend.save_student_attendance')}}",
                 headers: {

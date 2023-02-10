@@ -14,6 +14,7 @@ use App\Models\ExamList;
 use App\Models\ExamSchedule;
 use App\Models\Fee;
 use App\Models\FeeType;
+use App\Models\SessionModel;
 use App\Models\Student;
 use App\Models\Syllabus;
 use App\Models\User;
@@ -78,10 +79,10 @@ class BackendController extends Controller
         $teachers = User::where('user_role', 6)->get();
         $exam_lists = ExamList::get();
         $feetypes = FeeType::get();
+        $sessions = SessionModel::get();
 
-        return view(
-            'backend.index',
-            compact('classes', 'departments', 'sections', 'subjects', 'classrooms', 'teachers', 'exam_lists', 'feetypes'),
+        return view('backend.index',
+            compact('classes', 'departments', 'sections', 'subjects', 'classrooms', 'teachers', 'exam_lists', 'feetypes', 'sessions'),
         );
     }
     public function add_user_modal()
@@ -465,7 +466,6 @@ class BackendController extends Controller
         $this->reuse_fee($request);
         return $this->open_fee_modal();
     }
-
     public function class_response(){
         return view('backend.dashboard.class_response');
     }

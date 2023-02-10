@@ -5,7 +5,6 @@
 <div class="card">
     <div class="card-header">
         <div class="row justify-content-center">
-
             <div class="col-md-2 show_type">
                 <select name="section_id" id="select_type" class="form-control">
                     <option value="">Select Type</option>
@@ -20,10 +19,8 @@
                 <input type="month" class="form-control date_data_month" value="{{date('Y-m')}}">
             </div>
 
-            <div class="col-md-3 show_button" style="display:none">
-
+            <div class="col-md-3 show_button">
                 <button type="button" class="btn btn-primary get_student_mark">Get Attendence Report</button>
-
             </div>
         </div>
     </div>
@@ -44,12 +41,11 @@
                 $(".show_day").css('display', 'none');
                 $(".show_monthly").css('display', 'block');
             }
-
         });
 
-        $(".date_click").on('change', function(e) {
-            $(".show_button").css('display', 'block');
-        });
+        // $(".date_click").on('change', function(e) {
+        //     $(".show_button").css('display', 'block');
+        // });
 
         $('.get_student_mark').click(function(e) {
 
@@ -83,8 +79,6 @@
             success: function(data) {
                 $("#section_id").html(data);
             }
-
-
         })
     });
 </script>

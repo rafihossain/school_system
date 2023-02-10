@@ -47,6 +47,15 @@ class User extends Authenticatable implements HasMedia, MustVerifyEmail
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
+    public function teacher_single_attendence()
+    {
+        return $this->belongsTo(TeacherAttendence::class,'id','teacher_id');
+    }
+
+    public function teacher_attendence()
+    {
+        return $this->hasMany(TeacherAttendence::class,'teacher_id','id');
+    }
 
     public function role()
     {

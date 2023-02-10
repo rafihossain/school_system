@@ -49,7 +49,7 @@ class Student extends Model
 
     public function getParent()
     {
-        return $this->belongsTo(AdditionalInfo::class,'parent_id','user_id');
+        return $this->belongsTo(User::class,'parent_id','id');
     }
     public function getClass()
     {

@@ -1,3 +1,4 @@
+@if(!$students->isEmpty())
 <table class="table table-bordered table-bordered dt-responsive nowrap">
     <thead>
         <tr>
@@ -10,7 +11,6 @@
             <th>PARENT NAME</th>
             <th>PARENT PHONE</th>
             <th>ACTION</th>
-
         </tr>
     </thead>
     <tbody>
@@ -22,10 +22,11 @@
             <td>{{$student->getStudentBasicInfo->date_of_birth}}</td>
             <td>{{$student->getStdAdditionalInfo->blood_group}}</td>
             <td>{{$student->admission_date}}</td>
-            <td>{{$student->getParent->father_name}}</td>
+            <td>{{$student->getParent->name}}</td>
             <td>{{$student->getStdAdditionalInfo->student_phone}}</td>
             <td><a href="{{route('backend.student.report.view',$student->id)}}" class="btn btn-primary"><i class="fa fa-eye"></i></a></td>
           </tr>
         @endforeach    
     </tbody>
 </table>
+@endisset

@@ -13,6 +13,7 @@ use App\Models\SessionModel;
 use App\Models\StaffAdditionalInfo;
 use App\Models\ExamSchedule;
 use App\Models\TeacherAdditionalInfo;
+use App\Models\User;
 use DataTables;
 
 class ReportController extends Controller
@@ -21,8 +22,12 @@ class ReportController extends Controller
     public function reportTeacher(Request $request)
     {
         if ($request->ajax()) {
-            $teacher=TeacherAdditionalInfo::with('getTeacher','getDepartment')->get()->toArray();
-            //dd($teacher);
+            // dd('hi');
+
+            // $teacher = TeacherAdditionalInfo::with('getTeacher','getDepartment')->get()->toArray();
+            $teacher = User::where('user_role', 4)->get()->toArray();
+            // dd($teacher);
+
             return Datatables::of($teacher)->addIndexColumn()
                 ->addColumn('action', function($row){
                     $btn = '<a href="'.route('backend.teacher.view',$row['id']).'" data-id="'.$row['id'].'" class="btn btn-sm btn-primary waves-effect waves-light"><i class="fa fa-eye"></i>';
@@ -50,8 +55,17 @@ class ReportController extends Controller
 
     public function get_student_report(Request $request)
     {
-       $students=Student::with('getStudent')->where('class_id',$request->class_id)->where('section_id',$request->section_id)->get();
-       //dd($students);
+        $request->validate([
+            'class_id' => 'required',
+            'section_id' => 'required',
+        ]);
+
+        $students=Student::with('getStudent','getParent')
+                        ->where('class_id',$request->class_id)
+                        ->where('section_id',$request->section_id)
+                        ->get();
+
+    //    dd($students);
        return view('backend.report.student.report_data',compact('students'));
     }
 
@@ -66,7 +80,8 @@ class ReportController extends Controller
     public function reportStaff(Request $request)
     {
         if ($request->ajax()) {
-            $staff=StaffAdditionalInfo::with('getUser')->get();
+            $staff=User::where('user_role', 7)->get();
+            // $staff=StaffAdditionalInfo::with('getUser')->get();
             return Datatables::of($staff)->addIndexColumn()
                 ->addColumn('action', function($row){
                   
@@ -89,14 +104,15 @@ class ReportController extends Controller
     public function reportExamRoutine()
     {
         $exam_lists=ExamList::all();
+        $sessions=SessionModel::all();
         $classes=ClassModal::all();
         //$sections=Section::all();
-        return view('backend.report.exam_routine.exam_routine',compact('exam_lists','classes'));
+        return view('backend.report.exam_routine.exam_routine',compact('exam_lists','classes', 'sessions'));
     }
 
     public function get_report_exam_routine(Request $request)
     {
-              $exam_id=$request->exam_id;
+        $exam_id=$request->exam_id;
         $class_id=$request->class_id;
         $section_id=$request->section_id;
         $session_id=$request->session_id;
@@ -192,15 +208,22 @@ class ReportController extends Controller
 
     public function get_teacher_attendence_report(Request $request)
     {
+        // dd(11);
+
         if($request->select_type == 'date'){
             $attendence_date=$request->date_data;
-            $teachers=TeacherAdditionalInfo::with(['teacher_single_attendence' => function($q) use ($attendence_date){
-                $q->where('attendence_date',$attendence_date);
-              }])->get();
+            
+            $teachers = User::where('user_role', 6)
+            ->with(['teacher_single_attendence' => function($q) use ($attendence_date){
+                 $q->where('attendence_date',$attendence_date);
+            }])->get();
+            // dd('hi');
+            
+            // $teachers=TeacherAdditionalInfo::with(['teacher_single_attendence' => function($q) use ($attendence_date){
+            //     $q->where('attendence_date',$attendence_date);
+            //   }])->get();
             return view('backend.report.teacher_attendence.teacher_atttendence_day_data',compact('teachers'));
-        }
-        else
-        {
+        }else{
             $days=cal_days_in_month(CAL_GREGORIAN,date('m',strtotime($request->date_data_month)),date('Y',strtotime($request->date_data_month)));
             $attendence_date=$request->date_data_month;
        

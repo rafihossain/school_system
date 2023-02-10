@@ -110,7 +110,6 @@
             </div>
         </a>
     </div>
-
     <div class="col-xl-3 col-6">
         <div class="card">
             <div class="card-body">
@@ -321,28 +320,30 @@
                 </div>
                 <div id="AttendenceStudent">
                     <div class="row justify-content-center mb-3">
-                        <div class="col-md-3">
-                            <input type="date" name="attendence_date" class="form-control attendence_date" value="{{date('Y-m-d')}}">
-                            <span class="text-danger stdatd_attendence_date_error"></span>
-                        </div>
-                        <div class="col-md-3">
-                            <select name="class_id" id="class_id" class="form-control">
-                                <option value="">Select Class</option>
-                                @foreach($classes as $classe)
-                                <option value="{{$classe->id}}">{{$classe->class_name}}</option>
-                                @endforeach
-                            </select>
-                            <span class="text-danger stdatd_class_name_error"></span>
-                        </div>
-                        <div class="col-md-3 show_section">
-                            <select name="section_id" id="section_id" class="form-control">
-                                <option value="">Select Section</option>
-                            </select>
-                            <span class="text-danger stdatd_section_name_error"></span>
-                        </div>
-                        <div class="col-md-3 show_button">
-                            <button type="button" class="btn btn-primary get_student_list">Get Student List</button>
-                        </div>
+                        <form id="get_student_list_form">
+                            <div class="col-md-3">
+                                <input type="date" name="attendence_date" class="form-control attendence_date" value="{{date('Y-m-d')}}">
+                                <span class="text-danger stdatd_attendence_date_error"></span>
+                            </div>
+                            <div class="col-md-3">
+                                <select name="class_id" id="class_id" class="form-control">
+                                    <option value="">Select Class</option>
+                                    @foreach($classes as $classe)
+                                    <option value="{{$classe->id}}">{{$classe->class_name}}</option>
+                                    @endforeach
+                                </select>
+                                <span class="text-danger stdatd_class_name_error"></span>
+                            </div>
+                            <div class="col-md-3 show_section">
+                                <select name="section_id" id="section_id" class="form-control">
+                                    <option value="">Select Section</option>
+                                </select>
+                                <span class="text-danger stdatd_section_name_error"></span>
+                            </div>
+                            <div class="col-md-3 show_button">
+                                <button type="button" class="btn btn-primary get_student_list">Get Student List</button>
+                            </div>
+                        </form>
                     </div>
                     <form id="save_student_attendance">
                         <div id="student_attendance_response_list"></div>
@@ -465,7 +466,6 @@
 <!-- Add  Exam Schedule -->
 <div id="exam_schedule_response_modal_data"></div>
 <!--End Exam Schedule -->
-
 <!-- Add Exam -->
 <div id="addExam" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="standard-modalLabel" aria-hidden="true">
     <div class="modal-dialog  modal-lg modal-dialog-centered">
@@ -512,7 +512,6 @@
     </div><!-- /.modal-dialog -->
 </div>
 <!-- ebd Exam -->
-
 <!-- Add Syllabus -->
 <div id="syllabus_response_modal_data"></div>
 <!-- ebd Syllabus -->
@@ -553,7 +552,7 @@
 
 <!-- Add report -->
 <div id="ourreport" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="standard-modalLabel" aria-hidden="true">
-    <div class="modal-dialog  modal-lg modal-dialog-centered">
+    <div class="modal-dialog modal-xl modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
                 <h4 class="modal-title" id="standard-modalLabel">Report </h4>
@@ -561,7 +560,7 @@
             </div>
             <div class="modal-body">
                 <div class="choose_report_type mb-3">
-                    <select class="form-control">
+                    <select class="form-control" name="report_type">
                         <option value="">Select Report Type</option>
                         <option value="1">Student</option>
                         <option value="2">Teacher</option>
@@ -573,67 +572,32 @@
                     </select>
                 </div>
                 <div id="student_report">
-                    <div class="row justify-content-center mb-3">
-                        <div class="col-md-3">
-                            <select name="class_id" id="getSection" class="form-control">
-                                <option value="">Select Class</option>
-                                <option value="1">Class one</option>
-                                <option value="2">Class two</option>
-                                <option value="3">Class three</option>
-                            </select>
+                    <form id="student_report_form">
+                        <div class="row justify-content-center mb-3">
+                            <div class="col-md-3">
+                                <select name="class_id" id="getSection" class="form-control">
+                                    <option value="">Select Class</option>
+                                    @foreach($classes as $class)
+                                    <option value="{{ $class->id }}">{{ $class->class_name }}</option>
+                                    @endforeach
+                                </select>
+                                <span class="text-danger class_name_error"></span>
+                            </div>
+                            <div class="col-md-3 show_section">
+                                <select name="section_id" id="getInfo" class="form-control">
+                                    <option value="">Select Section</option>
+                                    @foreach($sections as $section)
+                                    <option value="{{ $section->id }}">{{ $section->section_name }}</option>
+                                    @endforeach
+                                </select>
+                                <span class="text-danger section_name_error"></span>
+                            </div>
+                            <div class="col-md-3 show_student">
+                                <button type="button" class="btn btn-primary get_student_report">Get Student List</button>
+                            </div>
                         </div>
-                        <div class="col-md-3 show_section">
-                            <select name="section_id" id="getInfo" class="form-control">
-                                <option value="">Select Section</option>
-                                <option value="1">Section-A</option>
-                                <option value="4">Section-C</option>
-                                <option value="6">Home Banner</option>
-                            </select>
-                        </div>
-                        <div class="col-md-3 show_student">
-                            <button type="button" class="btn btn-primary get_student_report">Get Student List</button>
-                        </div>
-                    </div>
-                    <table class="table table-bordered table-bordered dt-responsive nowrap">
-                        <thead>
-                            <tr>
-                                <th>NAME</th>
-                                <th>ROLL NUMBER</th>
-                                <th>GENDER</th>
-                                <th>DATE OF BIRTH</th>
-                                <th>BLOOD GROUP</th>
-                                <th>ADMISSION DATE</th>
-                                <th>PARENT NAME</th>
-                                <th>PARENT PHONE</th>
-                                <th>ACTION</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>Rafi</td>
-                                <td>1</td>
-                                <td>male</td>
-                                <td>2023-01-04</td>
-                                <td>Ut sit hic odio porr</td>
-                                <td>2018-05-26</td>
-                                <td>Ursa Macdonald</td>
-                                <td>+1 (578) 718-9931</td>
-                                <td><a href="http://schoolmanagment.test/public/admin/student/view/4" class="btn btn-primary"><i class="fa fa-eye"></i></a></td>
-                            </tr>
-                            <tr>
-                                <td>Shovon</td>
-                                <td>104</td>
-                                <td>male</td>
-                                <td></td>
-                                <td></td>
-                                <td>2023-01-09</td>
-                                <td>Nazmul</td>
-                                <td></td>
-                                <td><a href="http://schoolmanagment.test/public/admin/student/view/6" class="btn btn-primary"><i class="fa fa-eye"></i></a></td>
-                            </tr>
-
-                        </tbody>
-                    </table>
+                    </form>
+                    <div class="show_student_report"></div>
                 </div>
                 <div id="teacher_report">
                     <table id="datatable" class="table table-bordered table-bordered dt-responsive nowrap teacher_report_datatable">
@@ -641,7 +605,7 @@
                             <tr>
                                 <th>NAME</th>
                                 <th>EMAIL</th>
-                                <th>DEPARTMENT</th>
+                                <!-- <th>DEPARTMENT</th> -->
                                 <th>GENDER</th>
                                 <th>PHONE</th>
                                 <th>ACTION</th>
@@ -651,6 +615,174 @@
 
                         </tbody>
                     </table>
+                </div>
+                <div id="staff_report">
+                    <table id="datatable" class="table table-bordered table-bordered dt-responsive nowrap staff_report_datatable">
+                        <thead>
+                            <tr>
+                                <th>NAME</th>
+                                <th>EMAIL</th>
+                                <!-- <th>DEPARTMENT</th> -->
+                                <th>GENDER</th>
+                                <th>PHONE</th>
+                                <th>ACTION</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+
+                        </tbody>
+                    </table>
+                </div>
+                <div id="routine_report">
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="row justify-content-center">
+                                <div class="col-md-2">
+                                    <select name="session_id" class="form-control getroutineclass">
+                                        <option value="">Select Session</option>
+                                        @foreach($sessions as $session)
+                                        <option value="{{ $session->id }}">{{ $session->session_name }}</option>
+                                        @endforeach
+                                    </select>
+                                    @error('session_id')
+                                    <span class="text-danger">{{ $message }}</span>
+                                    @enderror
+                                </div>
+                                <div class="col-md-2 show_class d-none">
+                                    <select name="class_id" class="form-control getroutinesection"></select>
+                                </div>
+
+                                <div class="col-md-2 show_section d-none">
+                                    <select name="section_id" class="form-control getroutineInfo"></select>
+                                </div>
+                                <div class="col-md-4 show_route d-none">
+                                    <button type="button" class="btn btn-primary preview_routine">Get Class Routine</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="show_class_routine"></div>
+                        </div>
+                    </div>
+                </div>
+                <div id="exam_report">
+                    <div class="card">
+                        <form id="exam_report_form">
+                            <div class="card-header">
+                                <div class="row justify-content-center">
+                                    <div class="col-md-2">
+                                        <select name="session_id" class="form-control getexamlist">
+                                            <option value="">Select Session</option>
+                                            @foreach($sessions as $session)
+                                                <option value="{{ $session->id }}">{{ $session->session_name }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    <div class="col-md-2 show_exam d-none">
+                                        <select name="exam_id" class="form-control getexamclass">
+                                            <option value="">Select Exam</option>
+                                            @foreach($exam_lists as $exam_list)
+                                                <option value="{{ $exam_list->id }}">{{ $exam_list->name }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    <div class="col-md-2 show_class d-none">
+                                        <select name="class_id" class="form-control getexamsection">
+                                            <option value="">Select Class</option>
+                                            @foreach($classes as $classe)
+                                                <option value="{{$classe->id}}">{{$classe->class_name}}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    <div class="col-md-2 show_section d-none">
+                                        <select name="section_id" class="form-control getsectioninfo">
+                                            <option value="">Select Section</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-3 show_button d-none">
+                                        <button type="button" class="btn btn-primary get_report_exam_routine">Get Exam Routine</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                        <div class="card-body">
+                            <div class="show_get_report_exam_routine"></div>
+                        </div>
+                    </div>
+                </div>
+                <div id="student_attendence_report">
+                    <div class="card">
+                        <form id="student_attendence_report_form">
+                            <div class="card-header">
+                                <div class="d-flex justify-content-center">
+                                    <div class="col-md-2">
+                                        <select name="session_id" class="form-control std_atten_session">
+                                            @foreach($sessions as $session)
+                                                <option value="{{ $session->id }}">{{ $session->session_name }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    <div class="show_class d-none">
+                                        <select name="class_id" class="form-control std_atten_class">
+                                            <option value="">Select Class</option>
+                                            @foreach($classes as $classe)
+                                                <option value="{{$classe->id}}">{{$classe->class_name}}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    <div class="show_section d-none">
+                                        <select name="section_id" class="form-control std_atten_section">
+                                            <option value="">Select Section</option>
+                                        </select>
+                                    </div>
+                                    <div class="show_type d-none">
+                                        <select name="select_type" class="form-control std_atten_select_type">
+                                            <option value="">Select Type</option>
+                                            <option value="date">Date</option>
+                                            <option value="monthly">Monthly</option>   
+                                        </select>
+                                    </div>
+                                    <div class="show_day date_click d-none">
+                                        <input type="date" class="form-control date_data" name="date_data" value="{{date('Y-m-d')}}">
+                                    </div>
+                                    <div class="show_monthly date_click d-none">
+                                        <input type="month" class="form-control date_data_month" name="date_data_month" value="{{date('Y-m')}}">
+                                    </div>
+                                    <div class="show_button"> 
+                                        <button type="button" class="btn btn-primary get_student_mark">Get Attendence Report</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-body">'
+                                <div class="show_student_attendence_report"></div>
+                            </div>
+                        </form>
+                        <div class="card-body">
+                            <div class="show_get_report_exam_routine"></div>
+                        </div>
+                    </div>
+                </div>
+                <div id="teacher_attendence_report">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="row justify-content-center">
+                                <div class="col-md-3">
+                                    <input type="date" id="attendence_date" name="attendence_date" class="form-control" value="{{ date('Y-m-d') }}">
+                                    @error('attendence_date')
+                                        <span class="text-danger">{{ $message }}</span>
+                                    @enderror
+                                </div>
+                                <div class="col-md-3 show_button"> 
+                                    <button type="button" class="btn btn-primary get_teacher_list">Get Teacher List</button> 
+                                </div> 
+                            </div>
+                            <div class="show_teacher_list"></div>
+                        </div>
+
+                        <div class="card-body">
+                            <div class="show_get_report_exam_routine"></div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -672,18 +804,18 @@
                     <div class="mb-2">
                         <label class="form-label">Event Title</label>
                         <input type="text" class="form-control" name="event_title" placeholder="Enter Event Title">
-                        <span class="text-danger" id="event_title_error"></span>
+                        <span class="text-danger event_title_error"></span>
                     </div>
                     <div class="row">
                         <div class="col-md-6 mb-2">
                             <label class="form-label">Starting Date</label>
                             <input type="date" class="form-control" name="start_date">
-                            <span class="text-danger" id="startdate_error"></span>
+                            <span class="text-danger event_startdate_error"></span>
                         </div>
                         <div class="col-md-6 mb-2">
                             <label class="form-label">Ending Date</label>
                             <input type="date" class="form-control" name="end_date">
-                            <span class="text-danger" id="enddate_error"></span>
+                            <span class="text-danger event_enddate_error"></span>
                         </div>
                     </div>
                     <div class="mt-4">
@@ -712,7 +844,6 @@
     const CSRF_TOKEN = {
         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
     }
-
     // @todo: Async Request Handler
     const asyncHandler = function(route, method, resCallback, errCallback = null, object = {}) {
         $.ajax({
@@ -720,17 +851,18 @@
             url: route,
             method: method,
             data: object,
+            // processData: false,
+            // contentType: false,
             success: (res) => resCallback(res),
             error: (err) => errCallback(err)
         })
     }
-
     const errorHandler = (param) => {
-        for (let i=0; i <= param.length; i++) {
+        console.log(param);
+        for (let i = 0; i <= param.length; i++) {
             $(param[i].name).text(param[i].data);
         }
     }
-
 
     $(document).ready(function() {
 
@@ -739,22 +871,13 @@
         ========================================================*/
 
         $('#open_user_model').on('click', function() {
-
-            asyncHandler("{{route('backend.add-user-modal')}}", "GET", (res) => {
-                $('#add_user_modal_data').html(res);
-                $('#addUser').modal('show');
-            }, (err) => {
-                console.log(err);
-            });
-
-
-            // $.ajax({
-            //     url: "route('backend.add-user-modal')",
-            //     success: function(data) {
-            //         $('#add_user_modal_data').html(data);
-            //         $('#addUser').modal('show');
-            //     }
-            // })
+            $.ajax({
+                url: "{{route('backend.add-user-modal')}}",
+                success: function(data) {
+                    $('#add_user_modal_data').html(data);
+                    $('#addUser').modal('show');
+                }
+            })
         });
         $('#open_attendence_model').on('click', function() {
             $('#AddAttendence').modal('show');
@@ -814,7 +937,6 @@
             e.preventDefault();
             let fromData = $("#add_parent").serializeArray();
             return asyncHandler("{{route('backend.admin-save-parent')}}", "POST", (res) => $('#addUser').modal('hide'), (err) => {
-
                 return errorHandler([
                     {name: '.parent_name_error', data: err.responseJSON.errors.name},
                     {name: '.parent_email_error', data: err.responseJSON.errors.email},
@@ -822,230 +944,133 @@
                     {name: '.parent_phone_error', data: err.responseJSON.errors.phone},
                     {name: '.parent_gender_error', data: err.responseJSON.errors.gender},
                 ])
-
             }, fromData);
         });
-
-
         $(document).delegate('.studentinfosave', 'click', function(e) {
             e.preventDefault();
-            var serialize = $('#add_student').serialize();
-            $.ajax({
-                url: "{{route('backend.admin-save-student')}}",
-                type: "POST",
-                data: serialize,
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                },
-                success: function(response) {
-                    // $('#add_user_modal_data').html(data);
 
-                    // $('#parent_content').hide();
-                    // $('#student_content').hide();
-
-                    // $('#addSection').modal('hide');
-                    $('#addUser').modal('hide');
-                },
-                error: function(response) {
-                    $('.student_name_error').text(response.responseJSON.errors.name);
-                    $('.student_email_error').text(response.responseJSON.errors.email);
-                    $('.student_password_error').text(response.responseJSON.errors.password);
-                    $('.student_parent_error').text(response.responseJSON.errors.parent_id);
-                    $('.student_department_error').text(response.responseJSON.errors.department_id);
-                    $('.student_class_error').text(response.responseJSON.errors.class_id);
-                    $('.student_section_error').text(response.responseJSON.errors.section_id);
-                    $('.student_rollno_error').text(response.responseJSON.errors.roll_no);
-                    $('.admission_date_error').text(response.responseJSON.errors.admission_date);
-                    $('.student_gender_error').text(response.responseJSON.errors.gender);
-                }
-            });
+            let fromData = $("#add_student").serializeArray();
+            return asyncHandler("{{route('backend.admin-save-student')}}", "POST", (res) => $('#addUser').modal('hide'), (err) => {
+                return errorHandler([
+                    {name: '.student_name_error', data: err.responseJSON.errors.name},
+                    {name: '.student_email_error', data: err.responseJSON.errors.email},
+                    {name: '.student_password_error', data: err.responseJSON.errors.password},
+                    {name: '.student_parent_error', data: err.responseJSON.errors.parent_id},
+                    {name: '.student_department_error', data: err.responseJSON.errors.department_id},
+                    {name: '.student_class_error', data: err.responseJSON.errors.class_id},
+                    {name: '.student_section_error', data: err.responseJSON.errors.section_id},
+                    {name: '.student_rollno_error', data: err.responseJSON.errors.roll_no},
+                    {name: '.admission_date_error', data: err.responseJSON.errors.admission_date},
+                    {name: '.student_gender_error', data: err.responseJSON.errors.gender},
+                ])
+            }, fromData);
         });
         $(document).delegate('.teacherinfosave', 'click', function(e) {
             e.preventDefault();
 
-            var fromData = new FormData(document.getElementById("add_teacher"));
-            $.ajax({
-                url: "{{route('backend.admin-save-teacher')}}",
-                type: "POST",
-                data: fromData,
-                cache: false,
-                contentType: false,
-                processData: false,
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                },
-                success: function(response) {
-                    $('#addUser').modal('hide');
-                },
-                error: function(response) {
-                    $('.teacher_name_error').text(response.responseJSON.errors.name);
-                    $('.teacher_email_error').text(response.responseJSON.errors.email);
-                    $('.teacher_password_error').text(response.responseJSON.errors.password);
-                    $('.teacher_phone_error').text(response.responseJSON.errors.phone);
-                    $('.teacher_gender_error').text(response.responseJSON.errors.gender);
-                }
-            });
+            let fromData = $("#add_teacher").serializeArray();
+            return asyncHandler("{{route('backend.admin-save-teacher')}}", "POST", (res) => $('#addUser').modal('hide'), (err) => {
+                return errorHandler([
+                    {name: '.teacher_name_error', data: err.responseJSON.errors.name},
+                    {name: '.teacher_email_error', data: err.responseJSON.errors.email},
+                    {name: '.teacher_password_error', data: err.responseJSON.errors.password},
+                    {name: '.teacher_phone_error', data: err.responseJSON.errors.phone},
+                    {name: '.teacher_gender_error', data: err.responseJSON.errors.gender},
+                ])
+            }, fromData);
+
         });
         $(document).delegate('.staffinfosave', 'click', function(e) {
             e.preventDefault();
 
-            var fromData = new FormData(document.getElementById("add_staff"));
-            $.ajax({
-                url: "{{route('backend.admin-save-staff')}}",
-                type: "POST",
-                data: fromData,
-                cache: false,
-                contentType: false,
-                processData: false,
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                },
-                success: function(response) {
-                    $('#addUser').modal('hide');
-                },
-                error: function(response) {
-                    $('.staff_name_error').text(response.responseJSON.errors.name);
-                    $('.staff_email_error').text(response.responseJSON.errors.email);
-                    $('.staff_password_error').text(response.responseJSON.errors.password);
-                    $('.staff_phone_error').text(response.responseJSON.errors.phone);
-                    $('.staff_gender_error').text(response.responseJSON.errors.gender);
-                }
-            });
+            let fromData = $("#add_staff").serializeArray();
+            return asyncHandler("{{route('backend.admin-save-staff')}}", "POST", (res) => $('#addUser').modal('hide'), (err) => {
+                return errorHandler([
+                    {name: '.staff_name_error', data: err.responseJSON.errors.name},
+                    {name: '.staff_email_error', data: err.responseJSON.errors.email},
+                    {name: '.staff_password_error', data: err.responseJSON.errors.password},
+                    {name: '.staff_phone_error', data: err.responseJSON.errors.phone},
+                    {name: '.staff_gender_error', data: err.responseJSON.errors.gender},
+                ])
+            }, fromData);
+
         });
         $(document).delegate('.operatorinfosave', 'click', function(e) {
             e.preventDefault();
 
-            var fromData = new FormData(document.getElementById("add_operator"));
-            $.ajax({
-                url: "{{route('backend.admin-save-operator')}}",
-                type: "POST",
-                data: fromData,
-                cache: false,
-                contentType: false,
-                processData: false,
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                },
-                success: function(response) {
-                    $('#addUser').modal('hide');
-                },
-                error: function(response) {
-                    $('.operator_name_error').text(response.responseJSON.errors.name);
-                    $('.operator_email_error').text(response.responseJSON.errors.email);
-                    $('.operator_password_error').text(response.responseJSON.errors.password);
-                    $('.operator_phone_error').text(response.responseJSON.errors.phone);
-                    $('.operator_gender_error').text(response.responseJSON.errors.gender);
-                }
-            });
+            let fromData = $("#add_operator").serializeArray();
+            return asyncHandler("{{route('backend.admin-save-operator')}}", "POST", (res) => $('#addUser').modal('hide'), (err) => {
+                return errorHandler([
+                    {name: '.operator_name_error', data: err.responseJSON.errors.name},
+                    {name: '.operator_email_error', data: err.responseJSON.errors.email},
+                    {name: '.operator_password_error', data: err.responseJSON.errors.password},
+                    {name: '.operator_phone_error', data: err.responseJSON.errors.phone},
+                    {name: '.operator_gender_error', data: err.responseJSON.errors.gender},
+                ])
+            }, fromData);
+
         });
         $(document).delegate('.saveroutineinfo', 'click', function(e) {
-            // alert('hi');
-            var fromData = new FormData(document.getElementById("routineFrom"));
-            $.ajax({
-                url: "{{route('backend.save-class-routine')}}",
-                type: "POST",
-                data: fromData,
-                cache: false,
-                contentType: false,
-                processData: false,
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                },
-                success: function(response) {
-                    $('#createRoutineModal').modal('hide');
-                },
-                error: function(response) {
-                    $('.routine_class_error').text(response.responseJSON.errors.class_id);
-                    $('.routine_section_error').text(response.responseJSON.errors.section_id);
-                    $('.routine_subject_error').text(response.responseJSON.errors.subject_id);
-                    $('.routine_classroom_error').text(response.responseJSON.errors.classroom_id);
-                    $('.routine_teacher_error').text(response.responseJSON.errors.teacher_id);
-                    $('.routine_day_error').text(response.responseJSON.errors.day_id);
-                    $('.routine_starttime_error').text(response.responseJSON.errors.start_time);
-                    $('.routine_endtime_error').text(response.responseJSON.errors.end_time);
-                }
-            });
+
+            let fromData = $("#routineFrom").serializeArray();
+            return asyncHandler("{{route('backend.save-class-routine')}}", "POST", (res) => $('#createRoutineModal').modal('hide') , (err) => {
+                return errorHandler([
+                    {name: '.routine_class_error', data: err.responseJSON.errors.class_id},
+                    {name: '.routine_section_error', data: err.responseJSON.errors.section_id},
+                    {name: '.routine_subject_error', data: err.responseJSON.errors.subject_id},
+                    {name: '.routine_classroom_error', data: err.responseJSON.errors.classroom_id},
+                    {name: '.routine_teacher_error', data: err.responseJSON.errors.teacher_id},
+                    {name: '.routine_day_error', data: err.responseJSON.errors.day_id},
+                    {name: '.routine_starttime_error', data: err.responseJSON.errors.start_time},
+                    {name: '.routine_endtime_error', data: err.responseJSON.errors.end_time},
+                ])
+            }, fromData);
+
         })
         $(document).delegate('.examscheduleinfo', 'click', function(e) {
-            // alert('hi');
-            var fromData = new FormData(document.getElementById("examSchedule"));
-            $.ajax({
-                url: "{{route('backend.save-examschedule-info')}}",
-                type: "POST",
-                data: fromData,
-                cache: false,
-                contentType: false,
-                processData: false,
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                },
-                success: function(response) {
-                    $('#AddExamSchedule').modal('hide');
-                },
-                error: function(response) {
-                    $('.exam_name_error').text(response.responseJSON.errors.exam_id);
-                    $('.exam_classname_error').text(response.responseJSON.errors.class_id);
-                    $('.exam_sectionname_error').text(response.responseJSON.errors.section_id);
-                    $('.exam_classroom_name_error').text(response.responseJSON.errors.class_room_id);
-                    $('.exam_subject_name_error').text(response.responseJSON.errors.subject_id);
-                    $('.exam_date_error').text(response.responseJSON.errors.exam_date);
-                    $('.start_time_error').text(response.responseJSON.errors.start_time);
-                    $('.end_time_error').text(response.responseJSON.errors.end_time);
-                }
-            });
+
+            let fromData = $("#examSchedule").serializeArray();
+            return asyncHandler("{{route('backend.save-examschedule-info')}}", "POST", (res) => $('#AddExamSchedule').modal('hide'), (err) => {
+                return errorHandler([
+                    {name: '.exam_name_error', data: err.responseJSON.errors.exam_id},
+                    {name: '.exam_classname_error', data: err.responseJSON.errors.class_id},
+                    {name: '.exam_sectionname_error', data: err.responseJSON.errors.section_id},
+                    {name: '.exam_classroom_name_error', data: err.responseJSON.errors.class_room_id},
+                    {name: '.exam_subject_name_error', data: err.responseJSON.errors.subject_id},
+                    {name: '.exam_date_error', data: err.responseJSON.errors.exam_date},
+                    {name: '.start_time_error', data: err.responseJSON.errors.start_time},
+                    {name: '.end_time_error', data: err.responseJSON.errors.end_time},
+                ])
+            }, fromData);
+
         })
         $(document).delegate('#submitSyllabus', 'click', function(e) {
-            // alert('hi');
-            var fromData = new FormData(document.getElementById("formSyllabus"));
-            $.ajax({
-                url: "{{route('backend.save-syllabus-info')}}",
-                type: "POST",
-                data: fromData,
-                cache: false,
-                contentType: false,
-                processData: false,
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                },
-                success: function(response) {
-                    $('#addSyllabus').modal('hide');
-                },
-                error: function(response) {
-                    $('.syllabus_title_error').text(response.responseJSON.errors.syllabus_title);
-                    $('.syllabus_class_name_error').text(response.responseJSON.errors.class_id);
-                    $('.syllabus_section_name_error').text(response.responseJSON.errors.section_id);
-                    $('.syllabus_subject_name_error').text(response.responseJSON.errors.subject_id);
-                    $('.syllabus_image_error').text(response.responseJSON.errors.syllabus_image);
-                }
-            });
+
+            let fromData = $("#formSyllabus").serializeArray();
+            return asyncHandler("{{route('backend.save-syllabus-info')}}", "POST", (res) => $('#addSyllabus').modal('hide'), (err) => {
+                return errorHandler([
+                    {name: '.syllabus_title_error', data: err.responseJSON.errors.syllabus_title},
+                    {name: '.syllabus_class_name_error', data: err.responseJSON.errors.class_id},
+                    {name: '.syllabus_section_name_error', data: err.responseJSON.errors.section_id},
+                    {name: '.syllabus_subject_name_error', data: err.responseJSON.errors.subject_id},
+                    {name: '.syllabus_image_error', data: err.responseJSON.errors.syllabus_image},
+                ])
+            }, fromData);
+
         })
         $(document).delegate('.savefeebasicinfo', 'click', function(e) {
-            // alert('hi');
-            var fromData = new FormData(document.getElementById("feeFrom"));
-            $.ajax({
-                url: "{{route('backend.save-feebasic-info')}}",
-                type: "POST",
-                data: fromData,
-                cache: false,
-                contentType: false,
-                processData: false,
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                },
-                success: function(response) {
-                    $('#addFee').modal('hide');
-                },
-                error: function(response) {
-                    $('.fee_invoicetype_error').text(response.responseJSON.errors.syllabus_title);
-                    $('.fee_feetype_error').text(response.responseJSON.errors.class_id);
-                    $('.fee_class_error').text(response.responseJSON.errors.section_id);
-                    $('.fee_section_error').text(response.responseJSON.errors.subject_id);
-                    $('.fee_amountdue_error').text(response.responseJSON.errors.syllabus_image);
-                    $('.fee_duedate_error').text(response.responseJSON.errors.syllabus_image);
-                    $('.fee_status_error').text(response.responseJSON.errors.syllabus_image);
-                    $('.fee_description_error').text(response.responseJSON.errors.syllabus_image);
-                }
-            });
+            
+            let fromData = $("#feeFrom").serializeArray();
+            return asyncHandler("{{route('backend.save-feebasic-info')}}", "POST", (res) => $('#addFee').modal('hide'), (err) => {
+                return errorHandler([
+                    {name: '.fee_feetype_error', data: err.responseJSON.errors.feetype_id},
+                    {name: '.fee_class_error', data: err.responseJSON.errors.class_id},
+                    {name: '.fee_section_error', data: err.responseJSON.errors.section_id},
+                    {name: '.fee_amountdue_error', data: err.responseJSON.errors.amount_due},
+                    {name: '.fee_duedate_error', data: err.responseJSON.errors.due_date},
+                    {name: '.fee_description_error', data: err.responseJSON.errors.fee_description},
+                ])
+            }, fromData);
         })
 
         $("body").on("click", "#addUser .user_items input[type='radio']", function() {
@@ -1101,31 +1126,24 @@
         $('#addUser').modal('hide');
     });
     $("body").on("click", ".save_parent", function() {
-        var serialize = $('#parentFrom').serialize();
-        $.ajax({
-            url: "{{route('backend.admin-save-parent')}}",
-            type: 'POST',
-            data: serialize,
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            },
-            success: function(data) {
-                $('#add_user_modal_data').html(data);
 
-                $('#parent_content').hide();
-                $('#student_content').show();
+        let fromData = $("#parentFrom").serializeArray();
+        return asyncHandler("{{route('backend.admin-save-parent')}}", "POST", (res) =>{
+            $('#add_user_modal_data').html(data);
+            $('#parent_content').hide();
+            $('#student_content').show();
+            $('#addparent').modal('hide');
+            $('#addUser').modal('show');
+        }, (err) => {
+            return errorHandler([
+                {name: '.parent_name_error', data: err.responseJSON.errors.name},
+                {name: '.parent_email_error', data: err.responseJSON.errors.email},
+                {name: '.parent_password_error', data: err.responseJSON.errors.password},
+                {name: '.parent_phone_error', data: err.responseJSON.errors.phone},
+                {name: '.parent_gender_error', data: err.responseJSON.errors.gender},
+            ])
+        }, fromData);
 
-                $('#addparent').modal('hide');
-                $('#addUser').modal('show');
-            },
-            error: function(response) {
-                $('.parent_name_error').text(response.responseJSON.errors.name);
-                $('.parent_email_error').text(response.responseJSON.errors.email);
-                $('.parent_password_error').text(response.responseJSON.errors.password);
-                $('.parent_phone_error').text(response.responseJSON.errors.phone);
-                $('.parent_gender_error').text(response.responseJSON.errors.gender);
-            }
-        })
     });
     $("body").on("click", ".addClass_student", function() {
         // $('#formClass')[0].reset();
@@ -1139,28 +1157,21 @@
         })
     });
     $("body").on("click", ".submitClass", function() {
-        var serialize = $('#formClass').serialize();
-        $.ajax({
-            url: "{{route('backend.admin-save-class')}}",
-            type: 'POST',
-            data: serialize,
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            },
-            success: function(data) {
-                $('#add_user_modal_data').html(data);
 
-                $('#parent_content').hide();
-                $('#student_content').show();
+        let fromData = $("#formClass").serializeArray();
+        return asyncHandler("{{route('backend.admin-save-class')}}", "POST", (res) =>{
+            $('#add_user_modal_data').html(data);
+            $('#parent_content').hide();
+            $('#student_content').show();
+            $('#addClass').modal('hide');
+            $('#addUser').modal('show');
+        }, (err) => {
+            return errorHandler([
+                {name: '.class_name_error', data: err.responseJSON.errors.class_name},
+                {name: '.class_numeric_error', data: err.responseJSON.errors.class_numeric},
+            ])
+        }, fromData);
 
-                $('#addClass').modal('hide');
-                $('#addUser').modal('show');
-            },
-            error: function(response) {
-                $('.class_name_error').text(response.responseJSON.errors.class_name);
-                $('.class_numeric_error').text(response.responseJSON.errors.class_numeric);
-            }
-        })
     });
     $("body").on("click", ".addRoutineClass", function() {
         $('#addClass').modal('show');
@@ -1170,26 +1181,20 @@
     });
 
     $("body").on("click", ".NewClassRoutineSubmit", function() {
-        var serialize = $('#formClass').serialize();
-        $.ajax({
-            url: "{{route('backend.add-routine-class')}}",
-            type: 'POST',
-            data: serialize,
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            },
-            success: function(data) {
-                $('#routine_response_modal_data').html(data);
-                $('#addClass').modal('hide');
-                $('#createRoutineModal').modal('show');
-                $('#addClass').find('.NewClassRoutineSubmit').addClass('submitClass');
-                $('#addClass').find('.NewClassRoutineSubmit').removeClass('NewClassRoutineSubmit');
-            },
-            error: function(response) {
-                $('.class_name_error').text(response.responseJSON.errors.class_name);
-                $('.class_numeric_error').text(response.responseJSON.errors.class_numeric);
-            }
-        })
+
+        let fromData = $("#formClass").serializeArray();
+        return asyncHandler("{{route('backend.add-routine-class')}}", "POST", (res) =>{
+            $('#routine_response_modal_data').html(data);
+            $('#addClass').modal('hide');
+            $('#createRoutineModal').modal('show');
+            $('#addClass').find('.NewClassRoutineSubmit').addClass('submitClass');
+            $('#addClass').find('.NewClassRoutineSubmit').removeClass('NewClassRoutineSubmit');
+        }, (err) => {
+            return errorHandler([
+                {name: '.class_name_error', data: err.responseJSON.errors.class_name},
+                {name: '.class_numeric_error', data: err.responseJSON.errors.class_numeric},
+            ])
+        }, fromData);
 
     });
 
@@ -1234,53 +1239,38 @@
     });
     $("body").on("click", ".submitRoutineClass", function() {
 
-        var serialize = $('#formClass').serialize();
-        $.ajax({
-            url: "{{route('backend.admin-routine-class')}}",
-            type: 'POST',
-            data: serialize,
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            },
-            success: function(data) {
-                $('#section_response_data').html(data);
+        let fromData = $("#formClass").serializeArray();
+        return asyncHandler("{{route('backend.admin-routine-class')}}", "POST", (res) =>{
+            $('#section_response_data').html(data);
+            $('#addClass').modal('hide');
+            $('#addSection').modal('show');
+            $('#addClass').find('.submitRoutineClass').addClass('submitClass');
+            $('#addClass').find('.submitRoutineClass').removeClass('submitRoutineClass');
+        }, (err) => {
+            return errorHandler([
+                {name: '.class_name_error', data: err.responseJSON.errors.class_name},
+                {name: '.class_numeric_error', data: err.responseJSON.errors.class_numeric},
+            ])
+        }, fromData);
 
-                $('#addClass').modal('hide');
-                $('#addSection').modal('show');
-                $('#addClass').find('.submitRoutineClass').addClass('submitClass');
-                $('#addClass').find('.submitRoutineClass').removeClass('submitRoutineClass');
-            },
-            error: function(response) {
-                $('.class_name_error').text(response.responseJSON.errors.class_name);
-                $('.class_numeric_error').text(response.responseJSON.errors.class_numeric);
-            }
-        })
     });
     $("body").on("click", ".NewRoutineSactionSubmit", function() {
 
-        var serialize = $('#formSection').serialize();
-        $.ajax({
-            url: "{{route('backend.add-routine-section')}}",
-            type: 'POST',
-            data: serialize,
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            },
-            success: function(data) {
-                $('#routine_response_modal_data').html(data);
+        let fromData = $("#formSection").serializeArray();
+        return asyncHandler("{{route('backend.add-routine-section')}}", "POST", (res) =>{
+            $('#routine_response_modal_data').html(data);
 
-                $('#addSection').modal('hide');
-                $('#createRoutineModal').modal('show');
-                $('#addSection').find('.NewRoutineSactionSubmit').addClass('submitSection');
-                $('#addSection').find('.NewRoutineSactionSubmit').removeClass('NewRoutineSactionSubmit');
-
-            },
-            error: function(response) {
-                $('.class_name_error').text(response.responseJSON.errors.class_id);
-                $('.section_name_error').text(response.responseJSON.errors.section_name);
-                $('.section_capacity_error').text(response.responseJSON.errors.section_capacity);
-            }
-        })
+            $('#addSection').modal('hide');
+            $('#createRoutineModal').modal('show');
+            $('#addSection').find('.NewRoutineSactionSubmit').addClass('submitSection');
+            $('#addSection').find('.NewRoutineSactionSubmit').removeClass('NewRoutineSactionSubmit');
+        }, (err) => {
+            return errorHandler([
+                {name: '.class_name_error', data: err.responseJSON.errors.class_id},
+                {name: '.section_name_error', data: err.responseJSON.errors.section_name},
+                {name: '.section_capacity_error', data: err.responseJSON.errors.section_capacity},
+            ])
+        }, fromData);
 
     });
     $("body").on("click", ".addDepartmentStudent", function() {
@@ -1288,6 +1278,7 @@
         $('#addUser').modal('hide');
     });
     $("body").on("click", ".addDepartmentSave", function() {
+
         var formdata = new FormData(document.getElementById('formDepartment'));
         $.ajax({
             url: "{{route('backend.admin-save-department')}}",
@@ -1314,6 +1305,22 @@
                 $('.department_image_error').text(response.responseJSON.errors.department_image);
             }
         })
+
+        // let fromData = new FormData(document.getElementById('formDepartment'));
+        // return asyncHandler("{{route('backend.admin-save-department')}}", "POST", (res) =>{
+        //     $('#add_user_modal_data').html(data)
+        //     $('#parent_content').hide()
+        //     $('#student_content').show()
+        //     $('#addDepartment').modal('hide')
+        //     $('#addUser').modal('show')
+        // }, (err) => {
+        //     return errorHandler([
+        //         {name: '.department_name_error', data: err.responseJSON.errors.department_name},
+        //         {name: '.description_error', data: err.responseJSON.errors.description},
+        //         {name: '.department_image_error', data: err.responseJSON.errors.department_image},
+        //     ])
+        // }, fromData);
+        
     });
     $("body").on("click", ".addSectionStudent", function() {
         $.ajax({
@@ -1330,30 +1337,20 @@
     });
     $("body").on("click", ".submitSection", function() {
 
-        var serialize = $('#formSection').serialize();
-        $.ajax({
-            url: "{{route('backend.admin-save-section')}}",
-            type: 'POST',
-            data: serialize,
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            },
-            success: function(data) {
-                $('#add_user_modal_data').html(data);
-
-                $('#parent_content').hide();
-                $('#student_content').show();
-
-                $('#addSection').modal('hide');
-                $('#addUser').modal('show');
-
-            },
-            error: function(response) {
-                $('.class_name_error').text(response.responseJSON.errors.class_id);
-                $('.section_name_error').text(response.responseJSON.errors.section_name);
-                $('.section_capacity_error').text(response.responseJSON.errors.section_capacity);
-            }
-        })
+        let fromData = $("#formSection").serializeArray();
+        return asyncHandler("{{route('backend.admin-save-section')}}", "POST", (res) =>{
+            $('#add_user_modal_data').html(data);
+            $('#parent_content').hide();
+            $('#student_content').show();
+            $('#addSection').modal('hide');
+            $('#addUser').modal('show');
+        }, (err) => {
+            return errorHandler([
+                {name: '.class_name_error', data: err.responseJSON.errors.class_id},
+                {name: '.section_name_error', data: err.responseJSON.errors.section_name},
+                {name: '.section_capacity_error', data: err.responseJSON.errors.section_capacity},
+            ])
+        }, fromData);
 
     });
     $("body").on("click", ".NewaddSectionClass", function() {
@@ -1371,27 +1368,19 @@
     });
     $("body").on("click", ".NewClassSactionSubmit", function() {
 
-        var serialize = $('#formClass').serialize();
-        $.ajax({
-            url: "{{route('backend.user-save-class')}}",
-            type: 'POST',
-            data: serialize,
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            },
-            success: function(data) {
-                $('#section_response_data').html(data);
-
-                $('#addSection').modal('show');
-                $('#addClass').modal('hide');
-                $('#addClass').find('.NewClassSactionSubmit').addClass('submitClass');
-                $('#addClass').find('.NewClassSactionSubmit').removeClass('NewClassSactionSubmit');
-            },
-            error: function(response) {
-                $('.class_name_error').text(response.responseJSON.errors.class_name);
-                $('.class_numeric_error').text(response.responseJSON.errors.class_numeric);
-            }
-        })
+        let fromData = $("#formClass").serializeArray();
+        return asyncHandler("{{route('backend.user-save-class')}}", "POST", (res) =>{
+            $('#section_response_data').html(data);
+            $('#addSection').modal('show');
+            $('#addClass').modal('hide');
+            $('#addClass').find('.NewClassSactionSubmit').addClass('submitClass');
+            $('#addClass').find('.NewClassSactionSubmit').removeClass('NewClassSactionSubmit');
+        }, (err) => {
+            return errorHandler([
+                {name: '.class_name_error', data: err.responseJSON.errors.class_name},
+                {name: '.class_numeric_error', data: err.responseJSON.errors.class_numeric},
+            ])
+        }, fromData);
 
     });
     $("body").on("click", ".addRoutineSubject", function() {
@@ -1411,51 +1400,39 @@
         $('#addClass').find('.NewClassSubjectSubmit').removeClass('NewClassSubjectSubmit');
     });
     $("body").on("click", ".AddSubjectSubmit", function() {
-        var serialize = $('#formSubject').serialize();
-        $.ajax({
-            url: "{{route('backend.admin-save-subject')}}",
-            type: 'POST',
-            data: serialize,
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            },
-            success: function(data) {
-                $('#routine_response_modal_data').html(data);
 
-                $('#AddSubject').modal('hide');
-                $('#createRoutineModal').modal('show');
-            },
-            error: function(response) {
-                $('.routine_subject_classname_error').text(response.responseJSON.errors.class_id);
-                $('.routine_subjectname_error').text(response.responseJSON.errors.subject_name);
-                $('.routine_subject_code_error').text(response.responseJSON.errors.subject_code);
-            }
-        })
+        let fromData = $("#formSubject").serializeArray();
+        return asyncHandler("{{route('backend.admin-save-subject')}}", "POST", (res) =>{
+            $('#routine_response_modal_data').html(data);
+            $('#AddSubject').modal('hide');
+            $('#createRoutineModal').modal('show');
+        }, (err) => {
+            return errorHandler([
+                {name: '.routine_subject_classname_error', data: err.responseJSON.errors.class_id},
+                {name: '.routine_subjectname_error', data: err.responseJSON.errors.subject_name},
+                {name: '.routine_subject_code_error', data: err.responseJSON.errors.subject_code},
+            ])
+        }, fromData);
+
     });
     $("body").on("click", ".addClassroomClass", function() {
         $('#createRoutineModal').modal('hide');
         $('#AddClassRoom').modal('show');
     });
     $("body").on("click", ".submitClassroom", function() {
-        var serialize = $('#formClassroom').serialize();
-        $.ajax({
-            url: "{{route('backend.admin-save-classroom')}}",
-            type: 'POST',
-            data: serialize,
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            },
-            success: function(data) {
-                $('#routine_response_modal_data').html(data);
 
-                $('#createRoutineModal').modal('show');
-                $('#AddClassRoom').modal('hide');
-            },
-            error: function(response) {
-                $('.routine_classroom_name_error').text(response.responseJSON.errors.classroom_name);
-                $('.routine_classroom_description_error').text(response.responseJSON.errors.classroom_description);
-            }
-        })
+        let fromData = $("#formClassroom").serializeArray();
+        return asyncHandler("{{route('backend.admin-save-classroom')}}", "POST", (res) =>{
+            $('#routine_response_modal_data').html(data);
+            $('#createRoutineModal').modal('show');
+            $('#AddClassRoom').modal('hide');
+        }, (err) => {
+            return errorHandler([
+                {name: '.routine_classroom_name_error', data: err.responseJSON.errors.classroom_name},
+                {name: '.routine_classroom_description_error', data: err.responseJSON.errors.classroom_description},
+            ])
+        }, fromData);
+
     });
 
     $("body").on("click", ".addRoutineTeacher", function() {
@@ -1464,31 +1441,20 @@
     });
     $("body").on("click", ".saveteacher", function() {
 
-        var fromData = new FormData(document.getElementById("routine_addteacher"));
-        $.ajax({
-            url: "{{route('backend.routine-save-teacher')}}",
-            type: "POST",
-            data: fromData,
-            cache: false,
-            contentType: false,
-            processData: false,
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            },
-            success: function(response) {
-                $('#routine_response_modal_data').html(data);
-
-                $('#Addteacher').modal('hide');
-                $('#createRoutineModal').modal('show');
-            },
-            error: function(response) {
-                $('.teacher_name_error').text(response.responseJSON.errors.name);
-                $('.teacher_email_error').text(response.responseJSON.errors.email);
-                $('.teacher_password_error').text(response.responseJSON.errors.password);
-                $('.teacher_phone_error').text(response.responseJSON.errors.phone);
-                $('.teacher_gender_error').text(response.responseJSON.errors.gender);
-            }
-        });
+        let fromData = $("#routine_addteacher").serializeArray();
+        return asyncHandler("{{route('backend.routine-save-teacher')}}", "POST", (res) =>{
+            $('#routine_response_modal_data').html(data);
+            $('#Addteacher').modal('hide');
+            $('#createRoutineModal').modal('show');
+        }, (err) => {
+            return errorHandler([
+                {name: '.teacher_name_error', data: err.responseJSON.errors.name},
+                {name: '.teacher_email_error', data: err.responseJSON.errors.email},
+                {name: '.teacher_password_error', data: err.responseJSON.errors.password},
+                {name: '.teacher_phone_error', data: err.responseJSON.errors.phone},
+                {name: '.teacher_gender_error', data: err.responseJSON.errors.gender},
+            ])
+        }, fromData);
 
     });
     $("body").on("click", ".addExam", function() {
@@ -1497,27 +1463,21 @@
     });
 
     $("body").on("click", ".create_exam", function() {
-        var serialize = $("#create_exam_save").serialize();
-        $.ajax({
-            url: "{{route('backend.exam-save-examschedule')}}",
-            type: "POST",
-            data: serialize,
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            },
-            success: function(data) {
-                $('#exam_schedule_response_modal_data').html(data);
 
-                $('#AddExamSchedule').modal('show');
-                $('#addExam').modal('hide');
-            },
-            error: function(response) {
-                $('.exam_name_error').text(response.responseJSON.errors.name);
-                $('.exam_startdate_error').text(response.responseJSON.errors.start_date);
-                $('.exam_enddate_error').text(response.responseJSON.errors.end_date);
-                $('.exam_note_error').text(response.responseJSON.errors.note);
-            }
-        });
+        let fromData = $("#create_exam_save").serializeArray();
+        return asyncHandler("{{route('backend.exam-save-examschedule')}}", "POST", (res) =>{
+            $('#exam_schedule_response_modal_data').html(data);
+            $('#AddExamSchedule').modal('show');
+            $('#addExam').modal('hide');
+        }, (err) => {
+            return errorHandler([
+                {name: '.exam_name_error', data: err.responseJSON.errors.name},
+                {name: '.exam_startdate_error', data: err.responseJSON.errors.start_date},
+                {name: '.exam_enddate_error', data: err.responseJSON.errors.end_date},
+                {name: '.exam_note_error', data: err.responseJSON.errors.note},
+            ])
+        }, fromData);
+
     });
     $("body").on("click", ".addExamClass", function() {
         $('#addClass').modal('show');
@@ -1527,27 +1487,20 @@
     });
     $("body").on("click", ".NewClassExamSubmit", function() {
 
-        var serialize = $("#formClass").serialize();
-        $.ajax({
-            url: "{{route('backend.class-save-examschedule')}}",
-            type: "POST",
-            data: serialize,
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            },
-            success: function(data) {
-                $('#exam_schedule_response_modal_data').html(data);
+        let fromData = $("#formClass").serializeArray();
+        return asyncHandler("{{route('backend.class-save-examschedule')}}", "POST", (res) =>{
+            $('#exam_schedule_response_modal_data').html(data);
+            $('#AddExamSchedule').modal('show');
+            $('#addClass').modal('hide');
+            $('#addClass').find('.NewClassExamSubmit').addClass('submitClass');
+            $('#addClass').find('.NewClassExamSubmit').removeClass('NewClassExamSubmit');
+        }, (err) => {
+            return errorHandler([
+                {name: '.class_name_error', data: err.responseJSON.errors.class_name},
+                {name: '.class_numeric_error', data: err.responseJSON.errors.class_numeric},
+            ])
+        }, fromData);
 
-                $('#AddExamSchedule').modal('show');
-                $('#addClass').modal('hide');
-                $('#addClass').find('.NewClassExamSubmit').addClass('submitClass');
-                $('#addClass').find('.NewClassExamSubmit').removeClass('NewClassExamSubmit');
-            },
-            error: function(response) {
-                $('.class_name_error').text(response.responseJSON.errors.class_name);
-                $('.class_numeric_error').text(response.responseJSON.errors.class_numeric);
-            }
-        });
     });
     $("body").on("click", ".addExamSection", function() {
 
@@ -1585,84 +1538,55 @@
     });
     $("body").on("click", ".submitExamSectionClass", function() {
 
-        var serialize = $("#formClass").serialize();
-        $.ajax({
-            url: "{{route('backend.exam-schedule-class')}}",
-            type: "POST",
-            data: serialize,
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            },
-            success: function(data) {
-                $('#section_response_data').html(data);
-
-                $('#addClass').modal('hide');
-                $('#addSection').modal('show');
-
-                $('#addSection').find('.submitExamSectionClass').addClass('submitExamSectionData');
-                $('#addSection').find('.submitExamSectionClass').removeClass('submitExamSectionClass');
-            },
-            error: function(response) {
-                $('.class_name_error').text(response.responseJSON.errors.class_name);
-                $('.class_numeric_error').text(response.responseJSON.errors.class_numeric);
-            }
-        });
+        let fromData = $("#formClass").serializeArray();
+        return asyncHandler("{{route('backend.exam-schedule-class')}}", "POST", (res) =>{
+            $('#section_response_data').html(data);
+            $('#addClass').modal('hide');
+            $('#addSection').modal('show');
+            $('#addSection').find('.submitExamSectionClass').addClass('submitExamSectionData');
+            $('#addSection').find('.submitExamSectionClass').removeClass('submitExamSectionClass');
+        }, (err) => {
+            return errorHandler([
+                {name: '.class_name_error', data: err.responseJSON.errors.class_name},
+                {name: '.class_numeric_error', data: err.responseJSON.errors.class_numeric},
+            ])
+        }, fromData);
 
     });
     $("body").on("click", ".submitExamSectionData", function() {
-        // console.log('hi');
-        var serialize = $('#formSection').serialize();
-        $.ajax({
-            url: "{{route('backend.save-examschedule-section')}}",
-            type: 'POST',
-            data: serialize,
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            },
-            success: function(data) {
-                $('#exam_schedule_response_modal_data').html(data);
-
-                $('#AddExamSchedule').modal('show');
-                $('#addSection').modal('hide');
-                $('#addSection').find('.submitExamSectionData').addClass('submitSection');
-                $('#addSection').find('.submitExamSectionData').removeClass('submitExamSectionData');
-
-            },
-            error: function(response) {
-                $('.class_name_error').text(response.responseJSON.errors.class_id);
-                $('.section_name_error').text(response.responseJSON.errors.section_name);
-                $('.section_capacity_error').text(response.responseJSON.errors.section_capacity);
-            }
-        })
-
+        
+        let fromData = $("#formSection").serializeArray();
+        return asyncHandler("{{route('backend.save-examschedule-section')}}", "POST", (res) =>{
+            $('#exam_schedule_response_modal_data').html(data);
+            $('#AddExamSchedule').modal('show');
+            $('#addSection').modal('hide');
+            $('#addSection').find('.submitExamSectionData').addClass('submitSection');
+            $('#addSection').find('.submitExamSectionData').removeClass('submitExamSectionData');
+        }, (err) => {
+            return errorHandler([
+                {name: '.class_name_error', data: err.responseJSON.errors.class_id},
+                {name: '.section_name_error', data: err.responseJSON.errors.section_name},
+                {name: '.section_capacity_error', data: err.responseJSON.errors.section_capacity},
+            ])
+        }, fromData);
 
     });
 
-
-
     $("body").on("click", ".addExamclassroom", function() {
 
-        var serialize = $("#formClassroom").serialize();
-        $.ajax({
-            url: "{{route('backend.classroom-save-examschedule')}}",
-            type: "POST",
-            data: serialize,
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            },
-            success: function(data) {
-                $('#exam_schedule_response_modal_data').html(data);
-
-                $('#AddExamSchedule').modal('hide');
-                $('#AddClassRoom').modal('show');
-                $('#AddClassRoom').find('.submitClassroom').addClass('submitExamClassroom');
-                $('#AddClassRoom').find('.submitClassroom').removeClass('submitClassroom');
-            },
-            error: function(response) {
-                $('.classroom_name_error').text(response.responseJSON.errors.classroom_name);
-                $('.classroom_description_error').text(response.responseJSON.errors.classroom_description);
-            }
-        });
+        let fromData = $("#formClassroom").serializeArray();
+        return asyncHandler("{{route('backend.classroom-save-examschedule')}}", "POST", (res) =>{
+            $('#exam_schedule_response_modal_data').html(data);
+            $('#AddExamSchedule').modal('hide');
+            $('#AddClassRoom').modal('show');
+            $('#AddClassRoom').find('.submitClassroom').addClass('submitExamClassroom');
+            $('#AddClassRoom').find('.submitClassroom').removeClass('submitClassroom');
+        }, (err) => {
+            return errorHandler([
+                {name: '.classroom_name_error', data: err.responseJSON.errors.classroom_name},
+                {name: '.classroom_description_error', data: err.responseJSON.errors.classroom_description}
+            ])
+        }, fromData);
 
     });
     $("body").on("click", ".submitExamClassroom", function() {
@@ -1679,28 +1603,20 @@
     });
     $("body").on("click", ".AddExamSubjectSubmit", function() {
 
-        var serialize = $('#formSubject').serialize();
-        $.ajax({
-            url: "{{route('backend.save-examschedule-subject')}}",
-            type: 'POST',
-            data: serialize,
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            },
-            success: function(data) {
-                $('#routine_response_modal_data').html(data);
-
-                $('#AddSubject').modal('hide');
-                $('#AddExamSchedule').modal('show');
-                $('#AddSubject').find('.AddExamSubjectSubmit').addClass('AddSubjectSubmit');
-                $('#AddSubject').find('.AddExamSubjectSubmit').removeClass('AddExamSubjectSubmit');
-            },
-            error: function(response) {
-                $('.routine_subject_classname_error').text(response.responseJSON.errors.class_id);
-                $('.routine_subjectname_error').text(response.responseJSON.errors.subject_name);
-                $('.routine_subject_code_error').text(response.responseJSON.errors.subject_code);
-            }
-        })
+        let fromData = $("#formSubject").serializeArray();
+        return asyncHandler("{{route('backend.save-examschedule-subject')}}", "POST", (res) =>{
+            $('#routine_response_modal_data').html(data);
+            $('#AddSubject').modal('hide');
+            $('#AddExamSchedule').modal('show');
+            $('#AddSubject').find('.AddExamSubjectSubmit').addClass('AddSubjectSubmit');
+            $('#AddSubject').find('.AddExamSubjectSubmit').removeClass('AddExamSubjectSubmit');
+        }, (err) => {
+            return errorHandler([
+                {name: '.routine_subject_classname_error', data: err.responseJSON.errors.class_id},
+                {name: '.routine_subjectname_error', data: err.responseJSON.errors.subject_name},
+                {name: '.routine_subject_code_error', data: err.responseJSON.errors.subject_code}
+            ])
+        }, fromData);
 
     });
     $("body").on("click", ".addSyllabusClass", function() {
@@ -1711,28 +1627,19 @@
     });
     $("body").on("click", ".submitSyllabusClass", function() {
 
-        var serialize = $("#formClass").serialize();
-        $.ajax({
-            url: "{{route('backend.save-syllabus-class')}}",
-            type: "POST",
-            data: serialize,
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            },
-            success: function(data) {
-                $('#syllabus_response_modal_data').html(data);
-
-                $('#addSyllabus').modal('show');
-                $('#addClass').modal('hide');
-
-                $('#addClass').find('.submitSyllabusClass').addClass('submitClass');
-                $('#addClass').find('.submitSyllabusClass').removeClass('submitSyllabusClass');
-            },
-            error: function(response) {
-                $('.class_name_error').text(response.responseJSON.errors.class_name);
-                $('.class_numeric_error').text(response.responseJSON.errors.class_numeric);
-            }
-        });
+        let fromData = $("#formClass").serializeArray();
+        return asyncHandler("{{route('backend.save-syllabus-class')}}", "POST", (res) =>{
+            $('#syllabus_response_modal_data').html(data);
+            $('#addSyllabus').modal('show');
+            $('#addClass').modal('hide');
+            $('#addClass').find('.submitSyllabusClass').addClass('submitClass');
+            $('#addClass').find('.submitSyllabusClass').removeClass('submitSyllabusClass');
+        }, (err) => {
+            return errorHandler([
+                {name: '.class_name_error', data: err.responseJSON.errors.class_name},
+                {name: '.class_numeric_error', data: err.responseJSON.errors.class_numeric},
+            ])
+        }, fromData);
 
     });
     $("body").on("click", ".addSyllabusSection", function() {
@@ -1755,28 +1662,20 @@
     });
     $("body").on("click", ".submitSyllabusSection", function() {
 
-        var serialize = $("#formSection").serialize();
-        $.ajax({
-            url: "{{route('backend.save-syllabus-section')}}",
-            type: "POST",
-            data: serialize,
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            },
-            success: function(data) {
-                $('#syllabus_response_modal_data').html(data);
-
-                $('#addSection').modal('hide');
-                $('#addSyllabus').modal('show');
-                $('#addSection').find('.submitSyllabusSection').addClass('submitSection');
-                $('#addSection').find('.submitSyllabusSection').removeClass('submitSyllabusSection');
-            },
-            error: function(response) {
-                $('.class_name_error').text(response.responseJSON.errors.class_id);
-                $('.section_name_error').text(response.responseJSON.errors.section_name);
-                $('.section_capacity_error').text(response.responseJSON.errors.section_capacity);
-            }
-        });
+        let fromData = $("#formSection").serializeArray();
+        return asyncHandler("{{route('backend.save-syllabus-section')}}", "POST", (res) =>{
+            $('#syllabus_response_modal_data').html(data);
+            $('#addSection').modal('hide');
+            $('#addSyllabus').modal('show');
+            $('#addSection').find('.submitSyllabusSection').addClass('submitSection');
+            $('#addSection').find('.submitSyllabusSection').removeClass('submitSyllabusSection');
+        }, (err) => {
+            return errorHandler([
+                {name: '.class_name_error', data: err.responseJSON.errors.class_id},
+                {name: '.section_name_error', data: err.responseJSON.errors.section_name},
+                {name: '.section_capacity_error', data: err.responseJSON.errors.section_capacity},
+            ])
+        }, fromData);
 
     });
     $("body").on("click", ".addSyllabusSectionClass", function() {
@@ -1796,27 +1695,19 @@
     });
     $("body").on("click", ".submitSyllabusSectionClass", function() {
 
-        var serialize = $("#formClass").serialize();
-        $.ajax({
-            url: "{{route('backend.add-syllabus-class')}}",
-            type: "POST",
-            data: serialize,
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            },
-            success: function(data) {
-                $('#section_response_data').html(data);
-
-                $('#addSection').modal('show');
-                $('#addClass').modal('hide');
-                $('#addClass').find('.submitSyllabusSectionClass').addClass('addSyllabusSectionClass');
-                $('#addSection').find('.submitSyllabusSectionClass').removeClass('submitSyllabusSectionClass');
-            },
-            error: function(response) {
-                $('.class_name_error').text(response.responseJSON.errors.class_name);
-                $('.class_numeric_error').text(response.responseJSON.errors.class_numeric);
-            }
-        });
+        let fromData = $("#formClass").serializeArray();
+        return asyncHandler("{{route('backend.add-syllabus-class')}}", "POST", (res) =>{
+            $('#section_response_data').html(data);
+            $('#addSection').modal('show');
+            $('#addClass').modal('hide');
+            $('#addClass').find('.submitSyllabusSectionClass').addClass('addSyllabusSectionClass');
+            $('#addSection').find('.submitSyllabusSectionClass').removeClass('submitSyllabusSectionClass');
+        }, (err) => {
+            return errorHandler([
+                {name: '.class_name_error', data: err.responseJSON.errors.class_name},
+                {name: '.class_numeric_error', data: err.responseJSON.errors.class_numeric},
+            ])
+        }, fromData);
 
     });
     $("body").on("click", ".addSyllabusSubject", function() {
@@ -1829,28 +1720,21 @@
     });
     $("body").on("click", ".submitSyllabusSubjectClass", function() {
 
-        var serialize = $("#formSubject").serialize();
-        $.ajax({
-            url: "{{route('backend.save-syllabus-subject')}}",
-            type: "POST",
-            data: serialize,
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            },
-            success: function(data) {
-                $('#syllabus_response_modal_data').html(data);
+        let fromData = $("#formSubject").serializeArray();
+        return asyncHandler("{{route('backend.save-syllabus-subject')}}", "POST", (res) =>{
+            $('#syllabus_response_modal_data').html(data);
+            $('#AddSubject').modal('hide');
+            $('#addSyllabus').modal('show');
+            $('#AddSubject').find('.submitSyllabusSubjectClass').addClass('AddSubjectSubmit');
+            $('#AddSubject').find('.submitSyllabusSubjectClass').removeClass('submitSyllabusSubjectClass');
+        }, (err) => {
+            return errorHandler([
+                {name: '.routine_subject_classname_error', data: err.responseJSON.errors.class_id},
+                {name: '.routine_subjectname_error', data: err.responseJSON.errors.subject_name},
+                {name: '.routine_subject_code_error', data: err.responseJSON.errors.subject_code}
+            ])
+        }, fromData);
 
-                $('#AddSubject').modal('hide');
-                $('#addSyllabus').modal('show');
-                $('#AddSubject').find('.submitSyllabusSubjectClass').addClass('AddSubjectSubmit');
-                $('#AddSubject').find('.submitSyllabusSubjectClass').removeClass('submitSyllabusSubjectClass');
-            },
-            error: function(response) {
-                $('.routine_subject_classname_error').text(response.responseJSON.errors.class_id);
-                $('.routine_subjectname_error').text(response.responseJSON.errors.subject_name);
-                $('.routine_subject_code_error').text(response.responseJSON.errors.subject_code);
-            }
-        });
     });
     $("body").on("click", ".AddSyllabusSubjectClass", function() {
         $('#AddSubject').modal('hide');
@@ -1902,28 +1786,19 @@
     });
     $("body").on("click", ".submitfeeClass", function() {
 
-        var serialize = $("#formClass").serialize();
-        $.ajax({
-            url: "{{route('backend.save-fee-class')}}",
-            type: "POST",
-            data: serialize,
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            },
-            success: function(data) {
-                $('#fee_response_modal_data').html(data);
-
-                $('#addFee').modal('show');
-                $('#addClass').modal('hide');
-                $('#addClass').find('.submitfeeClass').addClass('submitClass');
-                $('#addClass').find('.submitfeeClass').removeClass('submitfeeClass');
-
-            },
-            error: function(response) {
-                $('.class_name_error').text(response.responseJSON.errors.class_name);
-                $('.class_numeric_error').text(response.responseJSON.errors.class_numeric);
-            }
-        });
+        let fromData = $("#formClass").serializeArray();
+        return asyncHandler("{{route('backend.save-fee-class')}}", "POST", (res) =>{
+            $('#fee_response_modal_data').html(data);
+            $('#addFee').modal('show');
+            $('#addClass').modal('hide');
+            $('#addClass').find('.submitfeeClass').addClass('submitClass');
+            $('#addClass').find('.submitfeeClass').removeClass('submitfeeClass');
+        }, (err) => {
+            return errorHandler([
+                {name: '.class_name_error', data: err.responseJSON.errors.class_name},
+                {name: '.class_numeric_error', data: err.responseJSON.errors.class_numeric},
+            ])
+        }, fromData);
 
     });
     $("body").on("click", ".AddfeeSection", function() {
@@ -1945,28 +1820,20 @@
     });
     $("body").on("click", ".submitFeeSection", function() {
 
-        var serialize = $("#formSection").serialize();
-        $.ajax({
-            url: "{{route('backend.save-fee-section')}}",
-            type: "POST",
-            data: serialize,
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            },
-            success: function(data) {
-                $('#fee_response_modal_data').html(data);
-
-                $('#addSection').modal('hide');
-                $('#addFee').modal('show');
-                $('#addSection').find('.submitFeeSection').addClass('submitSection');
-                $('#addSection').find('.submitFeeSection').removeClass('submitFeeSection');
-            },
-            error: function(response) {
-                $('.class_name_error').text(response.responseJSON.errors.class_id);
-                $('.section_name_error').text(response.responseJSON.errors.section_name);
-                $('.section_capacity_error').text(response.responseJSON.errors.section_capacity);
-            }
-        });
+        let fromData = $("#formSection").serializeArray();
+        return asyncHandler("{{route('backend.save-fee-section')}}", "POST", (res) =>{
+            $('#fee_response_modal_data').html(data);
+            $('#addSection').modal('hide');
+            $('#addFee').modal('show');
+            $('#addSection').find('.submitFeeSection').addClass('submitSection');
+            $('#addSection').find('.submitFeeSection').removeClass('submitFeeSection');
+        }, (err) => {
+            return errorHandler([
+                {name: '.class_name_error', data: err.responseJSON.errors.class_id},
+                {name: '.section_name_error', data: err.responseJSON.errors.section_name},
+                {name: '.section_capacity_error', data: err.responseJSON.errors.section_capacity},
+            ])
+        }, fromData);
 
     });
     $("body").on("click", ".addfeeSectionClass", function() {
@@ -1986,27 +1853,19 @@
     });
     $("body").on("click", ".submitfeeClasss", function() {
 
-        var serialize = $("#formClass").serialize();
-        $.ajax({
-            url: "{{route('backend.add-fee-class')}}",
-            type: "POST",
-            data: serialize,
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            },
-            success: function(data) {
-                $('#section_response_data').html(data);
-
-                $('#addSection').modal('show');
-                $('#addClass').modal('hide');
-                $('#addClass').find('.submitfeeClasss').addClass('submitClass');
-                $('#addClass').find('.submitfeeClasss').removeClass('submitfeeClasss');
-            },
-            error: function(response) {
-                $('.class_name_error').text(response.responseJSON.errors.class_name);
-                $('.class_numeric_error').text(response.responseJSON.errors.class_numeric);
-            }
-        });
+        let fromData = $("#formClass").serializeArray();
+        return asyncHandler("{{route('backend.add-fee-class')}}", "POST", (res) =>{
+            $('#section_response_data').html(data);
+            $('#addSection').modal('show');
+            $('#addClass').modal('hide');
+            $('#addClass').find('.submitfeeClasss').addClass('submitClass');
+            $('#addClass').find('.submitfeeClasss').removeClass('submitfeeClasss');
+        }, (err) => {
+            return errorHandler([
+                {name: '.class_name_error', data: err.responseJSON.errors.class_name},
+                {name: '.class_numeric_error', data: err.responseJSON.errors.class_numeric},
+            ])
+        }, fromData);
 
     });
     $('#parents_id').on('keyup', function() {
@@ -2026,6 +1885,11 @@
     });
     $('#student_report').hide();
     $('#teacher_report').hide();
+    $('#staff_report').hide();
+    $('#routine_report').hide();
+    $('#exam_report').hide();
+    $('#student_attendence_report').hide();
+    $('#teacher_attendence_report').hide();
     $("body").delegate('.choose_report_type .form-control', "change", function() {
         var choose_report_type = $(this).val();
         if (choose_report_type == '1') {
@@ -2034,9 +1898,355 @@
         } else if (choose_report_type == '2') {
             $('#teacher_report').show();
             $('#student_report').hide();
+
+            var table = $('.teacher_report_datatable').DataTable({
+                processing: true,
+                serverSide: true,
+                ajax: {
+                    url: "{{ route('backend.report.teacher') }}",
+                },
+                columns: [{
+                        data: 'name',
+                        name: 'name'
+                    },
+                    {
+                        data: 'email',
+                        name: 'email'
+                    },
+                    // { data: 'department_name', name: 'department_name' },
+                    {
+                        data: 'gender',
+                        name: 'gender'
+                    },
+                    {
+                        data: 'mobile',
+                        name: 'mobile'
+                    },
+                    {
+                        data: 'action',
+                        name: 'action',
+                        orderable: true,
+                        searchable: true
+                    },
+                ],
+            });
+        } else if (choose_report_type == '3') {
+            $('#teacher_report').hide();
+            $('#student_report').hide();
+            $('#staff_report').show();
+
+            var table = $('.staff_report_datatable').DataTable({
+                processing: true,
+                serverSide: true,
+                ajax: {
+                    url: "{{ route('backend.report.staff') }}",
+                },
+                columns: [{
+                        data: 'name',
+                        name: 'name'
+                    },
+                    {
+                        data: 'email',
+                        name: 'email'
+                    },
+                    {
+                        data: 'gender',
+                        name: 'gender'
+                    },
+                    {
+                        data: 'mobile',
+                        name: 'mobile'
+                    },
+                    {
+                        data: 'action',
+                        name: 'action',
+                        orderable: true,
+                        searchable: true
+                    },
+                ],
+            });
+        } else if (choose_report_type == '4') {
+            $('#teacher_report').hide();
+            $('#student_report').hide();
+            $('#staff_report').hide();
+            $('#routine_report').show();
+
+            $('.getroutineclass').on("change", function() {
+                // console.log('hiiii');
+                $('.show_class').removeClass('d-none');
+
+                $.ajax({
+                    url: "{{ route('backend.show-class-info') }}",
+                    type: "POST",
+                    data: {
+                        'session_id': $(this).val(),
+                        '_token': '{{ csrf_token() }}',
+                    },
+                    dataType: 'json',
+                    success: function(response) {
+
+                        var classes = '';
+                        classes = '<option value="" >Select Class</option>';
+                        for (var i = 0; i < response.length; i++) {
+                            classes += '<option value="' + response[i].id + '" >' + response[i].class_name + '</option>';
+                        }
+                        $('.getroutinesection').html(classes);
+
+                    }
+                });
+            });
+
+            $(document).delegate('.getroutinesection', 'change', function(e) {
+                console.log('hi');
+                $('.show_section').removeClass('d-none');
+
+                $.ajax({
+                    url: "{{ route('backend.get-section-info') }}",
+                    type: "POST",
+                    data: {
+                        'section_id': $(this).val(),
+                        '_token': '{{ csrf_token() }}',
+                    },
+                    dataType: 'json',
+                    success: function(response) {
+
+                        var sections = '';
+                        sections = '<option value="" >Select Section</option>';
+                        for (var i = 0; i < response.length; i++) {
+                            sections += '<option value="' + response[i].id + '" >' + response[i].section_name + '</option>';
+                        }
+                        $('.getroutineInfo').html(sections);
+
+                    }
+                });
+            });
+
+            $(document).delegate('.getroutineInfo', 'change', function(e) {
+                $('.show_route').removeClass('d-none');
+            });
+
+            $('.get_routine').click(function(e) {
+
+                $('.preview_routine_calender').addClass('d-none');
+
+                var class_id = $('#getSection').val();
+                var section_id = $('#getInfo').val();
+                $.ajax({
+                    url: "{{ route('backend.show-subject-routine') }}",
+                    type: "POST",
+                    data: {
+                        'class_id': class_id,
+                        'section_id': section_id,
+                    },
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    dataType: 'html',
+                    success: function(response) {
+                        $('.show_class_routine').html(response);
+                    }
+                });
+            });
+
+            $('.preview_routine').click(function(e) {
+                var session_id = $('.getroutineclass').val();
+                var class_id = $('.getroutinesection').val();
+                var section_id = $('.getroutineInfo').val();
+
+                $.ajax({
+                    url: "{{ route('backend.routine-report-list') }}",
+                    type: "get",
+                    data: {
+                        'session_id': session_id,
+                        'class_id': class_id,
+                        'section_id': section_id,
+                    },
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    dataType: 'json',
+                    success: function(reponse) {
+
+                        var routinhtml = '<div class="card preview_routine_calender mt-3"><div class="card-header border-bottom bg-white"><h4 class="card-title">Class Routine</h4></div><div class="card-body"><div id="calendar"></div></div></div>';
+
+                        $('.show_class_routine').html(routinhtml);
+
+                        var calendarEl = document.getElementById('calendar');
+                        var calendar = new FullCalendar.Calendar(calendarEl, {
+                            headerToolbar: {
+                                left: 'prev,next today',
+                                center: 'title',
+                                right: 'dayGridMonth,timeGridWeek,timeGridDay'
+                            },
+                            initialView: 'dayGridMonth',
+                            dayMaxEvents: true,
+                            events: reponse
+                        });
+
+                        calendar.render();
+
+                    }
+                });
+
+            });
+        } else if (choose_report_type == '5') {
+            $('#teacher_report').hide();
+            $('#student_report').hide();
+            $('#staff_report').hide();
+            $('#routine_report').hide();
+            $('#exam_report').show();
+
+            $('.getexamlist').on('change', function(e) {
+                $(".show_exam").removeClass('d-none');
+            });
+            $(".getexamclass").on('change', function(e) {
+                $(".show_class").removeClass('d-none');
+            });
+            $(".getexamsection").on('change', function(e) {
+                $(".show_section").removeClass('d-none');
+
+                var class_id = $(this).val();
+                $.ajax({
+                    url: "{{route('backend.get_section')}}",
+                    type: 'GET',
+                    data: {
+                        'class_id': class_id
+                    },
+                    success: function(data) {
+                        $(".getsectioninfo").html(data);
+                    }
+                })
+            });
+            $(".getsectioninfo").on('change', function(e) {
+                $(".show_button").removeClass('d-none');
+            });
+
+            $('.get_report_exam_routine').click(function(e) {
+                var serialize = $('#exam_report_form').serialize();
+                $.ajax({
+                    url: "{{route('backend.get_report_exam_routine')}}",
+                    type: 'GET',
+                    data: serialize,
+                    success: function(data) {
+                        $(".show_get_report_exam_routine").html(data);
+                    }
+                })
+            });
+        } else if (choose_report_type == '6') {
+            $('#teacher_report').hide();
+            $('#student_report').hide();
+            $('#staff_report').hide();
+            $('#routine_report').hide();
+            $('#exam_report').hide();
+            $('#student_attendence_report').show();
+
+            
+            $(".std_atten_session").on('change', function(e) {
+                $(".show_class").removeClass('d-none');
+            });
+            $(".show_class").on('change', function(e) {
+                $(".show_class").removeClass('d-none');
+            });
+            $(".std_atten_class").on('change', function(e) {
+                $(".show_section").removeClass('d-none');
+            });
+            $(".std_atten_section").on('change', function(e) {
+                $(".show_type").removeClass('d-none');
+            });
+            
+            $(".std_atten_select_type").on('change', function(e) {
+                if($(this).val() == 'date'){
+                    $(".show_monthly").addClass('d-none');
+                    $(".show_day").removeClass('d-none');
+                }else{
+                    $(".show_day").addClass('d-none');
+                    $(".show_monthly").removeClass('d-none');
+                }
+            });
+
+
+            $('.get_student_mark').click(function(e) {
+                var serialize = $("#student_attendence_report_form").serialize();
+
+                $.ajax({
+                    url: "{{route('backend.get_student_attendence_report')}}",
+                    type: 'GET',
+                    data: serialize,
+                    success: function(data) {
+                        $(".show_student_attendence_report").html(data);
+                    }
+                })
+            });
+
+            $('.std_atten_class').on('change', function(e) {
+                var class_id = $(this).val();
+                $.ajax({
+                    url: "{{route('backend.get_section')}}",
+                    type: 'GET',
+                    data: {
+                        'class_id': class_id
+                    },
+                    success: function(data) {
+                        $(".std_atten_section").html(data);
+                    }
+                })
+            });
+        } else if (choose_report_type == '7') {
+            $('#teacher_report').hide();
+            $('#student_report').hide();
+            $('#staff_report').hide();
+            $('#routine_report').hide();
+            $('#exam_report').hide();
+            $('#student_attendence_report').hide();
+            $('#teacher_attendence_report').show();
+
+            $('.get_teacher_list').click(function(e){
+                get_teacher_list();
+            });
+
+            function get_teacher_list(){
+                var attendence_date = $("#attendence_date").val();
+                $.ajax({
+                    url: "{{route('backend.get_teacher_attendence_list')}}",
+                    type: 'GET',
+                    data: {
+                        'attendence_date': attendence_date
+                    },
+                    success: function(data) {
+                        $(".show_teacher_list").html(data);
+                    }
+                })
+            }
+
+            $(document).delegate('.save_teacher_attendance', 'click', function() {
+                var fromData = $("#save_teacher_attendance").serialize();
+
+                $.ajax({
+                    url: "{{route('backend.save_teacher_attendance')}}",
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    type: 'POST',
+                    data: fromData,
+                    success: function(data) {
+                        if(data.success){
+                            iziToast.success({
+                                message: 'Teacher attendance update Successfully!',
+                                position: 'topRight', 
+                            })
+                        }
+                    }
+                })
+            });
+
         } else {
             $('#student_report').hide();
             $('#teacher_report').hide();
+            $('#staff_report').hide();
+            $('#routine_report').hide();
+            $('#exam_report').hide();
+            $('#student_attendence_report').hide();
+            $('#teacher_attendence_report').hide();
         }
     });
 
@@ -2092,29 +2302,16 @@
         });
 
         $(document).delegate('.get_student_list', 'click', function() {
-            var class_id = $("#class_id").val();
-            var section_id = $("#section_id").val();
-            var attendence_date = $(".attendence_date").val();
-            $.ajax({
-                url: "{{route('backend.admin-showstudent-attendencelist')}}",
-                type: 'POST',
-                data: {
-                    'class_id': class_id,
-                    'section_id': section_id,
-                    'attendence_date': attendence_date
-                },
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                },
-                success: function(data) {
-                    $('#student_attendance_response_list').html(data);
-                },
-                error: function(response) {
-                    $('.stdatd_class_name_error').text(response.responseJSON.errors.class_id);
-                    $('.stdatd_section_name_error').text(response.responseJSON.errors.section_id);
-                    $('.stdatd_attendence_date_error').text(response.responseJSON.errors.attendence_date);
-                }
-            })
+
+            let fromData = $("#get_student_list_form").serializeArray();
+            return asyncHandler("{{route('backend.admin-showstudent-attendencelist')}}", "POST", (res) => $('#student_attendance_response_list').html(data), (err) => {
+                return errorHandler([
+                    {name: '.stdatd_class_name_error', data: err.responseJSON.errors.class_id},
+                    {name: '.stdatd_section_name_error', data: err.responseJSON.errors.section_id},
+                    {name: '.stdatd_attendence_date_error', data: err.responseJSON.errors.attendence_date},
+                ])
+            }, fromData);
+
         });
 
         $(document).delegate('.save_student_attendance', 'click', function() {
@@ -2179,7 +2376,30 @@
             })
         });
 
+        $(document).delegate('.get_student_report', 'click', function() {
+            let serialize = $("#student_report_form").serializeArray();
+            return asyncHandler("{{route('backend.get_student_report')}}", "GET",
+                (res) => $('.show_student_report').html(res),
+                (err) => {
+                    return errorHandler([
+                        {name: '.class_name_error', data: err.responseJSON.errors.class_id},
+                        {name: '.section_name_error', data: err.responseJSON.errors.section_id},
+                    ])
+                }, serialize);
+        });
 
+        $('#save_event').click(function (){
+            let serialize = $("#eventFrom").serializeArray();
+            return asyncHandler("{{route('backend.save-calender-event')}}", "POST",
+                (res) => $('#createEvent').modal('hide'),
+                (err) => {
+                    return errorHandler([
+                        {name: '.event_title_error', data: err.responseJSON.errors.event_title},
+                        {name: '.event_startdate_error', data: err.responseJSON.errors.start_date},
+                        {name: '.event_enddate_error', data: err.responseJSON.errors.end_date},
+                    ])
+                }, serialize);
+        });
 
     });
 

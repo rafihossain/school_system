@@ -140,6 +140,9 @@ Route::group(['namespace' => 'App\Http\Controllers\Backend', 'prefix' => 'admin'
     Route::get('class-response', 'BackendController@class_response')->name('class-response');
     Route::get('section-response', 'BackendController@section_response')->name('section-response');
 
+    //routine
+    // Route::post('admin_get_student_report', 'BackendController@student_report')->name('admin_get_student_report');
+
     /*===============================================================
                     Academic Section
     =================================================================*/

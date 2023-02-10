@@ -21,15 +21,15 @@
             <div class="col-md-2">
                 <select name="session_id" id="session_id" class="form-control">
                     <option value="">Select Session</option>
-                    <option value="2021">2021</option>
-                    <option value="2022">2022</option>
-                    <option value="2023">2023</option>
+                    @foreach($sessions as $session)
+                        <option value="{{ $session->id }}">{{ $session->session_name }}</option>
+                    @endforeach
                 </select>
                 @error('session_id')
-                <span class="text-danger">{{ $message }}</span>
+                    <span class="text-danger">{{ $message }}</span>
                 @enderror
             </div>
-            <div class="col-md-2">
+            <div class="col-md-2 show_exam" style="display:none">
                 <select name="exam_id" id="exam_id" class="form-control">
                     <option value="">Select Exam</option>
                     @foreach($exam_lists as $exam_list)
@@ -70,6 +70,9 @@
 
 <script>
     $(document).ready(function() {
+        $("#session_id").on('change', function(e) {
+            $(".show_exam").css('display', 'block');
+        });
         $("#exam_id").on('change', function(e) {
             $(".show_class").css('display', 'block');
         });

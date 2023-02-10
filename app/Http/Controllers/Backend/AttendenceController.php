@@ -9,6 +9,7 @@ use App\Models\Student;
 use App\Models\StudentAttendence;
 use App\Models\TeacherAttendence;
 use App\Models\TeacherAdditionalInfo;
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
@@ -78,7 +79,7 @@ class AttendenceController extends Controller
         $attendence_date = $request->attendence_date;
         $newDate = date('Y-m-d', strtotime($attendence_date . ' - 6 days'));
 
-        $teachers = TeacherAdditionalInfo::with(
+        $teachers =  User::where('user_role', 6)->with(
             ['teacher_single_attendence' => function ($q) use ($attendence_date, $newDate) {
                 $q->where('attendence_date', $attendence_date);
             }])
@@ -88,14 +89,12 @@ class AttendenceController extends Controller
                 ->where('attendence_date', '>=', $newDate)
                 ->orderBy('attendence_date', 'asc');
             }])->get();
-        // dd($teachers);
 
         return view('backend.attendence.teacher.teacher_attendence_list_data', compact('teachers', 'attendence_date'));
     }
 
     public function save_teacher_attendance(Request $request)
     {
-        // dd(22);
 
         $array = $request->all();
         foreach ($array['teacher_id'] as $teacher_id) {
@@ -109,7 +108,10 @@ class AttendenceController extends Controller
                     'status' => $present,
                 ]);
             } else {
-                DB::table('teacher_attendence')->where('teacher_id', $teacher_id)->where('attendence_date', $request->attendence_date)->update(['status' => $present]);
+                DB::table('teacher_attendence')
+                    ->where('teacher_id', $teacher_id)
+                    ->where('attendence_date', $request->attendence_date)
+                    ->update(['status' => $present]);
             }
         }
 

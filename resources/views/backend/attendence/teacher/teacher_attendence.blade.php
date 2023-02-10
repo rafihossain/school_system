@@ -59,7 +59,8 @@
             }
 
             $(document).delegate('.save_teacher_attendance', 'click', function() {
-                var fromData = $("#teacher_attendance_response_list").serialize();
+                var fromData = $("#save_teacher_attendance").serialize();
+
                 $.ajax({
                     url: "{{route('backend.save_teacher_attendance')}}",
                     headers: {
