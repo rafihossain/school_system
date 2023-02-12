@@ -26,33 +26,37 @@
         @endif
         <div class="card">
             <div class="card-body table-responsive">
-                <div class="row" style="margin-left:15%;">
-                    <div class="col-md-2">
-                        <select class="form-control submitable" name="department_id" id="department_id">
-                            <option value="">Select Department</option>
-                            @foreach($departments as $department)
-                            <option value="{{$department->id}}">{{$department->department_name}}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                    <div class="col-md-2">
-                        <select name="class_id" id="class_id" class="form-control submitable">
-                            <option value="">Select Class</option>
-                            @foreach($classes as $class)
-                            <option value="{{$class->id}}">{{$class->class_name}}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                    <div class="col-md-2">
-                        <select name="section_id" id="section_id" class="form-control submitable">
-                            <option value="">Select Section</option>
-                            @foreach($sections as $section)
-                            <option value="{{$section->id}}">{{$section->section_name}}</option>
-                            @endforeach
-                        </select>
+
+                <div class="row">
+                    <div class="d-flex justify-content-center">
+                        <button class="btn btn-warning reset_datatable">Reset</button>
+                        <div class="ms-2">
+                            <select class="form-control submitable" name="department_id" id="department_id">
+                                <option value="">Select Department</option>
+                                @foreach($departments as $department)
+                                <option value="{{$department->id}}">{{$department->department_name}}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="ms-2">
+                            <select name="class_id" id="class_id" class="form-control submitable">
+                                <option value="">Select Class</option>
+                                @foreach($classes as $class)
+                                <option value="{{$class->id}}">{{$class->class_name}}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="ms-2">
+                            <select name="section_id" id="section_id" class="form-control submitable">
+                                <option value="">Select Section</option>
+                                @foreach($sections as $section)
+                                <option value="{{$section->id}}">{{$section->section_name}}</option>
+                                @endforeach
+                            </select>
+                        </div>
                     </div>
                 </div>
-                <button class="btn btn-primary btn-sm mt-2 reset_datatable" style="margin-left:16%;">Reset</button>
+
                 <table class="table table-bordered table-bordered dt-responsive nowrap student_datatable">
                     <thead>
                         <tr>
@@ -79,6 +83,8 @@
             serverSide: true,
             ajax: {
                 url: "{{ route('backend.student.index') }}",
+                // data: $('#studentSort').serialize(),
+
                 data: function(e) {
                     e.department_id = $("#department_id").val();
                     e.class_id = $("#class_id").val();
@@ -107,12 +113,12 @@
         });
     });
 
-    $(document).delegate('.student_info_edit', 'click', function() {
-        localStorage.clear();
-    });
-
     $(document).on('change', '.submitable', function() {
         $('.student_datatable').DataTable().ajax.reload();
+    });
+
+    $(document).delegate('.student_info_edit', 'click', function() {
+        localStorage.clear();
     });
 
     $(document).on('click', '.reset_datatable', function() {

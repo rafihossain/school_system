@@ -19,9 +19,10 @@ return new class extends Migration
             $table->integer('department_id')->nullable();
             $table->integer('designation_id')->nullable();
             $table->string('date_of_birth')->nullable();
-            $table->string('blood_id')->nullable();
-            $table->string('present_address')->nullable();
-            $table->string('office_address')->nullable();
+            $table->integer('blood_id')->nullable();
+            $table->text('present_address')->nullable();
+            $table->string('teacher_profile_pic', 128)->nullable();
+            $table->integer('status')->nullable();
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->timestamps();
         });

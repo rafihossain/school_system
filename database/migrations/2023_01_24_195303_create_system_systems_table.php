@@ -15,14 +15,9 @@ return new class extends Migration
     {
         Schema::create('system_systems', function (Blueprint $table) {
             $table->id();
-            $table->string('sidebar_bgcolor', 128)->nullable();
-            $table->string('navigation_bgcolor', 128)->nullable();
-            $table->string('sidebar_txtcolor', 128)->nullable();
-            $table->string('navigation_txtcolor', 128)->nullable();
-            $table->string('left_nav_position', 128)->nullable();
-            $table->string('top_nav_position', 128)->nullable();
-            $table->string('full_width_layout', 128)->nullable();
-            $table->string('box_layout', 128)->nullable();
+            $table->string('time_diff', 128)->nullable();
+            $table->string('start_time', 128)->nullable();
+            $table->string('end_time', 128)->nullable();
             $table->timestamps();
         });
     }

@@ -119,7 +119,7 @@
                     </div>
 
                     <div class="widget-detail-1 text-end">
-                        <h2 class="fw-normal pt-2 mb-1"> 256 </h2>
+                        <h2 class="fw-normal pt-2 mb-1"> {{ $students }} </h2>
                         <p class="text-muted mb-1">Student</p>
                     </div>
                 </div>
@@ -135,7 +135,7 @@
                     </div>
 
                     <div class="widget-detail-1 text-end">
-                        <h2 class="fw-normal pt-2 mb-1"> 156 </h2>
+                        <h2 class="fw-normal pt-2 mb-1"> {{ $parents }} </h2>
                         <p class="text-muted mb-1">Parents</p>
                     </div>
                 </div>
@@ -151,7 +151,7 @@
                     </div>
 
                     <div class="widget-detail-1 text-end">
-                        <h2 class="fw-normal pt-2 mb-1"> 25 </h2>
+                        <h2 class="fw-normal pt-2 mb-1"> {{ $staff }} </h2>
                         <p class="text-muted mb-1">Teacher</p>
                     </div>
                 </div>
@@ -167,7 +167,7 @@
                     </div>
 
                     <div class="widget-detail-1 text-end">
-                        <h2 class="fw-normal pt-2 mb-1"> 6 </h2>
+                        <h2 class="fw-normal pt-2 mb-1"> {{ $operators }} </h2>
                         <p class="text-muted mb-1">Staff</p>
                     </div>
                 </div>
@@ -2139,7 +2139,6 @@
             $('#routine_report').hide();
             $('#exam_report').hide();
             $('#student_attendence_report').show();
-
             
             $(".std_atten_session").on('change', function(e) {
                 $(".show_class").removeClass('d-none');

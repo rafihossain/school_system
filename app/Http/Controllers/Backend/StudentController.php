@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\backend;
 
 use App\Http\Controllers\Controller;
+use App\Models\AdditionalInfo;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Hash;
@@ -50,27 +51,26 @@ class StudentController extends Controller
     {
         //$students=User::where('user_role',5)->get(); 
         if (request()->ajax()) {
-            $query = DB::table('student_basic_info')
-                ->leftJoin('users', 'student_basic_info.user_id', 'users.id')
-                ->leftJoin('classes', 'student_basic_info.class_id', 'classes.id')
-                ->leftJoin('sections', 'student_basic_info.section_id', 'sections.id')
+            $query = DB::table('students')
+                ->leftJoin('users', 'students.user_id', 'users.id')
+                ->leftJoin('classes', 'students.class_id', 'classes.id')
+                ->leftJoin('sections', 'students.section_id', 'sections.id')
                 ->where('users.user_role', 5);
+
             if ($request->department_id) {
-                $query->where('student_basic_info.department_id', $request->department_id);
+                $query->where('students.department_id', $request->department_id);
             }
-
             if ($request->class_id) {
-                $query->where('student_basic_info.class_id', $request->class_id);
+                $query->where('students.class_id', $request->class_id);
             }
-
             if ($request->section_id) {
-                $query->where('student_basic_info.section_id', $request->section_id);
+                $query->where('students.section_id', $request->section_id);
             }
             if (($request->department_id != '') && ($request->class_id != '')) {
-                $query->where('student_basic_info.department_id', $request->department_id)->where('student_basic_info.class_id', $request->class_id);
+                $query->where('students.department_id', $request->department_id)->where('students.class_id', $request->class_id);
             }
             if (($request->department_id != '') && ($request->class_id != '') && ($request->section_id != '')) {
-                $query->where('student_basic_info.department_id', $request->department_id)->where('student_basic_info.class_id', $request->class_id)->where('student_basic_info.section_id', $request->section_id);
+                $query->where('students.department_id', $request->department_id)->where('students.class_id', $request->class_id)->where('students.section_id', $request->section_id);
             }
 
             $students = $query->get();
@@ -79,7 +79,7 @@ class StudentController extends Controller
                 ->addIndexColumn()
                 ->addColumn('action', function ($row) {
                     $actionbtn = '<a href="' . route('backend.edit.student', $row->user_id) . '" class="btn btn-sm btn-primary waves-effect waves-light student_info_edit"><i class="mdi mdi-square-edit-outline"></i></a>
-                <a href="' . route('backend.student.delete', $row->user_id) . '" id="delete" class="btn btn-sm btn-danger waves-effect waves-light"><i class="mdi mdi-trash-can-outline"></i></a>';
+                    <a href="' . route('backend.student.delete', $row->user_id) . '" id="delete" class="btn btn-sm btn-danger waves-effect waves-light"><i class="mdi mdi-trash-can-outline"></i></a>';
 
                     return $actionbtn;
                 })
@@ -146,17 +146,10 @@ class StudentController extends Controller
                     $Student->section_id = $row[5];
                     $Student->class_id = $row[4];
                     $Student->parent_id = $row[3];
+                    $Student->department_id = $row[6];
                     $Student->roll_no = $row[8];
                     $Student->admission_date = $row[7];
                     $Student->save();
-
-                    $StudentBasicInfo = new StudentBasicInfo();
-                    $StudentBasicInfo->user_id = $user->id;
-                    $StudentBasicInfo->department_id = $row[6];
-                    $StudentBasicInfo->class_id = $row[4];
-                    $StudentBasicInfo->section_id = $row[5];
-                    $StudentBasicInfo->parent_id = $row[3];
-                    $StudentBasicInfo->save();
 
                     $StudentAdditionalInfo = new StudentAdditionalInfo();
                     $StudentAdditionalInfo->user_id = $user->id;
@@ -176,7 +169,6 @@ class StudentController extends Controller
         return redirect()->route('backend.student.index')->with('success', 'Successfully Student Created!');
     }
 
-
     public function saveStudent(Request $request)
     {
         $this->create_student_user($request);
@@ -185,24 +177,23 @@ class StudentController extends Controller
 
     public function editStudent($id)
     {
-        $User_info = User::find($id);
-        $student = Student::where('user_id', $id)->first();
-        $StudentBasicInfo = StudentBasicInfo::where('user_id', $id)->first();
-        
-        $StudentAdditionalInfo = StudentAdditionalInfo::where('user_id', $id)->first();
-        // dd($StudentAdditionalInfo);
+        $student = Student::with('getStudent','getParent', 'getparentBasicInfo')->where('user_id', $id)->first();
+        // dd($student);
 
+        $StudentAdditionalInfo = StudentAdditionalInfo::where('user_id', $id)->first();
         $StudentDocumentChecklist = StudentDocumentChecklist::where('user_id', $id)->first();
+
         $sections = Section::all();
         $classes = ClassModal::all();
         $departments = Department::all();
         //dd($StudentAdditionalInfo);
-        return view('backend.users.student.editStudent', compact('User_info', 'StudentBasicInfo', 'sections', 'classes', 'student', 'StudentAdditionalInfo', 'StudentDocumentChecklist', 'departments'));
+        return view('backend.users.student.editStudent', 
+        compact('sections', 'classes', 'student', 'StudentAdditionalInfo', 'StudentDocumentChecklist', 'departments')
+        );
     }
 
     public function studentDelete($id)
     {
-
         $success = DB::table('users')->where('id', $id)->delete();
 
         if ($success) {
@@ -213,14 +204,14 @@ class StudentController extends Controller
         }
     }
 
-    public function studentBasicInfoValidate($request)
-    {
-        $request->validate([
-            'first_name' => 'required',
-            'last_name' => 'required',
-            'date_of_birth' => 'required',
-        ]);
-    }
+    // public function studentBasicInfoValidate($request)
+    // {
+    //     $request->validate([
+    //         'first_name' => 'required',
+    //         'last_name' => 'required',
+    //         'date_of_birth' => 'required',
+    //     ]);
+    // }
 
     protected function studentProfileImageUpload($request)
     {
@@ -239,22 +230,33 @@ class StudentController extends Controller
 
     public function updateBasicInfoStudent(Request $request)
     {
-        $this->studentBasicInfoValidate($request);
-
+        // $this->studentBasicInfoValidate($request);
+        // dd($_POST);
+    
         $student_profile_pic = $request->file('student_profile_pic');
-        $StudentBasicInfo = StudentBasicInfo::where('user_id', $request->user_id)->first();
-
-        if ($student_profile_pic) {
-            $image_path = public_path() . '/images/student/' . $StudentBasicInfo->student_profile_pic;
-            if (File::exists($image_path)) {
-                unlink($image_path);
+        $StudentBasicInfo = Student::where('user_id', $request->user_id)->first();
+        
+        if($student_profile_pic){
+            if (isset($StudentBasicInfo->student_profile_pic)) {
+                $image_path = public_path() . '/images/student/' . $StudentBasicInfo->student_profile_pic;
+                if (File::exists($image_path)) {
+                    unlink($image_path);
+                }
             }
             $imageUrl = $this->studentProfileImageUpload($request);
         }
-        $data = $request->except('gender', '_token');
+        
+        $data = $request->only('b_form','registration','department_id','class_id','section_id','parent_id','guardian_name','guardian_office_address','guardian_office_phone','guardian_mobile_phone','guardian_mobile_whatsapp','guardian_mobile_email');
+
         $data['student_profile_pic'] = (isset($imageUrl)) ? $imageUrl : $StudentBasicInfo->student_profile_pic;
-        //dd($data);
-        StudentBasicInfo::where('user_id', $request->user_id)->update($data);
+        Student::where('user_id', $request->user_id)->update($data);
+
+        $student = $request->only('name', 'gender', 'date_of_birth');
+        User::find($request->user_id)->update($student);
+
+        $parent = $request->only('father_occupation', 'father_cnic', 'mother_name', 'mother_occupation');
+        AdditionalInfo::where('user_id',$request->parent_id)->update($parent);
+
         return redirect()->route('backend.student.index')->with('success', 'Successfully Updated');
     }
 

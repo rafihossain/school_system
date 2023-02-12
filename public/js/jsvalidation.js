@@ -333,18 +333,18 @@ $().ready(function () {
     $("#edit_student").validate({
         // in 'rules' user have to specify all the constraints for respective fields
         rules: {
-            first_name: "required",
-            last_name: "required",
-            date_of_birth: "required",
+            // first_name: "required",
+            // last_name: "required",
+            // date_of_birth: "required",
             // gender: "required",
             // b_form: "required",
             // registration: "required",
             // class_id: "required",
             // section_id: "required",
-            father_name: "required",
+            // father_name: "required",
             // father_occupation: "required",
             // father_cnic: "required",
-            mother_name: "required",
+            // mother_name: "required",
             // mother_language: "required",
             // mother_occupation: "required",
             // guardian_name: "required",

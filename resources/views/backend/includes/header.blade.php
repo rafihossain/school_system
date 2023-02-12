@@ -3,14 +3,14 @@
     <head>
 
         <meta charset="utf-8" />
-        <title>Dashboard | Electronics, Cars, Property and Jobs in Bangladesh </title>
+        <title>Dashboard | School System </title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta content="A fully featured admin theme which can be used to build CRM, CMS, etc." name="description" />
         <meta content="Coderthemes" name="author" />
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta name="csrf-token" content="{{ csrf_token() }}" />
         <meta name="base_url" content="{{ url('/') }}" />
-        
+    
         <!-- App favicon -->
         <link rel="shortcut icon" href="{{ asset('assets/images/favicon.ico') }}">
 
@@ -107,22 +107,9 @@
                     <div class="dropdown-menu dropdown-menu-end profile-dropdown ">
                         <!-- item-->
                         <div class="dropdown-header noti-title">
-                            <h6 class="text-overflow m-0">Welcome !</h6>
+                            <h5 class="text-overflow">Welcome <br>
+                                {{ Auth::user()->name }}</h5>
                         </div>
-
-                        <!-- item-->
-                        <a href="contacts-profile.html" class="dropdown-item notify-item">
-                            <i class="fe-user"></i>
-                            <span>My Account</span>
-                        </a>
-
-                        <!-- item-->
-                        <a href="auth-lock-screen.html" class="dropdown-item notify-item">
-                            <i class="fe-lock"></i>
-                            <span>Lock Screen</span>
-                        </a>
-
-                        <div class="dropdown-divider"></div>
 
                         <!-- item-->
                         <a class="dropdown-item notify-item" href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
@@ -133,25 +120,24 @@
 
                     </div>
                 </li>
-
             </ul>
 
             <!-- LOGO -->
             <div class="logo-box">
                 <a href="{{route('backend.dashboard')}}" class="logo logo-light text-center">
                     <span class="logo-sm">
-                        <img src="{{ asset('assets/images/logo-dark.png') }}" alt="" height="42">
+                        <img src="{{ asset('/images/settings/basic/'.$setting_basic->logo) }}" alt="" height="42">
                     </span>
                     <span class="logo-lg">
-                        <img src="{{ asset('assets/images/logo-dark.png') }}" alt="" height="42">
+                        <img src="{{ asset('/images/settings/basic/'.$setting_basic->logo) }}" alt="" height="42">
                     </span>
                 </a>
                 <a href="{{route('backend.dashboard')}}" class="logo logo-dark text-center">
                     <span class="logo-sm">
-                        <img src="{{ asset('assets/images/logo-dark.png') }}" alt="" height="42">
+                        <img src="{{ asset('/images/settings/basic/'.$setting_basic->logo) }}" alt="" height="42">
                     </span>
                     <span class="logo-lg">
-                        <img src="{{ asset('assets/images/logo-dark.png') }}" alt="" height="42">
+                        <img src="{{ asset('/images/settings/basic/'.$setting_basic->logo) }}" alt="" height="42">
                     </span>
                 </a>
             </div>

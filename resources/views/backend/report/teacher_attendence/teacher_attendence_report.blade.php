@@ -18,7 +18,6 @@
             <div class="col-md-2 show_monthly date_click" style="display:none">
                 <input type="month" class="form-control date_data_month" value="{{date('Y-m')}}">
             </div>
-
             <div class="col-md-3 show_button">
                 <button type="button" class="btn btn-primary get_student_mark">Get Attendence Report</button>
             </div>

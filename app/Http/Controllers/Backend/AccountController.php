@@ -11,6 +11,7 @@ use App\Models\Fee;
 use App\Models\FeeType;
 use App\Models\Section;
 use App\Models\Student;
+use App\Models\User;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Intervention\Image\Facades\Image;
@@ -127,12 +128,16 @@ class AccountController extends Controller
 
         $fee = new Fee();
         $fee->student_id = $student->user_id;
-        $fee->parent_id = 10;
         $fee->txn_number = Str::random(13);
         $fee->invoice_type = $request->invoice_type;
         $fee->feetype_id = $request->feetype_id;
         $fee->class_id = $request->class_id;
         $fee->section_id = $request->section_id;
+        
+        if($request->invoiceType == 2){
+            $fee->subject_id = $request->subject_id;
+        }
+
         $fee->amount_due = $request->amount_due;
         $fee->due_date = $request->due_date;
         $fee->fee_status = $request->fee_status;
@@ -242,7 +247,10 @@ class AccountController extends Controller
                 $action = '<td><a href="'.route('backend.delete-fee', ['id'=>$fee->id]).'" class="btn btn-sm btn-success me-2 mark_paid" data-id="'.$fee->id.'">Mark as Paid</a><a href="'.route('backend.edit-fee', ['id'=>$fee->id]).'" class="btn btn-sm btn-primary me-2 fee_edit" data-id="'.$fee->id.'">Edit</a><a href="javascript:void(0)" id="delete" class="btn btn-sm btn-danger me-2 fee_delete" data-id="'.$fee->id.'">Delete</a></td>';
             }
 
-            $html .='<tr class="row_'.$fee->id.'"><td>Student: '.$fee->student->name.' <br> Parent: '.$fee->parent->name.'</td><td>'.$fee->txn_number.'</td><td>'.$fee->amount_due.'</td><td>'.date('F d, Y', strtotime($fee->amount_due)).'</td><td>-</td>'.$action.'</tr>';
+            $student = Student::where('user_id', $fee->student_id)->first();
+            $parent = User::find($student->parent_id);
+
+            $html .='<tr class="row_'.$fee->id.'"><td>Student: '.$fee->student->name.' <br> Parent: '.$parent->name.'</td><td>'.$fee->txn_number.'</td><td>'.$fee->amount_due.'</td><td>'.date('F d, Y', strtotime($fee->amount_due)).'</td><td>-</td>'.$action.'</tr>';
         endforeach;
 
         return $html .= '</tbody></table></div></div>';
@@ -250,7 +258,8 @@ class AccountController extends Controller
     }
 
     public function get_fees_list(Request $request){
-        $fees = Fee::with('student','parent')->where([
+
+        $fees = Fee::with('student')->where([
             'class_id'=> $request->class_id,
             'section_id' => $request->section_id,
             'feetype_id' => $request->feetype_id,
@@ -260,10 +269,8 @@ class AccountController extends Controller
         // dd($fees);
 
         if(is_object(@$fees) && @$fees->count() > 0) {
-
             $html = $this->fee_list_basic_info($request, $fees);
             echo $html;
-
         } else {
             echo '<span class="text-danger"> No data found </span>';
         }

@@ -14,11 +14,12 @@ use App\Models\StudentBasicInfo;
 use App\Models\Section;
 use DataTables;
 use App\Models\ClassModal;
-
+use App\Models\Student;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 use App\Traits\UserRollPermissionTrait;
+
 class ParentsController extends Controller
 {
     use UserRollPermissionTrait;
@@ -42,22 +43,25 @@ class ParentsController extends Controller
 
         if ($request->ajax()) {
             // $parents = User::where('user_role', 4)->get();
-            $query=DB::table('student_basic_info')
-            ->leftJoin('users','student_basic_info.parent_id','users.id')
-            ->leftJoin('parent_additional_info','student_basic_info.parent_id','parent_additional_info.user_id')
-            ->where('users.user_role',4);
+            $query = DB::table('students')
+                ->leftJoin('users', 'students.parent_id', 'users.id')
+                ->leftJoin('parent_additional_info', 'students.parent_id', 'parent_additional_info.user_id')
+                ->where('users.user_role', 4);
 
-            if($request->class_id != ''){
-                $query->where('student_basic_info.class_id',$request->class_id);
+            if ($request->class_id != '') {
+                $query->where('students.class_id', $request->class_id);
             }
-            if($request->section_id != ''){
-                $query->where('student_basic_info.section_id',$request->section_id);
+            if ($request->section_id != '') {
+                $query->where('students.section_id', $request->section_id);
             }
-            if(($request->class_id != '')&&($request->section_id != '')){
-                $query->where('student_basic_info.class_id',$request->class_id)->where('student_basic_info.section_id',$request->section_id);
+            if (($request->class_id != '') && ($request->section_id != '')) {
+                $query->where('students.class_id', $request->class_id)
+                ->where('students.section_id', $request->section_id);
             }
-            if(($request->class_id != '')&&($request->section_id != '')&&($request->student_id != '')){
-                $query->where('student_basic_info.class_id',$request->class_id)->where('student_basic_info.section_id',$request->section_id)->where('student_basic_info.user_id',$request->student_id);
+            if (($request->class_id != '') && ($request->section_id != '') && ($request->student_id != '')) {
+                $query->where('students.class_id', $request->class_id)
+                ->where('students.section_id', $request->section_id)
+                ->where('students.user_id', $request->student_id);
             }
 
             $parents = $query->get();
@@ -65,12 +69,9 @@ class ParentsController extends Controller
 
             return Datatables::of($query)->addIndexColumn()
                 ->addColumn('action', function ($row) {
-
                     $btn = '<a href="' . route('backend.edit.parent', $row->id) . '" class="btn btn-sm btn-primary waves-effect waves-light parent_info_edit"><i class="mdi mdi-square-edit-outline"></i></a>
                     <a href="' . route('backend.parent.delete', $row->id) . '" id="delete" class="btn btn-sm btn-danger waves-effect waves-light"><i class="mdi mdi-trash-can-outline"></i></a>';
                     return $btn;
-                    // dd($btn);
-
                 })
                 ->rawColumns(['action'])
                 ->make(true);
@@ -195,7 +196,7 @@ class ParentsController extends Controller
         $user->name = $request->name;
         $user->email = $request->email;
 
-        if($request->password !=''){
+        if ($request->password != '') {
             $user->password = Hash::make($request->password);
         }
 
@@ -265,7 +266,7 @@ class ParentsController extends Controller
             if (count($data) > 0) {
                 $output = '<ul class="list-group" style="display: block; position: relative; z-index: 1">';
                 foreach ($data as $row) {
-                    $output .= '<li class="list-group-item" data-id="' . $row->id . '">' . $row->name .'</li>';
+                    $output .= '<li class="list-group-item" data-id="' . $row->id . '">' . $row->name . '</li>';
                 }
                 $output .= '</ul>';
             } else {
@@ -301,13 +302,12 @@ class ParentsController extends Controller
 
     public function get_student(Request $request)
     {
-        $student_basic_info = StudentBasicInfo::where('class_id', $request->class_id)->where('section_id', $request->section_id)->get();
+        $student_basic_info = Student::where('class_id', $request->class_id)->where('section_id', $request->section_id)->get();
         $output = '';
         if (count($student_basic_info) > 0) {
             $output = '<option value="">Select Student</option>';
             foreach ($student_basic_info as $row) {
                 $student = user::find($row->user_id);
-
                 $output .= '<option class="list-group-item" value="' . $student->id . '">' . $student->name . '</option>';
             }
         } else {

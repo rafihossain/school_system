@@ -28,25 +28,27 @@
         @endif
         <div class="card">
             <div class="card-body table-responsive">
-                <table class="table table-bordered table-bordered dt-responsive nowrap teacher_datatable">
-                    <div class="row" style="margin-left:15%;">
-                        <div class="col-md-2">
-                            <select class="form-control @error('department_id') is-invalid @enderror submitable" name="department_id" id="department_id">
+
+                <div class="row">
+                    <div class="d-flex justify-content-center">
+                        <button class="btn btn-warning reset_datatable">Reset</button>
+                        <div class="ms-2">
+                            <select class="form-control submitable" name="department_id" id="department_id">
                                 <option value="">Select Department</option>
                                 @foreach($departments as $department)
-                                <option value="{{$department->id}}">{{$department->department_name}}</option>
+                                    <option value="{{$department->id}}">{{$department->department_name}}</option>
                                 @endforeach
                             </select>
                         </div>
-                        <div class="col-md-2">
-                            <select class="form-control @error('designation_id') is-invalid @enderror submitable" name="designation_id" id="designation_id">
+                        <div class="ms-2">
+                            <select class="form-control submitable" name="designation_id" id="designation_id">
                                 <option value="">Select Designation</option>
                                 @foreach($designations as $designation)
-                                <option value="{{$designation->id}}">{{$designation->designation_name}}</option>
+                                    <option value="{{$designation->id}}">{{$designation->designation_name}}</option>
                                 @endforeach
                             </select>
                         </div>
-                        <div class="col-md-2">
+                        <div class="ms-2">
                             <select class="form-control submitable" name="status" id="status_val">
                                 <option value="">Select status</option>
                                 <option value="1">Active</option>
@@ -54,7 +56,9 @@
                             </select>
                         </div>
                     </div>
-                    <button class="btn btn-primary btn-sm mt-2 reset_datatable" style="margin-left:16%;">Reset</button>
+                </div>
+
+                <table class="table table-bordered table-bordered dt-responsive nowrap teacher_datatable">
                     <thead>
                         <tr>
                             <th>Name</th>
@@ -67,6 +71,7 @@
 
                     </tbody>
                 </table>
+
             </div>
         </div>
     </div>

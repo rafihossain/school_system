@@ -109,15 +109,8 @@ trait UserRollPermissionTrait {
         $Student->parent_id = $request->parent_id;
         $Student->roll_no = $request->roll_no;
         $Student->admission_date = $request->admission_date;
+        $Student->department_id = $request->department_id;
         $Student->save();
-
-        $StudentBasicInfo = new StudentBasicInfo();
-        $StudentBasicInfo->user_id = $user->id;
-        $StudentBasicInfo->department_id = $request->department_id;
-        $StudentBasicInfo->class_id = $request->class_id;
-        $StudentBasicInfo->section_id = $request->section_id;
-        $StudentBasicInfo->parent_id = $request->parent_id;
-        $StudentBasicInfo->save();
 
         $StudentAdditionalInfo = new StudentAdditionalInfo();
         $StudentAdditionalInfo->user_id = $user->id;

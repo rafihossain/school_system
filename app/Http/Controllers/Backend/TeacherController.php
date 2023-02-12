@@ -159,10 +159,11 @@ class TeacherController extends Controller
         $bloods = BloodGroup::all();
 
         $teacher_additional_info = TeacherAdditionalInfo::where('user_id', $id)->first();
-        // dd($teacher_additional_info);
-
         $TeacherDocumentChecklist = TeacherDocumentChecklist::where('user_id', $id)->first();
-        return view('backend.users.teacher.editTeacher', compact('teacher_edit', 'teacher_additional_info', 'TeacherDocumentChecklist', 'departments', 'designations', 'bloods'));
+
+        return view('backend.users.teacher.editTeacher', 
+        compact('teacher_edit', 'teacher_additional_info', 'TeacherDocumentChecklist', 'departments', 'designations', 'bloods')
+        );
     }
 
     protected function teacherupdateValidate($request)
@@ -202,39 +203,16 @@ class TeacherController extends Controller
 
     public function updateBasicInfoTeacher(Request $request)
     {
-        $id = $request->user_id;
-        $user = User::find($id)->toArray();
+        $user = User::find($request->user_id);
         
-        if ($user['email'] == $request->email) {
+        if ($user->email == $request->email) {
             $this->teacherupdateValidate($request);
         } else {
             $this->teacherupdateValidate_new($request);
         }
 
-        $teacher_profile_pic = $request->file('teacher_profile_pic');
-        $user_info = user::find($request->user_id);
-        if ($teacher_profile_pic) {
-            if ($user_info->user_Image) {
-                $image_path = public_path() . '/images/teacher/' . $user_info->user_Image;
-                if (File::exists($image_path)) {
-                    unlink($image_path);
-                }
-            }
-            $imageUrl = $this->teacherProfileImageUpload($request);
-        }
-
-        $user = User::find($id);
-        $user->name = $request->name;
-        $user->email = $request->email;
-
-        if($request->password != ''){
-            $user->password = Hash::make($request->password);
-        }
-
-        $user->mobile = $request->phone;
-        $user->gender = $request->gender;
-        $user->user_Image = (isset($imageUrl)) ? $imageUrl : $user_info->user_Image;
-        $user->save();
+        $student = $request->except('_token');
+        User::find($request->user_id)->update($student);
 
         return redirect()->route('backend.teacher.index')->with('success', 'Successfully Updated');
     }
@@ -250,21 +228,33 @@ class TeacherController extends Controller
 
     public function teacher_additional_info_update(Request $request)
     {
-        // dd($request->all());
         $this->update_studentAdditional_Info_validation($request);
-        User::where('id', $request->user_id)->update(['status' => $request->status]);
+        
+        // $user = $request->only('status');
+        // User::where('id', $request->user_id)->update($user);
 
-        $data = $request->except('_token', 'status');
+        $teacher_profile_pic = $request->file('teacher_profile_pic');
+        $teacher_additional_info = TeacherAdditionalInfo::where('user_id', $request->user_id)->first();
+        
+        if($teacher_profile_pic){
+            if (isset($teacher_additional_info->teacher_profile_pic)) {
+                $image_path = public_path() . '/images/student/' . $teacher_additional_info->teacher_profile_pic;
+                if (File::exists($image_path)) {
+                    unlink($image_path);
+                }
+            }
+            $imageUrl = $this->teacherProfileImageUpload($request);
+        }
 
+        $data = $request->except('_token');
+        $data['teacher_profile_pic'] = (isset($imageUrl)) ? $imageUrl : $teacher_additional_info->teacher_profile_pic;
         TeacherAdditionalInfo::where('user_id', $request->user_id)->update($data);
+
         return redirect()->route('backend.teacher.index')->with('success', 'Successfully Updated');
     }
 
-
-
     public function teacher_document_checklist_update(Request $request)
     {
-        //dd($request->all());
         $data = $request->except('_token');
         TeacherDocumentChecklist::where('user_id', $request->user_id)->update($data);
         return redirect()->route('backend.teacher.index')->with('success', 'Successfully Updated');

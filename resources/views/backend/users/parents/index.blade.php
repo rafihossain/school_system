@@ -28,29 +28,33 @@
         @endif
         <div class="card">
             <div class="card-body table-responsive">
-                <div class="row" style="margin-left:15%;">
-                    <div class="col-md-2">
-                        <select name="class_id" id="class_id" class="form-control submitable">
-                            <option value="">Select Class</option>
-                            @foreach($classes as $class)
-                            <option value="{{$class->id}}">{{$class->class_name}}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                    <div class="col-md-2">
-                        <select name="section_id" id="section_id" class="form-control submitable">
-                            <option value="">Select section</option>
 
-                        </select>
-                    </div>
-                    <div class="col-md-2">
-                        <select name="student_id" id="student_id" class="form-control submitable">
-                            <option value="">Select Student</option>
-                        </select>
+                <div class="row">
+                    <div class="d-flex justify-content-center">
+                        <button class="btn btn-warning reset_datatable">Reset</button>
+                        <div class="ms-2">
+                            <select name="class_id" id="class_id" class="form-control submitable">
+                                <option value="">Select Class</option>
+                                @foreach($classes as $class)
+                                <option value="{{$class->id}}">{{$class->class_name}}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="ms-2">
+                            <select name="section_id" id="section_id" class="form-control submitable">
+                                <option value="">Select section</option>
+
+                            </select>
+                        </div>
+                        <div class="ms-2">
+                            <select name="student_id" id="student_id" class="form-control submitable">
+                                <option value="">Select Student</option>
+                            </select>
+                        </div>
                     </div>
                 </div>
-                <button class="btn btn-primary btn-sm mt-2 reset_datatable" style="margin-left:16%;">Reset</button>
-                <table id="" class="table table-bordered table-bordered dt-responsive nowrap parent_datatable">
+
+                <table class="table table-bordered table-bordered dt-responsive nowrap parent_datatable">
                     <thead>
                         <tr>
                             <th>Name</th>
@@ -87,24 +91,11 @@
                     e.student_id = $("#student_id").val();
                 },
             },
-            columns: [{
-                    data: 'name',
-                    name: 'name'
-                },
-                {
-                    data: 'email',
-                    name: 'email'
-                },
-                {
-                    data: 'mobile',
-                    name: 'mobile'
-                },
-                {
-                    data: 'action',
-                    name: 'action',
-                    orderable: false,
-                    searchable: false
-                },
+            columns: [
+                {data: 'name',name: 'name'},
+                {data: 'email',name: 'email'},
+                {data: 'mobile',name: 'mobile'},
+                {data: 'action',name: 'action',orderable: false,searchable: false},
             ]
         });
     });

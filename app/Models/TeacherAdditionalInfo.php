@@ -9,7 +9,7 @@ class TeacherAdditionalInfo extends Model
 {
     use HasFactory;
     protected $table = "teacher_additional_info";
-    protected $fillable = ['department_id','user_id','first_name','last_name','date_of_birth','whatsapp','blood_group','present_address','office_address'];
+    protected $fillable = ['user_id','department_id','designation_id','date_of_birth','blood_id','present_address','office_address','teacher_profile_pic','status'];
 
     public function getTeacher()
     {

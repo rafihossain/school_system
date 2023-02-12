@@ -1,11 +1,11 @@
 @extends('backend.layouts.app')
 @section('title', 'Homework Create')
 @section('content')
- 
+
 <div class="card">
     <div class="card-body">
         <h4 class="m-0 header-title text-end float-end">
-           <a class="btn btn-primary" href="#">+ Create</a>
+            <a class="btn btn-primary open_homework_modal" href="javascript:void(0)">+ Create</a>
         </h4>
     </div>
 </div>
@@ -38,35 +38,28 @@
         </div>
     </div>
     <div class="card-body">
-         <div class="show_class_routine"></div>
-         <div class="mt-4 show_section" style="display: none;">
+        <div class="show_class_routine"></div>
+        <div class="mt-4 show_section" style="display: none;">
             <button type="button" class="btn btn-primary get_exam_schedule">Get Exam</button>
         </div>
         <div class="show_student_homework"></div>
     </div>
-   
+
 </div>
-
- 
-
-
-
 
 <div id="createHomeWorkModal" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <form id="homeworkFrom" enctype="multipart/form-data">
                 <div class="modal-header">
-                    <h4 class="modal-title" id="standard-modalLabel">Create Routine</h4>
+                    <h4 class="modal-title" id="standard-modalLabel">Homework Create</h4>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <div class="mb-2">
                         <label>Title <span class="text-danger">*</span></label>
-                        <input type="text" class="form-control @error('title') is-invalid @enderror" name="name" value="{{old('title')}}" placeholder="Enter Name">
-                        @error('title')
-                        <strong class="text-danger">{{ $message }}</strong>
-                        @enderror
+                        <input type="text" class="form-control" name="title" value="{{old('title')}}" placeholder="Enter Name">
+                        <span class="text-danger title_error"></span>
                     </div>
                     <div class="row">
                         <div class="col-md-6">
@@ -78,9 +71,7 @@
                                     <option value="{{$teacher->id}}">{{$teacher->name}}</option>
                                     @endforeach
                                 </select>
-                                @error('teacher_id')
-                                <strong class="text-danger">{{ $message }}</strong>
-                                @enderror
+                                <span class="text-danger teacher_error"></span>
                             </div>
                         </div>
                         <div class="col-md-6">
@@ -92,9 +83,7 @@
                                     <option value="{{ $class->id }}">{{$class->class_name}}</option>
                                     @endforeach
                                 </select>
-                                @error('class_id')
-                                <strong class="text-danger">{{ $message }}</strong>
-                                @enderror
+                                <span class="text-danger class_error"></span>
                             </div>
                         </div>
                         <div class="col-md-6">
@@ -103,9 +92,7 @@
                                 <select name="section_id" id="section_id" class="form-control">
                                     <option value="">Select Section</option>
                                 </select>
-                                @error('section_id')
-                                <strong class="text-danger">{{ $message }}</strong>
-                                @enderror
+                                <span class="text-danger section_error"></span>
                             </div>
                         </div>
                         <div class="col-md-6">
@@ -114,42 +101,32 @@
                                 <select name="subject_id" id="subject_id" class="form-control">
                                     <option value="">Select Subject</option>
                                 </select>
-                                @error('subject_id')
-                                <strong class="text-danger">{{ $message }}</strong>
-                                @enderror
+                                <span class="text-danger subject_error"></span>
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="mb-2">
                                 <label>Start Date<span class="text-danger">*</span></label>
                                 <input type="date" class="form-control @error('start_date') is-invalid @enderror" name="start_date" value="{{old('start_date')}}">
-                                @error('start_date')
-                                <strong class="text-danger">{{ $message }}</strong>
-                                @enderror
+                                <span class="text-danger start_date_error"></span>
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="mb-2">
                                 <label>End Date<span class="text-danger">*</span></label>
                                 <input type="date" class="form-control @error('end_date') is-invalid @enderror" name="end_date" value="{{old('end_date')}}">
-                                @error('end_date')
-                                <strong class="text-danger">{{ $message }}</strong>
-                                @enderror
+                                <span class="text-danger end_date_error"></span>
                             </div>
                         </div>
                     </div>
                     <div class="mb-2">
                         <label>Description<span class="text-danger">*</span></label>
-                        <textarea name="description" id="" cols="30" rows="5" class="form-control @error('description') is-invalid @enderror">
-
-                    </textarea>
-                        @error('end_date')
-                        <strong class="text-danger">{{ $message }}</strong>
-                        @enderror
+                        <textarea name="description" id="" cols="30" rows="5" class="form-control @error('description') is-invalid @enderror"></textarea>
+                        <span class="text-danger description_error"></span>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-light" id="save_close_homework">Close</button>
+                    <button type="button" class="btn btn-light" id="save_close_homework">Save&Close</button>
                     <button type="button" class="btn btn-primary" id="save_homework">Save</button>
                 </div>
             </form>
@@ -179,61 +156,69 @@
 
 <script>
     $(document).ready(function() {
-        // //create_report
-        // $('.get_homework').on("click", function() {
-        //     $('#routineFrom')[0].reset();
-        //     $('#createRoutineModal').modal('show');
 
-        //     $('.class').val($('#getSection').val());
-        //     $('.section').val($('#getInfo').val());
-        // });
+        //create_homework
+        $('.open_homework_modal').on("click", function() {
+            $('#homeworkFrom')[0].reset();
+            $('#createHomeWorkModal').modal('show');
 
-        // $('#save_close_homework').on("click", function(e) {
-        //     e.preventDefault();
-        //     manage_ajax_create_homework(0);
-        // });
+            $('.class').val($('#getSection').val());
+            $('.section').val($('#getInfo').val());
+        });
 
-        // $('#save_homework').on("click", function(e) {
-        //     e.preventDefault();
-        //     manage_ajax_create_homework(1);
-        // });
+        //get subject and section
+        $('#class_id').on('change', function(e) {
+            var class_id = $(this).val();
+            $.ajax({
+                url: "{{route('backend.get_section_subject')}}",
+                type: 'GET',
+                data: {
+                    'class_id': class_id
+                },
+                success: function(data) {
+                    $("#section_id").html(data['sectons']);
+                    $("#subject_id").html(data['subjects']);
+                }
+            })
+        });
 
-        $('#updateRoutine').on("click", function(e) {
+        $('#class_id').on("click", function() {
+            // $('.class').val($('#getSection').val());
+            // $('.section').val($('#getInfo').val());
+        });
+
+        $('#save_close_homework').on("click", function(e) {
+            e.preventDefault();
+            manage_ajax_create_homework(1);
+        });
+
+        $('#save_homework').on("click", function(e) {
+            e.preventDefault();
+            manage_ajax_create_homework(2);
+        });
+
+        $('#updateHomework').on("click", function(e) {
             e.preventDefault();
 
-            var fromData = new FormData(document.getElementById("updateRoutineFrom"));
+            var serialize = $("#updateHomeworkFrom").serialize() + '&_token=' + '{{ csrf_token() }}';
             $.ajax({
-                url: "{{ route('backend.save-class-routine') }}",
+                url: "{{ route('backend.update-student-homework') }}",
                 type: "POST",
-                data: fromData,
-                cache: false,
-                contentType: false,
-                processData: false,
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                },
+                data: serialize,
                 success: function(response) {
-
-                    if (response.error == true) {
-                        if (confirm('Schedule already exist!! Are you sure to overwrite this?')) {
-                            routine_overwrite_check_update(response.data);
-                        }
-                    } else {
-                        $('#updateRoutineModal').modal("hide");
-                        $('.show_class_routine').html(response.data);
-                    }
-
+                    $('#updateHomeWorkModal').modal("hide");
+                    $('.show_homework_info').html(response);
                 },
                 error: function(response) {
                     // console.log(response);
+                    $('#title_error').text(response.responseJSON.errors.title);
+                    $('#teacher_error').text(response.responseJSON.errors.teacher_id);
                     $('#class_error').text(response.responseJSON.errors.class_id);
                     $('#section_error').text(response.responseJSON.errors.section_id);
                     $('#subject_error').text(response.responseJSON.errors.subject_id);
-                    $('#classroom_error').text(response.responseJSON.errors.classroom_id);
-                    $('#teacher_error').text(response.responseJSON.errors.teacher_id);
-                    $('#day_error').text(response.responseJSON.errors.day_id);
-                    $('#starttime_error').text(response.responseJSON.errors.start_time);
-                    $('#endtime_error').text(response.responseJSON.errors.end_time);
+                    $('#start_date_error').text(response.responseJSON.errors.start_date);
+                    $('#end_date_error').text(response.responseJSON.errors.end_date);
+                    $('#description_error').text(response.responseJSON.errors.description);
                 }
             });
         });
@@ -243,40 +228,35 @@
 
             if (confirm('Are you sure you want to delete?')) {
                 var deleteId = $(this).data('id');
-                // console.log(deleteId);
                 $.ajax({
-                    url: "{{ route('backend.delete-class-routine') }}",
+                    url: "{{ route('backend.delete-student-homework') }}",
                     type: "POST",
                     data: {
                         'delete_id': deleteId,
+                        '_token': '{{ csrf_token() }}',
                     },
-                    headers: {
-                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                    },
-                    dataType: 'html',
                     success: function(response) {
-                        // console.log(deleteId);
                         $('.row_' + deleteId).remove();
                     }
                 });
             }
         });
 
-        $(document).delegate('.routine_edit', 'click', function(e) {
+        $(document).delegate('.homework_edit', 'click', function(e) {
             e.preventDefault();
 
-            var routineId = $(this).data('id');
-            console.log(routineId);
+            var homeworkId = $(this).data('id');
+            console.log(homeworkId);
 
             $.ajax({
-                url: "{{ route('backend.edit-class-routine') }}",
+                url: "{{ route('backend.edit-student-homework') }}",
                 type: "get",
                 data: {
-                    routine_id: routineId
+                    homework_id: homeworkId
                 },
                 success: function(response) {
-                    $('.showRoutineInfo').html(response);
-                    $('#updateRoutineModal').modal('show');
+                    $('.show_homework_info').html(response);
+                    $('#updateHomeWorkModal').modal('show');
                 }
             });
 
@@ -317,19 +297,16 @@
             var class_id = $('#getSection').val();
             var section_id = $('#getInfo').val();
             $.ajax({
-                url: "{{ route('backend.homework-save') }}",
+                url: "{{ route('backend.show-student-homework') }}",
                 type: "POST",
                 data: {
                     'class_id': class_id,
                     'section_id': section_id,
+                    '_token': '{{ csrf_token() }}',
                 },
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                },
-                dataType: 'html',
                 success: function(response) {
-                    $('.show_class_routine').html(response);
-                }
+                    $('.show_student_homework').html(response);
+                },
             });
         });
 
@@ -367,52 +344,34 @@
             });
         }
 
-        function manage_ajax_create_routine(param) {
-            var fromData = new FormData(document.getElementById("routineFrom"));
+        function manage_ajax_create_homework(param) {
+            var serialize = $("#homeworkFrom").serialize() + '&_token=' + '{{ csrf_token() }}';
             $.ajax({
-                url: "{{ route('backend.save-class-routine') }}",
+                url: "{{ route('backend.homework-save') }}",
                 type: "POST",
-                data: fromData,
-                cache: false,
-                contentType: false,
-                processData: false,
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                },
+                data: serialize,
                 success: function(response) {
 
-                    if (response.error == true) {
-                        if (confirm(response.msg)) {
-                            routine_overwrite_check(response.data);
-                        }
-                    } else {
-                        if (param == 1) {
-                            $('#createRoutineModal').modal("hide");
-                        }
-
-                        $('.subject').val('');
-                        $('.day').val('');
-                        $('.start_time').val('');
-                        $('.end_time').val('');
-
-                        $('.show_class_routine').html(response.data);
-
-                        iziToast.success({
-                            message: 'Successfully inserted recorded!',
-                            position: 'topRight', // bottomRight, bottomLeft, topRight, topLeft, topCenter, bottomCenter
-                        })
+                    if (param == 1) {
+                        $('#createHomeWorkModal').modal('hide');
                     }
+
+                    $('.show_student_homework').html(response);
+                    iziToast.success({
+                        message: 'Successfully inserted recorded!',
+                        position: 'topRight',
+                    })
 
                 },
                 error: function(response) {
-                    $('#class_error').text(response.responseJSON.errors.class_id);
-                    $('#section_error').text(response.responseJSON.errors.section_id);
-                    $('#subject_error').text(response.responseJSON.errors.subject_id);
-                    $('#classroom_error').text(response.responseJSON.errors.classroom_id);
-                    $('#teacher_error').text(response.responseJSON.errors.teacher_id);
-                    $('#day_error').text(response.responseJSON.errors.day_id);
-                    $('#starttime_error').text(response.responseJSON.errors.start_time);
-                    $('#endtime_error').text(response.responseJSON.errors.end_time);
+                    $('.title_error').text(response.responseJSON.errors.title);
+                    $('.teacher_error').text(response.responseJSON.errors.teacher_id);
+                    $('.class_error').text(response.responseJSON.errors.class_id);
+                    $('.section_error').text(response.responseJSON.errors.section_id);
+                    $('.subject_error').text(response.responseJSON.errors.subject_id);
+                    $('.start_date_error').text(response.responseJSON.errors.start_date);
+                    $('.end_date_error').text(response.responseJSON.errors.end_date);
+                    $('.description_error').text(response.responseJSON.errors.description);
                 }
             });
         }

@@ -47,7 +47,7 @@
                 <select name="teacher_id" class="form-control">
                     <option value="">Select Teacher</option>
                     @foreach($teachers as $teacher)
-                        <option value="{{ $teacher->id }}">{{ $teacher->trainer_name }}</option>
+                        <option value="{{ $teacher->id }}">{{ $teacher->name }}</option>
                     @endforeach
                 </select>
                 @error('teacher_id')

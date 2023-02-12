@@ -9,6 +9,8 @@ class Classteacher extends Model
 {
     use HasFactory;
 
+    protected $fillable = ['class_id','section_id','teacher_id'];
+
     public function class(){
         return $this->belongsTo(ClassModal::class,'class_id');
     }

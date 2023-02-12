@@ -52,9 +52,7 @@
             </div>
 
             <div class="col-md-2 show_button" style="display:none">
-
                 <button type="button" class="btn btn-primary get_student_mark">Load Data</button>
-
             </div>
 
         </div>

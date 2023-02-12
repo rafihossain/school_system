@@ -81,8 +81,15 @@ class BackendController extends Controller
         $feetypes = FeeType::get();
         $sessions = SessionModel::get();
 
+        $students = User::where('user_role', 4)->count();
+        $parents = User::where('user_role', 5)->count();
+        $staff = User::where('user_role', 7)->count();
+        $operators = User::where('user_role', 8)->count();
+
+
         return view('backend.index',
-            compact('classes', 'departments', 'sections', 'subjects', 'classrooms', 'teachers', 'exam_lists', 'feetypes', 'sessions'),
+            compact('classes', 'departments', 'sections', 'subjects', 'classrooms',
+             'teachers', 'exam_lists', 'feetypes', 'sessions', 'students', 'parents', 'staff', 'operators'),
         );
     }
     public function add_user_modal()

@@ -3,12 +3,11 @@
     <div class="h-100" data-simplebar> 
         <!-- User box -->
         <div class="user-box text-center">
-            <p>{{ Auth::user()->name }}</p>
-            <p>{{ Session::get('role_name'); }}</p>
+            <p>{{-- Session::get('role_name'); --}}</p>
         </div>
 
         <!--- Sidemenu -->
-        <div id="sidebar-menu"> 
+        <div id="sidebar-menu">
             <ul id="side-menu">
                 
                 @if(Auth::user()->user_role == 1) 

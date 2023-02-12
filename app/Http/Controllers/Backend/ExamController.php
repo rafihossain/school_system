@@ -169,7 +169,8 @@ class ExamController extends Controller
     {
         $exam_id = $request->exam_id;
 
-        $exam_schedule = ExamSchedule::with('exam_list', 'class', 'section', 'class_room', 'subject')->where('exam_id', $exam_id)->get();
+        $exam_schedule = ExamSchedule::with('exam_list', 'class', 'section', 'class_room', 'subject')
+        ->where('exam_id', $exam_id)->get();
 
         if (is_object(@$exam_schedule) && @$exam_schedule->count() > 0) {
             $unique = collect($exam_schedule)->map(fn ($i) => $i->class_id)->unique()->sort();
@@ -254,8 +255,9 @@ class ExamController extends Controller
             $q->where('subject_id', $subject_id)->where('exam_id', $exam_id);
         }])->where('class_id', $class_id)->where('section_id', $section_id)->get();
 
+        // dd($stdent_marks);
+
         $get_student_subject = Subject::where('class_id', $class_id)->where('id', $subject_id)->get();
-        //dd($get_student_subject);
         $html = '';
         if (!$get_student_subject->isEmpty()) {
             if (count($stdent_marks) > 0) {
@@ -286,9 +288,13 @@ class ExamController extends Controller
         $subject_id = $request->subject_id;
         $student_ids = $request->student_id;
 
-        //dd($request->all());
+        // dd($request->all());
+
         foreach ($student_ids as $key => $studentId) {
-            $check = StudentMark::where('student_id', $studentId)->where('exam_id', $exam_id[$key])->where('subject_id', $subject_id[$key])->get();
+            $check = StudentMark::where('student_id', $studentId)
+            ->where('exam_id', $exam_id[$key])
+            ->where('subject_id', $subject_id[$key])
+            ->get();
 
             if ($check->isEmpty()) {
 
@@ -299,7 +305,11 @@ class ExamController extends Controller
                     'mark' => $marks[$key]
                 ]);
             } else {
-                DB::table('student_marks')->where('student_id', $studentId)->where('exam_id', $exam_id[$key])->where('subject_id', $subject_id[$key])->update(['mark' => $marks[$key]]);
+                DB::table('student_marks')
+                ->where('student_id', $studentId)
+                ->where('exam_id', $exam_id[$key])
+                ->where('subject_id', $subject_id[$key])
+                ->update(['mark' => $marks[$key]]);
             }
         }
 
@@ -391,13 +401,15 @@ class ExamController extends Controller
         $section_id = $request->section_id;
 
         $students = Student::with('getSubject', 'getStudent')
-                            ->with(['studentMark_new' => function ($q) use ($exam_id) {
-                                $q->where('exam_id', $exam_id)->orderBy('subject_id', 'asc');
-                            }])
-                            ->where('class_id', $class_id)
-                            ->where('section_id', $section_id)
-                            ->get()
-                            ->toArray();
+                    ->with(['studentMark_new' => function ($q) use ($exam_id) {
+                        $q->where('exam_id', $exam_id)->orderBy('subject_id', 'asc');
+                    }])
+                    ->where('class_id', $class_id)
+                    ->where('section_id', $section_id)
+                    ->get()
+                    ->toArray();
+        
+        // dd($students);
 
         $get_student_subject = Subject::where('class_id', $request->class_id)
                                         ->orderBy('id', 'asc')

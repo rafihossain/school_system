@@ -39,31 +39,35 @@
                                     <div class="form-group mb-3 row">
                                         <label for="name" class="form-label col-md-3 col-form-label">App Name</label>
                                         <div class="col-md-9">
-                                            <input type="text" name="name" placeholder="Name" class="form-control" value="{{ $setting_basic->name }}">
+                                            <input type="text" name="name" placeholder="Name" class="form-control" 
+                                            value="{{ $setting_basic->name }}">
                                         </div>
                                     </div>
                                     <div class="form-group mb-3 row">
                                         <label for="name" class="form-label col-md-3 col-form-label">App Short Name</label>
                                         <div class="col-md-9">
-                                            <input type="text" name="short_name" placeholder="short_name" class="form-control" value="{{ $setting_basic->short_name }}">
+                                            <input type="text" name="short_name" placeholder="short_name" class="form-control" 
+                                            value="{{ $setting_basic->short_name }}">
                                         </div>
                                     </div>
                                     <div class="form-group mb-3 row">
                                         <label for="email" class="form-label col-md-3 col-form-label">Email</label>
                                         <div class="col-md-9">
-                                            <input type="text" placeholder="Email" name="email" class="form-control" value="{{ $setting_basic->short_name }}">
+                                            <input type="email" placeholder="Email" name="email" class="form-control" 
+                                            value="{{ $setting_basic->email }}">
                                         </div>
                                     </div>
                                     <div class="form-group mb-3 row">
                                         <label for="phone" class="form-label col-md-3 col-form-label">Phone</label>
                                         <div class="col-md-9">
-                                            <input type="text" placeholder="Phone" name="phone" class="form-control" value="{{ $setting_basic->short_name }}">
+                                            <input type="text" placeholder="Phone" name="phone" class="form-control" 
+                                            value="{{ $setting_basic->phone }}">
                                         </div>
                                     </div>
                                     <div class="form-group mb-3 row">
                                         <label for="email" class="form-label col-md-3 col-form-label">Address</label>
                                         <div class="col-md-9">
-                                            <textarea rows="8" name="adddress" class="form-control">{{ $setting_basic->short_name }}</textarea>
+                                            <textarea rows="8" name="adddress" class="form-control">{{ $setting_basic->adddress }}</textarea>
                                         </div>
                                     </div>
                                 </div>
@@ -100,7 +104,6 @@
                         <form action="{{ route('backend.system-form-serialize') }}" method="POST" enctype="multipart/form-data">
                             @csrf
                             <input type="hidden" name="id" value="{{ $system_system->id }}">
-
                             
                             <div class="card">
                                 <div class="card-header"> 

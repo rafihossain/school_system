@@ -5,9 +5,9 @@
                 <tr>
                     <th>NAME</th>
                     <th>ROLL NO</th>
-                    @foreach($get_student_subject as $row)
-                    <th>{{$row['subject_name']}}</th>
-                    @endforeach
+                        @foreach($get_student_subject as $row)
+                            <th>{{$row['subject_name']}}</th>
+                        @endforeach
                     <th>GPA</th>
                     <th>STATUS</th>
                 </tr>
@@ -21,7 +21,8 @@
                 <tr>
                     <td>{{$student['get_student']['name']}}</td>
                     <td>{{$student['roll_no']}}</td>
-                    @foreach($get_student_subject as $key=>$row)
+
+                    @foreach($get_student_subject as $key=> $row)
                         @if(isset($student['student_mark_new'][$key])) 
                             <td>
                                 @foreach($result_rules as $result_rule)   
@@ -39,19 +40,17 @@
                         @else
                              <td>0</td>
                         @endif
-
                     @endforeach
 
                     <td>
                        @if($pass_fail_flag == 0)
                             @php
-                            $average=$gpa/count($get_student_subject)
+                                $average=$gpa/count($get_student_subject)
                             @endphp       
                             <span>{{number_format((float)$average, 2, '.', '')}} </span>    
                         @else
                             <span>0</span> 
                         @endif
-
                     </td>
                     <td>
                         @if($pass_fail_flag == 0)

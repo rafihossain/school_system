@@ -1,8 +1,6 @@
 @extends('backend.layouts.app')
 @section('title', 'Add Fee')
 
- 
-
 @section('content')
  
 <div class="card">
@@ -44,7 +42,7 @@
                     <div class="col-md-6">
                         <div class="mb-2">
                             <label class="form-label">Class</label>
-                            <select name="class_id" id="getSection" class="form-control">
+                            <select name="class_id" id="class_id" class="form-control">
                                 <option value="">Select Class</option>
                                 @foreach($classes as $class)
                                 <option value="{{ $class->id }}">{{ $class->class_name }}</option>
@@ -58,7 +56,7 @@
                     <div class="col-md-6">
                         <div class="mb-2">
                             <label class="form-label">Section</label>
-                            <select name="section_id" id="getSubject" class="form-control">
+                            <select name="section_id" id="section_id" class="form-control">
                                 <option value="">Select Section</option>
                             </select>
                             @error('section_id')
@@ -69,7 +67,7 @@
                 </div>
                 <div class="mb-2 show_subject d-none">
                     <label class="form-label">Subject</label>
-                    <select name="subject_id" id="subjectInfo" class="form-control">
+                    <select name="subject_id" id="subject_id" class="form-control">
                         <option value="">Select Subject</option>
                     </select>
                     @error('section_id')
@@ -138,49 +136,65 @@
 <script type="text/javascript">
     $(function() {
 
-        $('#getSection').on("change", function() {
+        $('#class_id').on('change', function(e) {
+            var class_id = $(this).val();
             $.ajax({
-                url: "{{ route('backend.get-section-info') }}",
-                type: "POST",
+                url: "{{route('backend.get_section_subject')}}",
+                type: 'GET',
                 data: {
-                    'section_id': $(this).val(),
-                    '_token': '{{ csrf_token() }}',
+                    'class_id': class_id
                 },
-                dataType: 'json',
-                success: function(response) {
-
-                    var sections = '';
-                    sections = '<option value="" >Select Section</option>';
-                    for (var i = 0; i < response.length; i++) {
-                        sections += '<option value="' + response[i].id + '" >' + response[i].section_name + '</option>';
-                    }
-                    $('#getSubject').html(sections);
+                success: function(data) {
+                    $("#section_id").html(data['sectons']);
+                    $("#subject_id").html(data['subjects']);
 
                 }
-            });
+            })
         });
 
-        $(document).delegate('#getSubject', 'change', function(e) {
-            $.ajax({
-                url: "{{ route('backend.get-subject-info') }}",
-                type: "POST",
-                data: {
-                    'subject_id': $(this).val(),
-                    '_token': '{{ csrf_token() }}',
-                },
-                dataType: 'json',
-                success: function(response) {
+        // $('#getSection').on("change", function() {
+        //     $.ajax({
+        //         url: "{{ route('backend.get-section-info') }}",
+        //         type: "POST",
+        //         data: {
+        //             'section_id': $(this).val(),
+        //             '_token': '{{ csrf_token() }}',
+        //         },
+        //         dataType: 'json',
+        //         success: function(response) {
 
-                    var subject = '';
-                    subjects = '<option value="" >Select Subject</option>';
-                    for (var i = 0; i < response.length; i++) {
-                        subjects += '<option value="' + response[i].id + '" >' + response[i].subject_name + '</option>';
-                    }
-                    $('#subjectInfo').html(subjects);
+        //             var sections = '';
+        //             sections = '<option value="" >Select Section</option>';
+        //             for (var i = 0; i < response.length; i++) {
+        //                 sections += '<option value="' + response[i].id + '" >' + response[i].section_name + '</option>';
+        //             }
+        //             $('#getSubject').html(sections);
 
-                }
-            });
-        });
+        //         }
+        //     });
+        // });
+
+        // $(document).delegate('#getSubject', 'change', function(e) {
+        //     $.ajax({
+        //         url: "{{ route('backend.get-subject-info') }}",
+        //         type: "POST",
+        //         data: {
+        //             'subject_id': $(this).val(),
+        //             '_token': '{{ csrf_token() }}',
+        //         },
+        //         dataType: 'json',
+        //         success: function(response) {
+
+        //             var subject = '';
+        //             subjects = '<option value="" >Select Subject</option>';
+        //             for (var i = 0; i < response.length; i++) {
+        //                 subjects += '<option value="' + response[i].id + '" >' + response[i].subject_name + '</option>';
+        //             }
+        //             $('#subjectInfo').html(subjects);
+
+        //         }
+        //     });
+        // });
 
         $('.invoice_type').on("change", function() {
 

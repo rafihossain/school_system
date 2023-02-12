@@ -324,7 +324,6 @@ class SettingController extends Controller
     //class
     public function manage_class(){
         $classes = ClassModal::with('session')->get();
-        dd($classes);
         return view('backend.settings.class.manage_class', [
             'classes' => $classes
         ]);
@@ -618,7 +617,8 @@ class SettingController extends Controller
         echo json_encode($sections);
     }
     public function get_subject_info(Request $request){
-        $subjects = Subject::where('section_id', $request->subject_id)->get();
+        // $subjects = Subject::where('section_id', $request->subject_id)->get();
+        $subjects = Subject::where('class_id', $request->subject_id)->get();
         // dd($subjects);
         echo json_encode($subjects);
     }
@@ -717,7 +717,7 @@ class SettingController extends Controller
     public function add_class_teacher(){
         $classes = ClassModal::get();
         $sections = Section::get();
-        $teachers = Teacher::get();
+        $teachers = User::where('user_role', 6)->get();
         // dd($subjects);
         return view('backend.settings.class_teacher.add_teacher_class', [
             'classes' => $classes,
@@ -733,15 +733,11 @@ class SettingController extends Controller
             'teacher_id' => 'required',
         ]);
 
-        // dd($_POST);
-        
-        $classteacher = new Classteacher();
-        $classteacher->class_id = $request->class_id;
-        $classteacher->section_id = $request->section_id;
-        $classteacher->teacher_id = $request->teacher_id;
-        $classteacher->save();
+        $data = $request->except('_token');
+        Classteacher::create($data);
 
-        return redirect()->route('backend.manage-class-teacher')->with('success', 'Teacher class has been added successfully !!');
+        return redirect()->route('backend.manage-class-teacher')
+        ->with('success', 'Teacher class has been added successfully !!');
     }
     public function edit_class_teacher($id){
 
@@ -1212,9 +1208,12 @@ class SettingController extends Controller
 
     public function homeWorkSave(Request $request)
     {
+        // dd(15);
+
         $this->homeworkValidation($request);
         $data = $request->except('_token');
         HomeworkModel::create($data);
+
         $homeworks = $this->homework_autoload($request);
         return view('backend.settings.homework.show_homework_response', [
             'homeworks' => $homeworks,

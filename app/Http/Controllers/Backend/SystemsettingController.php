@@ -16,6 +16,8 @@ class SystemsettingController extends Controller
     //system_setting_list
     public function system_setting_list(){
         $setting_basic = DB::table('setting_basics')->first();
+        // dd($setting_basic);
+
         $system_system = DB::table('system_systems')->first();
         // $system_theme = DB::table('system_themes')->first();
 
@@ -25,7 +27,8 @@ class SystemsettingController extends Controller
         $razorpay = DB::table('payment_settings')->where('payment_status', 3)->first();
         $paystack = DB::table('payment_settings')->where('payment_status', 4)->first();
 
-        // dd($system_theme);
+        // dd($paypal);
+
 
         return view('backend.system-setting.system_setting', [
             'setting_basic' => $setting_basic,
@@ -69,7 +72,7 @@ class SystemsettingController extends Controller
     }
 
     public function basic_form_serialize(Request $request){
-
+        // dd($_POST);
         // $request->validate([
         //     'department_name' => 'required|unique:departments,department_name',
         //     'description' => 'required',
