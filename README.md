@@ -9,7 +9,7 @@ Technology Used:<br>
 	Laravel, PHP, MySQl, Html, Css, JavaScript, Bootstrap And Jquery.</p>
 
 <h3>Project Screenshot</h3>
-<img src="assets/images/school_system_image.png" alt=""><br><br>
+<img src="img/school_system_image.png" alt=""><br><br>
 <h3>Installation</h3>
 
 Clone the repo git clone https://github.com/rafihossain/school_system.git
