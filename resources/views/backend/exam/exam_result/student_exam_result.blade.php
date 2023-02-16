@@ -27,25 +27,28 @@
                             <td>
                                 @foreach($result_rules as $result_rule)   
                                    @if(($student['student_mark_new'][$key]['mark'] >= $result_rule->min_mark) && ($student['student_mark_new'][$key]['mark'] <= $result_rule->max_mark))
+                                    
                                     {{$result_rule->name}}
+                                    
                                     @php
                                      if($result_rule->name == 'F'){
-                                            $pass_fail_flag=1;
+                                        $pass_fail_flag=1;
                                       }   
-                                     $gpa=$gpa+$result_rule->gpa;
+                                    $gpa = $gpa+$result_rule->gpa;
                                     @endphp
+
                                    @endif              
                                 @endforeach 
                             </td>    
                         @else
-                             <td>0</td>
+                            <td>0</td>
                         @endif
                     @endforeach
 
                     <td>
                        @if($pass_fail_flag == 0)
                             @php
-                                $average=$gpa/count($get_student_subject)
+                                $average = $gpa/count($get_student_subject)
                             @endphp       
                             <span>{{number_format((float)$average, 2, '.', '')}} </span>    
                         @else
@@ -54,7 +57,11 @@
                     </td>
                     <td>
                         @if($pass_fail_flag == 0)
-                            <span class="badge bg-success">PASS</span>     
+                            @if($gpa==0)
+                                <span class="badge bg-warning">Absent</span>
+                            @else
+                                <span class="badge bg-success">PASS</span>
+                            @endif
                         @else
                             <span class="badge bg-danger">FAILED</span> 
                         @endif

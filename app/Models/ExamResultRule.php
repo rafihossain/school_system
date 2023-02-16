@@ -9,5 +9,12 @@ class ExamResultRule extends Model
 {
     use HasFactory;
     protected $table = "exam_result_rules";
-    protected $fillable = ['name','gpa','min_mark','max_mark'];
+    protected $fillable = ['class_id','name','gpa','min_mark','max_mark'];
+
+    public function class()
+    {
+        return $this->belongsTo(ClassModal::class,'class_id','id');
+    }
+
+
 }

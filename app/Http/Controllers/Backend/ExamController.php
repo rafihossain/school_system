@@ -14,12 +14,21 @@ use App\Models\ExamSchedule;
 use App\Models\StudentMark;
 use App\Models\ExamResultRule;
 use App\Models\SessionModel;
+use App\Models\Subjectclass;
 use Illuminate\Support\Facades\Session;
 use DataTables;
 use DB;
 
 class ExamController extends Controller
 {
+
+    protected $Student;
+
+    public function __construct()
+    {
+        $this->Student = 'App\Models\Student'.Session::get('session_name');
+    }
+
     public function examValidation($request)
     {
         $request->validate([
@@ -251,34 +260,44 @@ class ExamController extends Controller
         $section_id = $request->section_id;
         $subject_id = $request->subject_id;
 
-        $stdent_marks = Student::with('getStudent', 'class', 'section')->with(['student_mark' => function ($q) use ($subject_id, $exam_id) {
+        $get_student_subject = Subject::where('class_id', $class_id)->where('id', $subject_id)->get();
+
+        $stdent_marks = $this->Student::with('getStudent', 'class', 'section')
+        ->with(['student_mark' => function ($q) use ($subject_id, $exam_id) {
             $q->where('subject_id', $subject_id)->where('exam_id', $exam_id);
         }])->where('class_id', $class_id)->where('section_id', $section_id)->get();
 
-        // dd($stdent_marks);
-
-        $get_student_subject = Subject::where('class_id', $class_id)->where('id', $subject_id)->get();
-        $html = '';
-        if (!$get_student_subject->isEmpty()) {
-            if (count($stdent_marks) > 0) {
-                $html .= '<div class="card mt-3"><div class="card-header border-bottom bg-white pb-0 ps-2"></div><div class="card-body p-0"><form id="save_student_mark"><table class="table"><thead class="bg-light"><tr><th>Name</th><th>Roll</th><th>Class</th><th>Section</th><th>Mark</th></tr></thead><tbody>';
-                $marks = '';
-                foreach ($stdent_marks as $n => $stdent_mark) :
-                    if ($stdent_mark->student_mark != null) {
-                        $marks = $stdent_mark->student_mark->mark;
-                    }
-
-                    $html .= '<tr><td>' . $stdent_mark->getStudent->name . '</td><td>' . $stdent_mark->roll_no . '</td><td>' . $stdent_mark->class->class_name . '</td><td>' . $stdent_mark->section->section_name . '</td><td>' . '<input type="number" name="mark[]" class="form-control" value="' . $marks . '"><input type="hidden" name="exam_id[]" class="form-control" value="' . $exam_id . '"><input type="hidden" name="subject_id[]" class="form-control" value="' . $subject_id . '"><input type="hidden" name="student_id[]" class="form-control" value="' . $stdent_mark->user_id . '">' . '</td></tr>';
-                endforeach;
-
-                $html .= '</tbody></table></form><button type="button" class="btn btn-primary m-2 save_student_mark">Save Mark</button></div></div>';
-                return $html;
-            } else {
-                echo '<span class="text-danger"> No data found </span>';
-            }
-        } else {
-            echo '<span class="text-danger"> No data found </span>';
+        foreach($stdent_marks as $key => $stdent_mark){
+            $stdent_marks[$key]->stubjectclass = Subjectclass::where(['class_id'=>$class_id,'subject_id'=>$subject_id])->first();
         }
+
+        // dd($stdent_marks);
+        return view('backend.exam.mark.response_marklist', compact('stdent_marks','get_student_subject','exam_id','class_id','subject_id'));
+    }
+
+
+    protected function student_mark_data_reuse($request, $studentmark, $key){
+        $theory_mark = 0;
+        if(isset($request->theory_mark[$key]) !=''){
+            $studentmark->theory_mark = $request->theory_mark[$key];
+            $theory_mark = $request->theory_mark[$key];
+        }
+        $practical_mark = 0;
+        if(isset($request->practical_mark[$key]) !=''){
+            $studentmark->practical_mark = $request->practical_mark[$key];
+            $practical_mark = $request->practical_mark[$key];
+        }
+        $city_exam_mark = 0;
+        if(isset($request->city_exam_mark[$key]) !=''){
+            $studentmark->city_exam_mark = $request->city_exam_mark[$key];
+            $city_exam_mark = $request->city_exam_mark[$key];
+        }
+        $diary = 0;
+        if(isset($request->diary[$key]) !=''){
+            $studentmark->diary = $request->diary[$key];
+            $diary = $request->diary[$key];
+        }
+        $studentmark->mark = $theory_mark+$practical_mark+$city_exam_mark+$diary;
     }
 
     public function save_student_mark(Request $request)
@@ -288,8 +307,6 @@ class ExamController extends Controller
         $subject_id = $request->subject_id;
         $student_ids = $request->student_id;
 
-        // dd($request->all());
-
         foreach ($student_ids as $key => $studentId) {
             $check = StudentMark::where('student_id', $studentId)
             ->where('exam_id', $exam_id[$key])
@@ -297,19 +314,27 @@ class ExamController extends Controller
             ->get();
 
             if ($check->isEmpty()) {
+                
+                // dd($_POST);
 
-                StudentMark::create([
-                    'student_id' => $studentId,
-                    'exam_id' => $exam_id[$key],
-                    'subject_id' => $subject_id[$key],
-                    'mark' => $marks[$key]
-                ]);
+                $studentmark = new StudentMark();
+                $studentmark->student_id = $studentId;
+                $studentmark->exam_id = $exam_id[$key];
+                $studentmark->subject_id = $subject_id[$key];
+
+                $this->student_mark_data_reuse($request, $studentmark, $key);
+                $studentmark->save();
+
             } else {
-                DB::table('student_marks')
-                ->where('student_id', $studentId)
-                ->where('exam_id', $exam_id[$key])
-                ->where('subject_id', $subject_id[$key])
-                ->update(['mark' => $marks[$key]]);
+                // dd($_POST);
+
+                $studentmark = StudentMark::where('student_id', $studentId)
+                            ->where('exam_id', $exam_id[$key])
+                            ->where('subject_id', $subject_id[$key])
+                            ->first();
+                
+                $this->student_mark_data_reuse($request, $studentmark, $key);
+                $studentmark->save();
             }
         }
 
@@ -321,8 +346,13 @@ class ExamController extends Controller
     //Result Rule-------------------
     public function resultRuleIndex(Request $request)
     {
+        $classes = ClassModal::all();
+
         if ($request->ajax()) {
-            $exam_result_rule = ExamResultRule::all();
+            $exam_result_rule = ExamResultRule::with('class')->get();
+            // dd($exam_result_rule);
+
+
             return Datatables::of($exam_result_rule)->addIndexColumn()
                 ->addColumn('action', function ($row) {
 
@@ -333,7 +363,7 @@ class ExamController extends Controller
                 ->rawColumns(['action'])
                 ->make(true);
         }
-        return view('backend.exam.resultRule.index');
+        return view('backend.exam.resultRule.index', compact('classes'));
     }
 
     public function examResultRuleValidation($request)
@@ -400,7 +430,7 @@ class ExamController extends Controller
         $class_id = $request->class_id;
         $section_id = $request->section_id;
 
-        $students = Student::with('getSubject', 'getStudent')
+        $students = $this->Student::with('getSubject', 'getStudent')
                     ->with(['studentMark_new' => function ($q) use ($exam_id) {
                         $q->where('exam_id', $exam_id)->orderBy('subject_id', 'asc');
                     }])
@@ -419,7 +449,6 @@ class ExamController extends Controller
 
         return view('backend.exam.exam_result.student_exam_result', compact('get_student_subject', 'students', 'result_rules'));
     }
-
 
     public function examPromotion()
     {

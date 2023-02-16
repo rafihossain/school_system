@@ -12,9 +12,16 @@ use App\Models\TeacherAdditionalInfo;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Session;
 
 class AttendenceController extends Controller
 {
+    protected $Student;
+    public function __construct()
+    {
+        $this->Student = 'App\Models\Student'.Session::get('session_name');
+    }
+
     public function studentAttendence()
     {
         $classes = ClassModal::all();
@@ -29,14 +36,16 @@ class AttendenceController extends Controller
         $newDate = date('Y-m-d', strtotime($attendence_date . ' - 6 days'));
         $class_id = $request->class_id;
         $section_id = $request->section_id;
-        $students = Student::with(['student_single_attendence' => function ($q) use ($attendence_date, $newDate) {
+
+        $students = $this->Student::with(['student_single_attendence' => function ($q) use ($attendence_date, $newDate) {
             $q->where('attendence_date', $attendence_date);
         }])->with(['student_attendence' => function ($q) use ($attendence_date, $newDate) {
             $q->where('attendence_date', '<=', $attendence_date)->where('attendence_date', '>=', $newDate)->orderBy('attendence_date', 'asc');
         }])->where(['class_id' => $class_id, 'section_id' => $section_id])->get();
         
         // dd($students);
-        
+
+
         return view('backend.attendence.student.student_attendence_list_data', compact('students', 'attendence_date'));
     }
 

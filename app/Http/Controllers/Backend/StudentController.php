@@ -15,22 +15,31 @@ use App\Models\StudentBasicInfo;
 use App\Models\StudentAdditionalInfo;
 use App\Models\StudentDocumentChecklist;
 use App\Models\Department;
-use DB;
+use App\Models\SessionModel;
+use Illuminate\Support\Facades\DB;
 use File;
 use Image;
 
 use App\Traits\UserRollPermissionTrait;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
+
+use function PHPUnit\Framework\isEmpty;
 
 class StudentController extends Controller
 {
     use UserRollPermissionTrait;
 
+    protected $Student;
+    protected $student;
+
     public function __construct()
     {
-        $this->module_name = 'users';
+        $this->Student = 'App\Models\Student'.Session::get('session_name');
+        $this->student = 'students_'.Session::get('session_name');
     }
+
     public function studentValidation($request)
     {
         $request->validate([
@@ -51,26 +60,29 @@ class StudentController extends Controller
     {
         //$students=User::where('user_role',5)->get(); 
         if (request()->ajax()) {
-            $query = DB::table('students')
-                ->leftJoin('users', 'students.user_id', 'users.id')
-                ->leftJoin('classes', 'students.class_id', 'classes.id')
-                ->leftJoin('sections', 'students.section_id', 'sections.id')
+            $query = DB::table($this->student)
+                ->leftJoin('users', $this->student.'.user_id', 'users.id')
+                ->leftJoin('classes', $this->student.'.class_id', 'classes.id')
+                ->leftJoin('sections', $this->student.'.section_id', 'sections.id')
                 ->where('users.user_role', 5);
 
             if ($request->department_id) {
-                $query->where('students.department_id', $request->department_id);
+                $query->where($this->student.'.department_id', $request->department_id);
             }
             if ($request->class_id) {
-                $query->where('students.class_id', $request->class_id);
+                $query->where($this->student.'.class_id', $request->class_id);
             }
             if ($request->section_id) {
-                $query->where('students.section_id', $request->section_id);
+                $query->where($this->student.'.section_id', $request->section_id);
             }
             if (($request->department_id != '') && ($request->class_id != '')) {
-                $query->where('students.department_id', $request->department_id)->where('students.class_id', $request->class_id);
+                $query->where($this->student.'.department_id', $request->department_id)
+                ->where($this->student.'.class_id', $request->class_id);
             }
             if (($request->department_id != '') && ($request->class_id != '') && ($request->section_id != '')) {
-                $query->where('students.department_id', $request->department_id)->where('students.class_id', $request->class_id)->where('students.section_id', $request->section_id);
+                $query->where($this->student.'.department_id', $request->department_id)
+                ->where($this->student.'.class_id', $request->class_id)
+                ->where($this->student.'.section_id', $request->section_id);
             }
 
             $students = $query->get();
@@ -177,7 +189,7 @@ class StudentController extends Controller
 
     public function editStudent($id)
     {
-        $student = Student::with('getStudent','getParent', 'getparentBasicInfo')->where('user_id', $id)->first();
+        $student = $this->Student::with('getStudent','getParent', 'getparentBasicInfo')->where('user_id', $id)->first();
         // dd($student);
 
         $StudentAdditionalInfo = StudentAdditionalInfo::where('user_id', $id)->first();
@@ -234,7 +246,7 @@ class StudentController extends Controller
         // dd($_POST);
     
         $student_profile_pic = $request->file('student_profile_pic');
-        $StudentBasicInfo = Student::where('user_id', $request->user_id)->first();
+        $StudentBasicInfo = $this->Student::where('user_id', $request->user_id)->first();
         
         if($student_profile_pic){
             if (isset($StudentBasicInfo->student_profile_pic)) {
@@ -249,7 +261,7 @@ class StudentController extends Controller
         $data = $request->only('b_form','registration','department_id','class_id','section_id','parent_id','guardian_name','guardian_office_address','guardian_office_phone','guardian_mobile_phone','guardian_mobile_whatsapp','guardian_mobile_email');
 
         $data['student_profile_pic'] = (isset($imageUrl)) ? $imageUrl : $StudentBasicInfo->student_profile_pic;
-        Student::where('user_id', $request->user_id)->update($data);
+        $this->Student::where('user_id', $request->user_id)->update($data);
 
         $student = $request->only('name', 'gender', 'date_of_birth');
         User::find($request->user_id)->update($student);
@@ -290,7 +302,7 @@ class StudentController extends Controller
         $user->email = $request->email;
         $user->save();
 
-        $student = Student::where('user_id', $id)->update(['admission_date' => $request->admission_date]);
+        $student = $this->Student::where('user_id', $id)->update(['admission_date' => $request->admission_date]);
 
         $data = $request->except('email', 'admission_date', '_token');
 
@@ -313,26 +325,67 @@ class StudentController extends Controller
         return redirect()->route('backend.student.index')->with('success', 'Successfully Updated');
     }
 
-    //student promotion
-    public function show_promotion_student_list(Request $request)
-    {
-        $students = Student::where([
+    protected function student_promote_reuse($request){
+
+        $students = $this->Student::with('class', 'session')->where([
             'session_id' => $request->session_from,
             'class_id' => $request->class_from,
         ])->get();
+        
+        $session_to = $request->session_to;
+        $class_to = $request->class_to;
 
-        foreach ($students as $student) {
-            $std = Student::find($student->id);
-            $std->session_id = $request->session_to;
-            $std->class_id = $request->class_to;
-            $std->save();
-        }
-
-        $allStudents = Student::with('get_student')->get();
-        // dd($allStudents);
-
-        return view('backend.exam.promotion.student_promotion_result', [
-            'students' => $allStudents
+        return view('backend.exam.promotion.student_promotion_list', [
+            'students' => $students,
+            'session_to' => $session_to,
+            'class_to' => $class_to
         ]);
+    }
+
+    //student promotion
+    public function student_list(Request $request)
+    {
+        return $this->student_promote_reuse($request);
+    }
+    public function promote_student_list(Request $request)
+    {
+        // if(!isEmpty($request->student_id)){
+            
+            $students = $this->Student::whereIn('id',$request->student_id)->get();
+            // dd($students);
+
+            foreach ($students as $student) {
+                $session = SessionModel::find($request->session_to);
+
+                DB::table('students_'.$session->session_name)->insert([
+                    'user_id' => $student->user_id,
+                    'session_id' => $student->session_id,
+                    'section_id' => $student->section_id,
+                    'class_id' => $student->class_id,
+                    'parent_id' => $student->parent_id,
+                    'department_id' => $student->department_id,
+                    'roll_no' => $student->roll_no,
+                    'admission_date' => $student->admission_date,
+                    'b_form' => $student->b_form,
+                    'registration' => $student->registration,
+                    'guardian_name' => $student->guardian_name,
+                    'guardian_office_address' => $student->guardian_office_address,
+                    'guardian_office_phone' => $student->guardian_office_phone,
+                    'guardian_mobile_phone' => $student->guardian_mobile_phone,
+                    'guardian_mobile_whatsapp' => $student->guardian_mobile_whatsapp,
+                    'guardian_mobile_email' => $student->guardian_mobile_email,
+                    'student_profile_pic' => $student->student_profile_pic,
+                ]);
+
+                DB::table('students_'.$session->session_name)
+                ->where('id', $student->id)->update([
+                    'session_id' => $request->session_to,
+                    'class_id' => $request->class_to,
+                ]);
+
+            }
+
+        // }
+        return $this->student_promote_reuse($request);
     }
 }

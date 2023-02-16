@@ -14,11 +14,19 @@ use App\Models\Student;
 use App\Models\User;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Intervention\Image\Facades\Image;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Session;
 
 class AccountController extends Controller
 {
+    protected $students;
+    public function __construct()
+    {
+        $this->students = 'students_'.Session::get('session_name');
+    }
+
     //freetype
     public function manage_feetype(){
         $feetypes = FeeType::get();
@@ -160,13 +168,19 @@ class AccountController extends Controller
         $invoiceType = $request->invoice_type;
         
         if($invoiceType == 1){
-            $students = Student::where(['class_id'=> $request->class_id,'section_id' => $request->section_id])->get();
+            $students = DB::table($this->students)->where([
+                'class_id'=> $request->class_id,
+                'section_id' => $request->section_id
+            ])->get();
             // dd($students);
             foreach($students as $student){
                 $this->feeBasicInfoSave($request, $student);
             }
         }else{
-            $student = Student::where(['class_id'=> $request->class_id,'section_id' => $request->section_id])->first();
+            $student = DB::table($this->students)->where([
+                'class_id'=> $request->class_id,
+                'section_id' => $request->section_id
+            ])->first();
             // dd($student);
             $this->feeBasicInfoSave($request, $student);
         }
@@ -247,7 +261,7 @@ class AccountController extends Controller
                 $action = '<td><a href="'.route('backend.delete-fee', ['id'=>$fee->id]).'" class="btn btn-sm btn-success me-2 mark_paid" data-id="'.$fee->id.'">Mark as Paid</a><a href="'.route('backend.edit-fee', ['id'=>$fee->id]).'" class="btn btn-sm btn-primary me-2 fee_edit" data-id="'.$fee->id.'">Edit</a><a href="javascript:void(0)" id="delete" class="btn btn-sm btn-danger me-2 fee_delete" data-id="'.$fee->id.'">Delete</a></td>';
             }
 
-            $student = Student::where('user_id', $fee->student_id)->first();
+            $student = DB::table($this->students)->where('user_id', $fee->student_id)->first();
             $parent = User::find($student->parent_id);
 
             $html .='<tr class="row_'.$fee->id.'"><td>Student: '.$fee->student->name.' <br> Parent: '.$parent->name.'</td><td>'.$fee->txn_number.'</td><td>'.$fee->amount_due.'</td><td>'.date('F d, Y', strtotime($fee->amount_due)).'</td><td>-</td>'.$action.'</tr>';

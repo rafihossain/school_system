@@ -74,7 +74,7 @@
                 <a href="{{ route('backend.manage-class-routine') }}">Class Routine</a>
             </li>
             <li>
-                <a href="{{ route('backend.manage-subject-class') }}">Associate Subject with Class</a>
+                <a href="{{ route('backend.add-subject-class') }}">Associate Subject with Class</a>
             </li>
             <li>
                 <a href="{{ route('backend.manage-class-teacher') }}">Assign Class Teacher</a>

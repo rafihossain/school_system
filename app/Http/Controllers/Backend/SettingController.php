@@ -15,13 +15,17 @@ use App\Models\Designation;
 use App\Models\HomeworkModel;
 use App\Models\Section;
 use App\Models\SessionModel;
+use App\Models\Student2020;
 use App\Models\Subject;
 use App\Models\Subjectclass;
 use App\Models\Syllabus;
 use App\Models\Teacher;
 use Illuminate\Http\Request;
 use File;
+use Illuminate\Support\Facades\Storage;
 use Image;
+
+use function PHPUnit\Framework\isEmpty;
 
 class SettingController extends Controller
 {
@@ -268,6 +272,24 @@ class SettingController extends Controller
     public function add_session(){
         return view('backend.settings.session.add_session');
     }
+
+    protected function automatic_createmodel_and_database_table($request, $DB_NAME, $MODEL_NAME){
+        DB::statement('CREATE TABLE IF NOT EXISTS '.$DB_NAME.'_'.$request->session_name.' LIKE '.$DB_NAME.'');
+
+        // if(!file_exists($filename)){
+            $myfile = fopen(app_path('Models/' . $MODEL_NAME.$request->session_name.'.php'),"w");
+            $contents = file_get_contents(app_path('Models/' . $MODEL_NAME.'.php'));
+            $table_from = $DB_NAME;
+            $table_to = $DB_NAME.'_'.$request->session_name;
+            $model_from = 'class '.$MODEL_NAME;
+            $model_to = 'class '.$MODEL_NAME.$request->session_name;
+            $replace_contents = str_replace([$table_from, $model_from], [$table_to, $model_to], $contents);
+            fwrite($myfile, $replace_contents);
+            fclose($myfile);
+        // }
+
+    }
+
     public function save_session(Request $request){
 
         $request->validate([
@@ -283,6 +305,11 @@ class SettingController extends Controller
         $session->start_date = $request->start_date;
         $session->end_date = $request->end_date;
         $session->save();
+
+        $this->automatic_createmodel_and_database_table($request, $DB_NAME='students', $MODEL_NAME='Student');
+        $this->automatic_createmodel_and_database_table($request, $DB_NAME='teacher_additional_info', $MODEL_NAME='TeacherAdditionalInfo');
+        $this->automatic_createmodel_and_database_table($request, $DB_NAME='staff_additional_info', $MODEL_NAME='StaffAdditionalInfo');
+
 
         return redirect()->route('backend.manage-session')->with('success', 'Session has been added successfully !!');
     }
@@ -617,20 +644,28 @@ class SettingController extends Controller
         echo json_encode($sections);
     }
     public function get_subject_info(Request $request){
-        // $subjects = Subject::where('section_id', $request->subject_id)->get();
-        $subjects = Subject::where('class_id', $request->subject_id)->get();
-        // dd($subjects);
-        echo json_encode($subjects);
+
+        $subjectclasses = Subjectclass::with('subject')->where('class_id', $request->class_id)->get();
+        if(!$subjectclasses->isEmpty()){
+            return view('backend.settings.subject_class.response_subject_class',[
+                'subjectclasses' => $subjectclasses,
+            ]);
+        }else{
+            return '<span class="text-danger">Not data found!</span>';
+        }
+        
     }
     public function subject_info(Request $request){
 
         // dd($_POST);
+        foreach ($request->subjectclass_id as $key => $subjectclass_id) {
 
-        foreach ($request->subject_name as $key => $subject) {
-            $subject_class = new Subjectclass();
-            $subject_class->subject_name = $subject;
-            $subject_class->section_id = $request->section_id[$key];
-            $subject_class->subject_code = $request->subject_code[$key];
+            $subject_class = Subjectclass::find($subjectclass_id);
+            // dd($subject_class);
+
+            $subject_class->subject_id = $request->subject_id[$key];
+            // $subject_class->class_id = $request->class_id[$key];
+            // $subject_class->section_id = $request->section_id;
             $subject_class->total_mark = $request->total_mark[$key];
             $subject_class->theory_mark = $request->theory_mark[$key];
             $subject_class->practical_mark = $request->practical_mark[$key];
@@ -658,40 +693,30 @@ class SettingController extends Controller
 
         return redirect()->route('backend.manage-subject-class')->with('success', 'Subject class has been added successfully !!');
     }
-    public function edit_subject_class($id){
-        $subject_classes = Subjectclass::where('section_id',$id)->get();
-        // dd($subject_class);
-
+    public function edit_subject_class($class_id, $section_id){
+        $subjectclasses = Subjectclass::where(['class_id'=>$class_id,'section_id'=>$section_id])->get();
         return view('backend.settings.subject_class.edit_subject_class', [
-            'subject_classes' => $subject_classes,
+            'subjectclasses' => $subjectclasses,
         ]);
     }
     public function update_subject_class(Request $request){
+        
         // dd($_POST);
 
         foreach ($request->subject_name as $key => $subject) {
-            // dd($request->section_id[$key]);
 
-            $subjectclass = Subjectclass::where('section_id',$request->section_id[$key])->first();
-            if ($subjectclass != null) {
-                $subjectclass->delete();
-            }
+            $subjectclass = Subjectclass::find($request->id[$key]);
+            $subjectclass->subject_name = $subject;
+            $subjectclass->subject_code = $request->subject_code[$key];
+            $subjectclass->total_mark = $request->total_mark[$key];
+            $subjectclass->theory_mark = $request->theory_mark[$key];
+            $subjectclass->practical_mark = $request->practical_mark[$key];
+            $subjectclass->city_exam_mark = $request->city_exam_mark[$key];
+            $subjectclass->diary = $request->diary[$key];
 
-            $subject_class = new Subjectclass();
-            $subject_class->subject_name = $subject;
-            $subject_class->section_id = $request->section_id[$key];
-            $subject_class->subject_code = $request->subject_code[$key];
-            $subject_class->total_mark = $request->total_mark[$key];
-            $subject_class->theory_mark = $request->theory_mark[$key];
-            $subject_class->practical_mark = $request->practical_mark[$key];
-            $subject_class->city_exam_mark = $request->city_exam_mark[$key];
-            $subject_class->diary = $request->diary[$key];
-
-            // dd($subject_class);
-
-            $subject_class->save();
-
+            $subjectclass->save();
         }
+        // dd('test');
 
         return redirect()->route('backend.manage-subject-class')->with('success', 'Subject class has been updated successfully !!');
     }

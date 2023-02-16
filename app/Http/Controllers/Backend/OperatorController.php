@@ -16,15 +16,19 @@ use File;
 use Image;
 use DataTables;
 use App\Traits\UserRollPermissionTrait;
+use Illuminate\Support\Facades\Session;
 
 class OperatorController extends Controller
 {
     use UserRollPermissionTrait;
 
+    protected $Student;
+
     public function __construct()
     {
-        $this->module_name = 'users';
+        $this->Student = 'App\Models\Student'.Session::get('session_name');
     }
+
 
     public function operator_validation($request){
         $request->validate([

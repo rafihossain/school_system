@@ -79,7 +79,6 @@
 
         $('#getClass').on("change",function(){
             
-            $('.show_class').removeClass('d-none');
 
             $.ajax({
                 url: "{{ route('backend.show-class-info') }}",
@@ -97,6 +96,7 @@
                         classes += '<option value="'+response[i].id+'" >'+response[i].class_name+'</option>';
                     }
                     $('#getSection').html(classes);
+                    $('.show_class').removeClass('d-none');
 
                 }
             });

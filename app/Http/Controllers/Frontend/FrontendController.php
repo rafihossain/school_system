@@ -11,14 +11,11 @@ class FrontendController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+
     public function index()
     {
-        // dd(11);
-
-        $body_class = '';
-
-        // return view('dashboard', compact('body_class'));
-        return view('frontend.index', compact('body_class'));
+        // return view('frontend.index', compact('body_class'));
+        return view('auth.login');
     }
 
     /**

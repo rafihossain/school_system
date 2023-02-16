@@ -6,11 +6,11 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Session;
 
-class Student extends Model
+class Student2023 extends Model
 {
     use HasFactory;
 
-    protected $table = "students";
+    protected $table = "students_2023";
 
     protected $fillable = ['user_id','department_id','section_id','class_id','parent_id','roll_no','admission_date'];
 
@@ -18,9 +18,9 @@ class Student extends Model
     {
         return $this->belongsTo(User::class,'user_id','id');
     }
-    public function subject_class()
+    public function getStudentBasicInfo()
     {
-        return $this->belongsTo(Subjectclass::class,'user_id','user_id');
+        return $this->belongsTo(StudentBasicInfo::class,'user_id','user_id');
     }
     public function getStdAdditionalInfo()
     {

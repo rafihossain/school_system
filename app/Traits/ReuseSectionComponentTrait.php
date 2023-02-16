@@ -19,6 +19,12 @@ trait ReuseSectionComponentTrait {
      * @param Request $request
      * @return $this|false|string
      */
+    protected $Student;
+    public function __construct()
+    {
+        $this->Student = 'App\Models\Student'.Session::get('session_name');
+    }
+
     public function reuse_class($request){
         $request->validate([
             'class_name' => 'required',
@@ -83,13 +89,13 @@ trait ReuseSectionComponentTrait {
         $invoiceType = $request->invoice_type;
         
         if($invoiceType == 1){
-            $students = Student::where(['class_id'=> $request->class_id,'section_id' => $request->section_id])->get();
+            $students = $this->Student::where(['class_id'=> $request->class_id,'section_id' => $request->section_id])->get();
             // dd($students);
             foreach($students as $student){
                 $this->feeBasicInfoSave($request, $student);
             }
         }else{
-            $student = Student::where(['class_id'=> $request->class_id,'section_id' => $request->section_id])->first();
+            $student = $this->Student::where(['class_id'=> $request->class_id,'section_id' => $request->section_id])->first();
             // dd($student);
             $this->feeBasicInfoSave($request, $student);
         }

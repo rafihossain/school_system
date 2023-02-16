@@ -7,9 +7,17 @@ use App\Models\Announcement;
 use App\Models\AnnouncementNotify;
 use App\Models\Student;
 use App\Models\User;
+use Illuminate\Support\Facades\Session;
 
 class NotificationsController extends Controller
 {
+    protected $Student;
+
+    public function __construct()
+    {
+        $this->Student = 'App\Models\Student'.Session::get('session_name');
+    }
+
     public function send_mail()
     {
 
@@ -25,7 +33,7 @@ class NotificationsController extends Controller
         foreach ($announcements as $key => $announcement) {
 
             if ($announcement->status == 0) {
-                $students = Student::where('class_id', $announcement->class_id)->get();
+                $students = $this->Student::where('class_id', $announcement->class_id)->get();
                 
                 // $user = [];
                 foreach($students as $student){

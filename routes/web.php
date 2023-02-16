@@ -27,6 +27,7 @@ Route::get('language/{language}', [LanguageController::class, 'switch'])->name('
 *
 * --------------------------------------------------------------------
 */
+
 Route::group(['namespace' => 'App\Http\Controllers\Frontend', 'as' => 'frontend.'], function () {
     Route::get('/', 'FrontendController@index')->name('index');
     Route::get('home', 'FrontendController@index')->name('home');
@@ -194,7 +195,7 @@ Route::group(['namespace' => 'App\Http\Controllers\Backend', 'prefix' => 'admin'
     Route::get('subject/class/list', ['as' => "manage-subject-class", 'uses' => "SettingController@manage_subject_class"]);
     Route::get('subject/class/add', ['as' => "add-subject-class", 'uses' => "SettingController@add_subject_class"]);
     Route::post('subject/class/save', ['as' => "save-subject-class", 'uses' => "SettingController@save_subject_class"]);
-    Route::get('subject/class/edit/{id}', ['as' => "edit-subject-class", 'uses' => "SettingController@edit_subject_class"]);
+    Route::get('subject/class/edit/{class_id}/{section_id}', ['as' => "edit-subject-class", 'uses' => "SettingController@edit_subject_class"]);
     Route::post('subject/class/update', ['as' => "update-subject-class", 'uses' => "SettingController@update_subject_class"]);
     Route::get('subject/class/delete/{id}', ['as' => "delete-subject-class", 'uses' => "SettingController@delete_subject_class"]);
 
@@ -443,7 +444,8 @@ Route::group(['namespace' => 'App\Http\Controllers\Backend', 'prefix' => 'admin'
     
     //Promotion---------------------
     Route::get('promotion',['as' =>"exam.promotion", 'uses' => "ExamController@examPromotion"]);
-    Route::post('show_promotion_student_list',"StudentController@show_promotion_student_list")->name('show-promotion-student-list');
+    Route::post('student_list',"StudentController@student_list")->name('student-list');
+    Route::post('promote-student-list',"StudentController@promote_student_list")->name('promote-student-list');
     
     //Report------------------------
     Route::get('report/student',['as' =>"report.student", 'uses' => "ReportController@reportStudent"]);

@@ -7,6 +7,7 @@
     {{ Session::get('success') }}
 </div>
 @endif
+
 <div class="alert alert-success d-none success_msg_show" style="text-align: center;">
 
 </div>
@@ -47,7 +48,6 @@
             <div class="col-md-2 show_subject" style="display:none">
                 <select name="subject_id" id="subject_id" class="form-control">
                     <option value="">Select Subject</option>
-
                 </select>
             </div>
 
@@ -111,8 +111,6 @@
                 $("#section_id").html(data['sectons']);
                 $("#subject_id").html(data['subjects']);
             }
-
-
         })
     });
 

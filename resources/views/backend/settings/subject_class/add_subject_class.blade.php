@@ -18,7 +18,7 @@
 <div class="card">
     <div class="card-body">
         <h4 class="m-0 header-title text-end float-end">
-            <a href="{{ route('backend.manage-subject-class') }}" class="btn btn-primary"><i class="mdi mdi-plus"></i>List Subject Class</a>
+            
         </h4>
     </div>
 </div>
@@ -36,46 +36,23 @@
                     <span class="text-danger">{{ $message }}</span>
                 @enderror
             </div>
-            <div class="col-md-2">
-               <select name="section_id" id="getSubject" class="form-control"></select>
-            </div>
+            <!-- <div class="col-md-2">
+               <select name="section_id" id="getSubject" class="form-control section"></select>
+            </div> -->
 
            <div class="col-md-4 show_route d-none">
-                <button type="button" class="btn btn-primary get_routine">Get Routine</button>
-                <button type="button" class="btn btn-primary preview_routine">Preview Routine</button>
+                <button type="button" class="btn btn-primary find_subject">Find</button>
             </div>
-            
         </div>
     </div>
     <div class="card-body">
         <form id="subjectListFrom">
 
-            <table id="datatable" class="table table-bordered dt-responsive table-responsive nowrap">
-                <thead>
-                <tr>
-                    <th>SL No</th>
-                    <th>Subject Name</th>
-                    <th>Subject Code</th>
-                    <th>Total Mark</th>
-                    <th>Theory Mark</th>
-                    <th>Practical Mark</th>
-                    <th>City Exam Mark</th>
-                    <th>Diary</th>
-                </tr>
-                </thead>
-                <tbody id="subject_table">
-                    
-                </tbody>
-            </table>
-            <div class="mb-2">
-                <button type="button" class="btn btn-primary" id="subjectListBtn">Submit</button>
-            </div>
-        </form>
+            <div class="response_subject_table"></div>
 
+        </form>
     </div>
 </div>
- 
- 
 
 @endsection
 
@@ -85,63 +62,26 @@
 
         $(function(){
             $('#getSection').on("change",function(){
-                $.ajax({
-                    url: "{{ route('backend.get-section-info') }}",
-                    type: "POST",
-                    data: {
-                        'section_id' : $(this).val(),
-                        '_token': '{{ csrf_token() }}',
-                    },
-                    dataType: 'json',
-                    success: function(response) {
-
-                        var sections = '';
-                        sections = '<option value="" >Select Section</option>';
-                        for(var i = 0; i < response.length; i++){
-                            sections += '<option value="'+response[i].id+'" >'+response[i].section_name+'</option>';
-                        }
-                        $('#getSubject').html(sections);
-
-                    }
-                });
+                $('.show_route').removeClass('d-none');
             });
             
-            $(document).delegate('#getSubject', 'change', function(e) {
+            $('.find_subject').click(function(e) {
+            
                 $.ajax({
                     url: "{{ route('backend.get-subject-info') }}",
                     type: "POST",
                     data: {
-                        'subject_id' : $(this).val(),
+                        'class_id' : $('#getSection').val(),
                         '_token': '{{ csrf_token() }}',
                     },
-                    dataType: 'json',
                     success: function(data) {
-
-                        var html = '';
-                        for (i = 0; i < data.length; i++) {
-                            
-
-                        html +=
-                            '<input type="hidden" name="section_id[]" value="'+data[i].section_id+'">'+
-                            '<tr>' +
-                                '<td><input type="checkbox"></td>' +
-                                '<td><input type="text" name="subject_name[]" value="'+data[i].subject_name+'" class="input_control"></td>' +
-                                '<td><input type="text" name="subject_code[]" value="'+data[i].subject_code+'" class="input_control"></td>' +
-                                '<td><input type="text" name="total_mark[]" value="'+data[i].subject_code+'" class="input_control"></td>' +
-                                '<td><input type="text" name="theory_mark[]" value="'+data[i].subject_code+'" class="input_control"></td>' +
-                                '<td><input type="text" name="practical_mark[]" value="'+data[i].subject_code+'" class="input_control"></td>' +
-                                '<td><input type="text" name="city_exam_mark[]" value="'+data[i].subject_code+'" class="input_control"></td>' +
-                                '<td><input type="text" name="diary[]" value="'+data[i].subject_code+'" class="input_control"></td>' +
-                            '</tr>';
-                        }
-
-                        $('#subject_table').html(html);
-
+                        $('.response_subject_table').html(data);
                     }
                 });
             });
 
-            $('#subjectListBtn').on("click",function(){
+            $(document).delegate('#subjectListBtn', 'click', function(){
+
                 var serialize = $('#subjectListFrom').serialize();
 
                 $.ajax({

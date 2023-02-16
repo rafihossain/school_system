@@ -19,7 +19,7 @@
             <td>{{$student->getStudent->name}}</td>
             <td>{{$student->roll_no}}</td>
             <td>{{$student->getStudent->gender}}</td>
-            <td>{{$student->getStudentBasicInfo->date_of_birth}}</td>
+            <td>{{$student->getStudent->date_of_birth}}</td>
             <td>{{$student->getStdAdditionalInfo->blood_group}}</td>
             <td>{{$student->admission_date}}</td>
             <td>{{$student->getParent->name}}</td>

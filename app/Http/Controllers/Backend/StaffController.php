@@ -6,21 +6,26 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use App\Models\User;
-use App\Models\StaffAdditionalInfo;
 use App\Models\StaffDocumentChecklist;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Image;
 use App\Traits\UserRollPermissionTrait;
+use Illuminate\Support\Facades\Session;
 
 class StaffController extends Controller
 {
     use UserRollPermissionTrait;
-    
+
+    protected $Student;
+    protected $Teacher;
+    protected $Staff;
+
     public function __construct()
     {
-        $this->module_name = 'users';
- 
+        $this->Student = 'App\Models\Student'.Session::get('session_name');
+        $this->Teacher = 'App\Models\TeacherAdditionalInfo'.Session::get('session_name');
+        $this->Staff = 'App\Models\StaffAdditionalInfo'.Session::get('session_name');
     }
 
     public function staffValidation($request){
@@ -78,8 +83,8 @@ class StaffController extends Controller
     {
         $staff_edit=User::find($id);
        //dd($teacher_edit);
-        $staff_additional_info=StaffAdditionalInfo::where('user_id',$id)->first();
-        $StaffDocumentChecklist=StaffDocumentChecklist::where('user_id',$id)->first();
+        $staff_additional_info=$this->Staff::where('user_id',$id)->first();
+        $StaffDocumentChecklist=$this->Staff::where('user_id',$id)->first();
         return view('backend.users.staff.editStaff',compact('staff_edit','staff_additional_info','StaffDocumentChecklist'));
     }
 
@@ -173,7 +178,7 @@ class StaffController extends Controller
         //dd($request->all());
         $this->update_StaffAdditionalInfo_Info_validation($request);
         $data=$request->except('_token');
-        StaffAdditionalInfo::where('user_id',$request->user_id)->update($data);
+        $this->Staff::where('user_id',$request->user_id)->update($data);
         return redirect()->route('backend.staff.index')->with('success', 'Successfully Updated'); 
     }
 

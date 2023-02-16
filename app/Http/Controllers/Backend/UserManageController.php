@@ -80,7 +80,6 @@ class UserManageController extends Controller
     public function manageUsers()
     {
         // dd(11);
-
         $manageUsers = User::with('role')->get();
         // dd($manageUsers);
 

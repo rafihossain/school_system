@@ -24,7 +24,6 @@ use App\Models\StudentDocumentChecklist;
 use App\Models\TeacherAdditionalInfo;
 use App\Models\TeacherDocumentChecklist;
 
-use App\Models\StaffAdditionalInfo;
 use App\Models\StaffDocumentChecklist;
 
 use App\Models\OperatorAdditionalInfo;
@@ -36,6 +35,7 @@ trait UserRollPermissionTrait {
      * @param Request $request
      * @return $this|false|string
      */
+
     public function user_input_field_validation($request){
         $request->validate([
             'name' => 'required',
@@ -48,8 +48,7 @@ trait UserRollPermissionTrait {
     public function create_teacher_user($request){
         $this->user_input_field_validation($request);
 
-        $module_name = $this->module_name;
-        $module_name_singular = Str::singular($module_name);
+        Str::singular('users');
         $user = $request->except('_token', 'roles', 'permissions', 'password_confirmation');
         $user = new User();
         $user->name = $request->name;
@@ -62,7 +61,7 @@ trait UserRollPermissionTrait {
         $user->user_role = 6;
         $user->save();
 
-        $TeacherAdditionalInfo = new TeacherAdditionalInfo();
+        $TeacherAdditionalInfo = new $this->Teacher();
         $TeacherAdditionalInfo->user_id = $user->id;
         $TeacherAdditionalInfo->save();
 
@@ -86,9 +85,7 @@ trait UserRollPermissionTrait {
             'gender' => 'required'
         ]);
 
-        $module_name = $this->module_name;
-        $module_name_singular = Str::singular($module_name);
-
+        Str::singular('users');
         $user = $request->except('_token', 'roles', 'permissions', 'password_confirmation');
 
         $user = new User();
@@ -101,7 +98,7 @@ trait UserRollPermissionTrait {
         $user->user_role = 5;
         $user->save();
 
-        $Student = new Student();
+        $Student = new $this->Student();
         $Student->user_id = $user->id;
         $Student->session_id = Session::get('session_id');
         $Student->section_id = $request->section_id;
@@ -125,9 +122,7 @@ trait UserRollPermissionTrait {
     public function create_staff_user($request){
         $this->user_input_field_validation($request);
 
-        $module_name = $this->module_name;
-        $module_name_singular = Str::singular($module_name);
-
+        Str::singular('users');
         $user = $request->except('_token', 'roles', 'permissions', 'password_confirmation');
 
         $user = new User();
@@ -141,7 +136,7 @@ trait UserRollPermissionTrait {
         $user->user_role = 7;
         $user->save();
 
-        $StaffAdditionalInfo = new StaffAdditionalInfo();
+        $StaffAdditionalInfo = new $this->Staff();
         $StaffAdditionalInfo->user_id = $user->id;
         $StaffAdditionalInfo->save();
 
@@ -154,9 +149,7 @@ trait UserRollPermissionTrait {
     public function create_operator_user($request){
         $this->user_input_field_validation($request);
 
-        $module_name = $this->module_name;
-        $module_name_singular = Str::singular($module_name);
-
+        Str::singular('users');
         $user = $request->except('_token', 'roles', 'permissions', 'password_confirmation');
 
         $user = new User();
@@ -183,9 +176,7 @@ trait UserRollPermissionTrait {
     public function create_parent_user($request){
         $this->user_input_field_validation($request);
 
-        $module_name = $this->module_name;
-        $module_name_singular = Str::singular($module_name);
-
+        Str::singular('users');
         $user = $request->except('_token', 'roles', 'permissions', 'password_confirmation');
         $user = new User();
         $user->name = $request->name;

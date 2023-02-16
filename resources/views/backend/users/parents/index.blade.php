@@ -29,7 +29,7 @@
         <div class="card">
             <div class="card-body table-responsive">
 
-                <div class="row">
+                {{-- <div class="row">
                     <div class="d-flex justify-content-center">
                         <button class="btn btn-warning reset_datatable">Reset</button>
                         <div class="ms-2">
@@ -43,7 +43,6 @@
                         <div class="ms-2">
                             <select name="section_id" id="section_id" class="form-control submitable">
                                 <option value="">Select section</option>
-
                             </select>
                         </div>
                         <div class="ms-2">
@@ -52,7 +51,7 @@
                             </select>
                         </div>
                     </div>
-                </div>
+                </div> --}}
 
                 <table class="table table-bordered table-bordered dt-responsive nowrap parent_datatable">
                     <thead>
@@ -102,7 +101,6 @@
 
     $(document).on('change', '.submitable', function() {
         $('.parent_datatable').DataTable().ajax.reload();
-        
     });
 
     $('#class_id').on('change', function(e) {

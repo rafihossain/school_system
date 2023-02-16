@@ -10,7 +10,6 @@ use App\Models\BloodGroup;
 use App\Models\User;
 use App\Models\ClassModal;
 use App\Models\Section;
-use App\Models\TeacherAdditionalInfo;
 use App\Models\TeacherDocumentChecklist;
 use App\Models\Department;
 use App\Models\Designation;
@@ -20,37 +19,43 @@ use DataTables;
 use App\Traits\UserRollPermissionTrait;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Session;
 
 class TeacherController extends Controller
 {
     use UserRollPermissionTrait;
 
+    protected $Teacher;
+    protected $teacher;
     public function __construct()
     {
-        $this->module_name = 'users';
+        $this->Teacher = 'App\Models\TeacherAdditionalInfo'.Session::get('session_name');
+        $this->teacher = 'teacher_additional_info_'.Session::get('session_name');
     }
 
     public function teacherIndex(Request $request)
     {
         if ($request->ajax()) {
-            //dd($request->all());
-            $query = DB::table('teacher_additional_info')
-                ->leftJoin('users', 'teacher_additional_info.user_id', 'users.id')
-                ->leftJoin('departments', 'teacher_additional_info.department_id', 'departments.id')
-                ->leftJoin('designations', 'teacher_additional_info.designation_id', 'designations.id')
+
+            $query = DB::table($this->teacher)
+                ->leftJoin('users', $this->teacher.'.user_id', 'users.id')
+                ->leftJoin('departments', $this->teacher.'.department_id', 'departments.id')
+                ->leftJoin('designations', $this->teacher.'.designation_id', 'designations.id')
                 ->where('users.user_role', 6);
             if ($request->department_id) {
-                $query->where('teacher_additional_info.department_id', $request->department_id);
+                $query->where($this->teacher.'.department_id', $request->department_id);
             }
 
             if ($request->designation_id) {
-                $query->where('teacher_additional_info.designation_id', $request->designation_id);
+                $query->where($this->teacher.'.designation_id', $request->designation_id);
             }
 
             if ($request->status) {
                 $query->where('users.status', $request->status);
             }
+
             $teachers = $query->get();
+
             return datatables()->of($teachers)
                 ->addIndexColumn()
                 ->addColumn('action', function ($row) {
@@ -114,7 +119,7 @@ class TeacherController extends Controller
                     $user->user_role = 6;
                     $user->save();
 
-                    $TeacherAdditionalInfo = new TeacherAdditionalInfo();
+                    $TeacherAdditionalInfo = new $this->Teacher();
                     $TeacherAdditionalInfo->user_id = $user->id;
                     $TeacherAdditionalInfo->save();
 
@@ -158,7 +163,7 @@ class TeacherController extends Controller
         $designations = Designation::all();
         $bloods = BloodGroup::all();
 
-        $teacher_additional_info = TeacherAdditionalInfo::where('user_id', $id)->first();
+        $teacher_additional_info = $this->Teacher::where('user_id', $id)->first();
         $TeacherDocumentChecklist = TeacherDocumentChecklist::where('user_id', $id)->first();
 
         return view('backend.users.teacher.editTeacher', 
@@ -234,7 +239,7 @@ class TeacherController extends Controller
         // User::where('id', $request->user_id)->update($user);
 
         $teacher_profile_pic = $request->file('teacher_profile_pic');
-        $teacher_additional_info = TeacherAdditionalInfo::where('user_id', $request->user_id)->first();
+        $teacher_additional_info = $this->Teacher::where('user_id', $request->user_id)->first();
         
         if($teacher_profile_pic){
             if (isset($teacher_additional_info->teacher_profile_pic)) {
@@ -248,7 +253,7 @@ class TeacherController extends Controller
 
         $data = $request->except('_token');
         $data['teacher_profile_pic'] = (isset($imageUrl)) ? $imageUrl : $teacher_additional_info->teacher_profile_pic;
-        TeacherAdditionalInfo::where('user_id', $request->user_id)->update($data);
+        $this->Teacher::where('user_id', $request->user_id)->update($data);
 
         return redirect()->route('backend.teacher.index')->with('success', 'Successfully Updated');
     }

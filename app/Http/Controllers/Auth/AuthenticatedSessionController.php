@@ -6,6 +6,7 @@ use App\Events\Auth\UserLoginSuccess;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
 use App\Models\Role;
+use App\Models\SessionModel;
 use App\Providers\RouteServiceProvider;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -44,7 +45,12 @@ class AuthenticatedSessionController extends Controller
 
         if (Auth::attempt(['email' => $email, 'password' => $password, 'status' => 1], $remember)) {
             
-            Session::put('session_id', 2);
+            Session::put('session_id', 1);
+            $session = SessionModel::find(Session::get('session_id'));
+            // dd($session->session_name);
+
+            Session::put('session_name', $session->session_name);
+
             $role = Role::find(auth()->user()->user_role);
             Session::put('role_name', $role->name);
 

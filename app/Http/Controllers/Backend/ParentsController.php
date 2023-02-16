@@ -24,10 +24,13 @@ class ParentsController extends Controller
 {
     use UserRollPermissionTrait;
 
+    protected $Student;
+
     public function __construct()
     {
-        $this->module_name = 'users';
+        $this->Student = 'App\Models\Student'.Session::get('session_name');
     }
+
 
     public function parentValidation($request)
     {
@@ -42,32 +45,34 @@ class ParentsController extends Controller
     {
 
         if ($request->ajax()) {
-            // $parents = User::where('user_role', 4)->get();
-            $query = DB::table('students')
-                ->leftJoin('users', 'students.parent_id', 'users.id')
-                ->leftJoin('parent_additional_info', 'students.parent_id', 'parent_additional_info.user_id')
+            // $query = User::where('user_role', 4)->get();
+
+            $query = DB::table('users')
+                // ->leftJoin('students', 'users.id', 'students.parent_id')
+                // ->leftJoin('parent_additional_info', 'users.id', 'parent_additional_info.user_id')
                 ->where('users.user_role', 4);
 
-            if ($request->class_id != '') {
-                $query->where('students.class_id', $request->class_id);
-            }
-            if ($request->section_id != '') {
-                $query->where('students.section_id', $request->section_id);
-            }
-            if (($request->class_id != '') && ($request->section_id != '')) {
-                $query->where('students.class_id', $request->class_id)
-                ->where('students.section_id', $request->section_id);
-            }
-            if (($request->class_id != '') && ($request->section_id != '') && ($request->student_id != '')) {
-                $query->where('students.class_id', $request->class_id)
-                ->where('students.section_id', $request->section_id)
-                ->where('students.user_id', $request->student_id);
-            }
+
+            // if ($request->class_id != '') {
+            //     $query->where('students.class_id', $request->class_id);
+            // }
+            // if ($request->section_id != '') {
+            //     $query->where('students.section_id', $request->section_id);
+            // }
+            // if (($request->class_id != '') && ($request->section_id != '')) {
+            //     $query->where('students.class_id', $request->class_id)
+            //     ->where('students.section_id', $request->section_id);
+            // }
+            // if (($request->class_id != '') && ($request->section_id != '') && ($request->student_id != '')) {
+            //     $query->where('students.class_id', $request->class_id)
+            //     ->where('students.section_id', $request->section_id)
+            //     ->where('students.user_id', $request->student_id);
+            // }
 
             $parents = $query->get();
-            // dd($query);
+            // dd($parents);
 
-            return Datatables::of($query)->addIndexColumn()
+            return Datatables::of($parents)->addIndexColumn()
                 ->addColumn('action', function ($row) {
                     $btn = '<a href="' . route('backend.edit.parent', $row->id) . '" class="btn btn-sm btn-primary waves-effect waves-light parent_info_edit"><i class="mdi mdi-square-edit-outline"></i></a>
                     <a href="' . route('backend.parent.delete', $row->id) . '" id="delete" class="btn btn-sm btn-danger waves-effect waves-light"><i class="mdi mdi-trash-can-outline"></i></a>';
@@ -155,7 +160,9 @@ class ParentsController extends Controller
     {
         $parent_edit = User::find($id);
         $parents_additional_info = AdditionalInfo::where('user_id', $id)->first();
-        //dd($parents_additional_info);
+
+        // dd($parents_additional_info);
+
         $ParentDocumentChecklist = ParentDocumentChecklist::where('user_id', $id)->first();
         return view('backend.users.parents.editParent', compact('parent_edit', 'parents_additional_info', 'ParentDocumentChecklist'));
     }
@@ -302,7 +309,7 @@ class ParentsController extends Controller
 
     public function get_student(Request $request)
     {
-        $student_basic_info = Student::where('class_id', $request->class_id)->where('section_id', $request->section_id)->get();
+        $student_basic_info = $this->Student::where('class_id', $request->class_id)->where('section_id', $request->section_id)->get();
         $output = '';
         if (count($student_basic_info) > 0) {
             $output = '<option value="">Select Student</option>';

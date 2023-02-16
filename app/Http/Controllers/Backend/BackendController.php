@@ -19,12 +19,12 @@ use App\Models\Student;
 use App\Models\Syllabus;
 use App\Models\User;
 use Illuminate\Http\Request;
-use App\Models\TeacherAdditionalInfo;
 use Intervention\Image\Facades\Image;
 
 use App\Traits\UserRollPermissionTrait;
 use App\Traits\ReuseSectionComponentTrait;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Str;
 
 class BackendController extends Controller
@@ -32,9 +32,15 @@ class BackendController extends Controller
     use UserRollPermissionTrait;
     use ReuseSectionComponentTrait;
 
+    protected $Student;
+    protected $Teacher;
+    protected $Staff;
+
     public function __construct()
     {
-        $this->module_name = 'users';
+        $this->Student = 'App\Models\Student'.Session::get('session_name');
+        $this->Teacher = 'App\Models\TeacherAdditionalInfo'.Session::get('session_name');
+        $this->Staff = 'App\Models\StaffAdditionalInfo'.Session::get('session_name');
     }
 
     /*=========================================================
@@ -205,7 +211,7 @@ class BackendController extends Controller
         $class_id = $request->class_id;
         $section_id = $request->section_id;
 
-        $students = Student::with(['student_single_attendence' => function ($q) use ($attendence_date, $newDate) {
+        $students = $this->Student::with(['student_single_attendence' => function ($q) use ($attendence_date, $newDate) {
             $q->where('attendence_date', $attendence_date);
         }])->with(['student_attendence' => function ($q) use ($attendence_date, $newDate) {
             $q->where('attendence_date', '<=', $attendence_date)
@@ -220,7 +226,7 @@ class BackendController extends Controller
         $attendence_date = $request->attendence_date;
         $newDate = date('Y-m-d', strtotime($attendence_date . ' - 6 days'));
 
-        $teachers = TeacherAdditionalInfo::with(
+        $teachers = $this->Teacher::with(
             ['teacher_single_attendence' => function ($q) use ($attendence_date, $newDate) {
                 $q->where('attendence_date', $attendence_date);
             }]
