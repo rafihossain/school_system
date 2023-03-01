@@ -25,10 +25,12 @@ class ParentsController extends Controller
     use UserRollPermissionTrait;
 
     protected $Student;
+    protected $Parent;
 
     public function __construct()
     {
         $this->Student = 'App\Models\Student'.Session::get('session_name');
+        $this->Parent = 'App\Models\AdditionalInfo'.Session::get('session_name');
     }
 
 
@@ -131,7 +133,7 @@ class ParentsController extends Controller
                     $user->user_role = 4;
                     $user->save();
 
-                    $AdditionalInfo = new AdditionalInfo();
+                    $AdditionalInfo = new $this->Parent();
                     $AdditionalInfo->user_id = $user->id;
                     $AdditionalInfo->save();
 
@@ -159,7 +161,7 @@ class ParentsController extends Controller
     public function editParents($id)
     {
         $parent_edit = User::find($id);
-        $parents_additional_info = AdditionalInfo::where('user_id', $id)->first();
+        $parents_additional_info = $this->Parent::where('user_id', $id)->first();
 
         // dd($parents_additional_info);
 
@@ -230,7 +232,7 @@ class ParentsController extends Controller
     {
         $this->update_parentAdditional_Info_validation($request);
         $data = $request->except('_token');
-        AdditionalInfo::where('user_id', $request->user_id)->update($data);
+        $this->Parent::where('user_id', $request->user_id)->update($data);
         return redirect()->route('backend.parents.index')->with('success', 'Successfully Updated');
     }
 
@@ -286,7 +288,7 @@ class ParentsController extends Controller
     public function parent_additional_info_get(Request $request)
     {
         $id = $request->parent_id;
-        $abc = AdditionalInfo::where('user_id', $id)->first();
+        $abc = $this->Parent::where('user_id', $id)->first();
         return response()->json($abc);
     }
 

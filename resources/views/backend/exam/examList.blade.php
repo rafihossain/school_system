@@ -181,8 +181,7 @@
                         $('.startError').text('');
                         $('.endError').text('');
                         $('.noteError').text('');
-                    }
-                    else{
+                    }else{
                         $('.dateError').text('');
                         $('#standard-modal').modal('hide');
                         $("div").removeClass("d-none");

@@ -21,11 +21,25 @@
             <td><input type="checkbox"></td>
             <td><span>{{ $subjectclass->subject->subject_name }}</span></td>
             <td><span>{{ $subjectclass->subject->subject_code }}</span></td>
-            <td><input type="number" name="total_mark[]" value="{{ $subjectclass->total_mark }}" class="input_control"></td>
-            <td><input type="number" name="theory_mark[]" value="{{ $subjectclass->theory_mark }}" class="input_control"></td>
-            <td><input type="number" name="practical_mark[]" value="{{ $subjectclass->practical_mark }}" class="input_control"></td>
-            <td><input type="number" name="city_exam_mark[]" value="{{ $subjectclass->city_exam_mark }}" class="input_control"></td>
-            <td><input type="number" name="diary[]" value="{{ $subjectclass->diary }}" class="input_control"></td>
+            <td>
+                <input type="number" name="total_mark[]" value="{{ $subjectclass->total_mark }}" class="input_control">
+            </td>
+            <td>
+                <input type="number" name="theory_mark[]" value="{{ $subjectclass->theory_mark }}" class="input_control">
+                <input type="number" name="mintheory_mark[]" value="{{ $subjectclass->mintheory_mark }}" class="input_control">
+            </td>
+            <td>
+                <input type="number" name="practical_mark[]" value="{{ $subjectclass->practical_mark }}" class="input_control">
+                <input type="number" name="minpractical_mark[]" value="{{ $subjectclass->minpractical_mark }}" class="input_control">
+            </td>
+            <td>
+                <input type="number" name="city_exam_mark[]" value="{{ $subjectclass->city_exam_mark }}" class="input_control">
+                <input type="number" name="mincity_exam_mark[]" value="{{ $subjectclass->mincity_exam_mark }}" class="input_control">
+            </td>
+            <td>
+                <input type="number" name="diary[]" value="{{ $subjectclass->diary }}" class="input_control">
+                <input type="number" name="mindiary[]" value="{{ $subjectclass->mindiary }}" class="input_control">
+            </td>
         </tr>
         @endforeach
     </tbody>

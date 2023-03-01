@@ -19,10 +19,12 @@ trait ReuseSectionComponentTrait {
      * @param Request $request
      * @return $this|false|string
      */
+    protected $Fee;
     protected $Student;
     public function __construct()
     {
         $this->Student = 'App\Models\Student'.Session::get('session_name');
+        $this->Fee = 'App\Models\Fee'.Session::get('session_name');
     }
 
     public function reuse_class($request){
@@ -62,7 +64,7 @@ trait ReuseSectionComponentTrait {
         $classroom->save();
     }
     protected function feeBasicInfoSave($request, $student){
-        $fee = new Fee();
+        $fee = new $this->Fee();
         $fee->student_id = $student->user_id;
         $fee->parent_id = 10;
         $fee->txn_number = Str::random(13);

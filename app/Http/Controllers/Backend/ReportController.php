@@ -12,12 +12,11 @@ use App\Models\Section;
 use App\Models\SessionModel;
 use App\Models\ExamSchedule;
 use App\Models\User;
-use DataTables;
+use Yajra\DataTables\DataTables;
 use Illuminate\Support\Facades\Session;
 
 class ReportController extends Controller
 {
-
     protected $Student;
     protected $Teacher;
     protected $Staff;
@@ -52,9 +51,11 @@ class ReportController extends Controller
 
     public function viewTeacher($id)
     {
-        $teacher=$this->Teacher::with('getTeacher','getDepartment')->where('id',$id)->first();
-
-        return view('backend.report.teacher.teacher_view',compact('teacher'));
+        $teacher=$this->Teacher::with('getTeacher','getDepartment')->where('user_id', $id)->first();
+        // dd($teacher);
+        return view('backend.report.teacher.teacher_view',[
+            'teacher' => $teacher
+        ]);
     }
 
     //Student Report-----------------
@@ -66,7 +67,6 @@ class ReportController extends Controller
 
     public function get_student_report(Request $request)
     {
-
         $request->validate([
             'class_id' => 'required',
             'section_id' => 'required',
@@ -76,17 +76,15 @@ class ReportController extends Controller
                         ->where('class_id',$request->class_id)
                         ->where('section_id',$request->section_id)
                         ->get();
-        // dd('hi');
-
-    //    dd($students);
 
        return view('backend.report.student.report_data',compact('students'));
     }
 
     public function viewStudent($id)
     {
-        $student=$this->Student::with('getParent')->where('id',$id)->first();
-        //dd($student);
+        $student=$this->Student::with('getParent', 'getStudent')->find($id);
+        // dd($student);
+
         return view('backend.report.student.student_view',compact('student'));
     }
 
@@ -109,8 +107,9 @@ class ReportController extends Controller
 
     public function viewStaff($id)
     {
-        $staff=$this->Staff::with('getUser')->where('id',$id)->first();
-        //dd($student);
+        $staff=$this->Staff::with('getUser')->where('user_id',$id)->first();
+        // dd($staff);
+
         return view('backend.report.staff.staff_view',compact('staff'));
     }
 

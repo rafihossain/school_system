@@ -82,6 +82,15 @@
             <li>
                 <a href="{{ route('backend.manage-homework') }}">Homework</a>
             </li>
+            <li>
+                <a href="{{ route('backend.manage-designation') }}">Designations</a>
+            </li>
+            <li>
+                <a href="{{ route('backend.manage-department') }}">Department</a>
+            </li>
+            <li>
+                <a href="{{ route('backend.manage-syllabus') }}">Syllabus</a>
+            </li>
         </ul>
     </div>
 </li>
@@ -192,24 +201,4 @@
         <i class="mdi mdi-cog-outline mdi-18px"></i>
         <span>Setting</span>
     </a>
-</li>
-<li>
-    <a href="#Settings" data-bs-toggle="collapse">
-        <i class="mdi mdi-account-cog-outline mdi-18px"></i>
-        <span>Profile</span>
-        <span class="menu-arrow"></span>
-    </a>
-    <div class="collapse" id="Settings">
-        <ul class="nav-second-level">
-            <li>
-                <a href="{{ route('backend.manage-designation') }}">Designations</a>
-            </li>
-            <li>
-                <a href="{{ route('backend.manage-department') }}">Department</a>
-            </li>
-            <li>
-                <a href="{{ route('backend.manage-syllabus') }}">Syllabus</a>
-            </li>
-        </ul>
-    </div>
 </li>

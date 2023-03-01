@@ -13,6 +13,7 @@
                         </tr>
                     </thead>
                 <tbody>
+                    
                     @php
                         $marks = '';
                         $theory_mark = '';

@@ -92,7 +92,6 @@
         });
 
         $('#getSection').on("change",function(){
-        
             $('.show_section').removeClass('d-none');
 
             $.ajax({
@@ -111,7 +110,6 @@
                         sections += '<option value="'+response[i].id+'" >'+response[i].section_name+'</option>';
                     }
                     $('#getInfo').html(sections);
-
                 }
             });
         });

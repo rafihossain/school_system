@@ -76,6 +76,7 @@ class ExamController extends Controller
     public function editExam(Request $request)
     {
         $exam_edit = ExamList::find($request->id);
+        dd($exam_edit);
         return response()->json($exam_edit);
     }
 
@@ -352,7 +353,6 @@ class ExamController extends Controller
             $exam_result_rule = ExamResultRule::with('class')->get();
             // dd($exam_result_rule);
 
-
             return Datatables::of($exam_result_rule)->addIndexColumn()
                 ->addColumn('action', function ($row) {
 
@@ -363,6 +363,7 @@ class ExamController extends Controller
                 ->rawColumns(['action'])
                 ->make(true);
         }
+
         return view('backend.exam.resultRule.index', compact('classes'));
     }
 
@@ -417,6 +418,8 @@ class ExamController extends Controller
     //Exam Result-------------
     public function examResult()
     {
+        // dd('hi');
+
         $exam_lists = ExamList::all();
         $classes = ClassModal::all();
         $sections = Section::all();
@@ -446,8 +449,23 @@ class ExamController extends Controller
                                         ->get()
                                         ->toArray();
         $result_rules = ExamResultRule::all();
+        $subjectclasses = Subjectclass::all();
 
-        return view('backend.exam.exam_result.student_exam_result', compact('get_student_subject', 'students', 'result_rules'));
+        return view('backend.exam.exam_result.student_exam_result', compact('get_student_subject','students','result_rules','subjectclasses'));
+    }
+    public function view_result_details(Request $request)
+    {
+        // dd($request->student_id);
+        
+        $exam_id = $request->exam_id;
+        $class_id = $request->class_id;
+        $section_id = $request->section_id;
+        $student_id = $request->student_id;
+
+        $studentmarks = StudentMark::with('subject')->where('student_id', $student_id)->get();
+        $result_rules = ExamResultRule::all();
+
+        return view('backend.exam.exam_result.result_details', compact('studentmarks','result_rules'));
     }
 
     public function examPromotion()

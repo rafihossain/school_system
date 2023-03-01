@@ -5,62 +5,183 @@
 <div class="card">
     <div class="card-body">
         <h4 class="m-0 header-title text-end float-end">
-            <a href="{{ route('backend.add-classroom') }}" class="btn btn-primary "><i class="mdi mdi-plus"></i>Add Classroom</a>
+            <a href="javascript:void(0)" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addclassroom-modal">
+                <i class="mdi mdi-plus"></i>Add Classroom
+            </a>
         </h4>
     </div>
 </div>
 
-@if(Session::has('success'))
-    <div class="alert alert-success">
-        {{ Session::get('success') }}
-    </div>
-@endif
-
 <div class="card">
     <div class="card-body">
-        
-		<table id="datatable" class="table table-bordered dt-responsive table-responsive nowrap">
+		<table class="table table-bordered dt-responsive table-responsive nowrap classroomlist_datatable">
             <thead>
-            <tr>
-                <th>Classroom Name</th>
-                <th>Classroom Description</th>
-                <th>Action</th>
-            </tr>
+                <tr>
+                    <th>Classroom Name</th>
+                    <th>Classroom Description</th>
+                    <th>Action</th>
+                </tr>
             </thead>
             <tbody>
-                @foreach($classrooms as $classroom)
-                <tr>
-                    <td>{{$classroom->classroom_name}}</td>
-                    <td>{{$classroom->classroom_description}}</td>
-                    <td>
-                        <a href="{{ route('backend.edit-classroom', ['id'=>$classroom->id]) }}" class="btn btn-sm btn-success">
-                            <i class="mdi mdi-file-edit-outline"></i>
-                        </a>
-                        <a href="{{ route('backend.delete-classroom', ['id'=>$classroom->id]) }}" id="delete" class="btn btn-sm btn-danger">
-                            <i class="mdi mdi-trash-can-outline"></i>
-                        </a>
-                    </td>
-                </tr>
-                @endforeach
+
             </tbody>
         </table>
     </div>
 </div>
+
+<!-- Standard modal content -->
+<div id="addclassroom-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="addclassroom-modalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="addclassroom-modalLabel">Create Classroom</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="addclassroom_form">
+                <div class="modal-body">
+                    
+                    <div class="mb-2">
+                        <label>Classroom Name</label>
+                        <input type="text" class="form-control" name="classroom_name">
+                        <span class="text-danger classroom_name_error"></span>
+                    </div>
+                    <div class="mb-2">
+                        <label>Description</label>
+                        <textarea class="form-control" name="classroom_description"></textarea>
+                        <span class="text-danger classroom_description_error"></span>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary create_classroom">Save</button>
+                </div>
+            </form>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+<!-- Edit Exam Modal -->
+<div id="updateclassroom-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="updateclassroom-modalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="updateclassroom-modalLabel">Update Classroom</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="updateclassroom_form">
+                <input type="hidden" name="classroom_id" id="classroom_id">
+                <div class="modal-body">
+                    <div class="mb-2">
+                        <label>Classroom Name</label>
+                        <input type="text" class="form-control classroom_name" name="classroom_name">
+                        <span class="text-danger classroom_name_error"></span>
+                    </div>
+                    <div class="mb-2">
+                        <label>Description</label>
+                        <textarea class="form-control classroom_description" name="classroom_description"></textarea>
+                        <span class="text-danger classroom_description_error"></span>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary update_classroom">Save</button>
+                </div>
+            </form>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
 @endsection
 
 
 @section('script')
 <script type="text/javascript">
     $(document).ready(function() {
-        $('#datatable').DataTable();
-        $('#addtask').on("click", function() {
-            $('#addTaskModal').modal("show");
+        var table = $('.classroomlist_datatable').DataTable({
+            processing: true,
+            serverSide: true,
+            ajax: {
+                url: "{{ route('backend.manage-classroom') }}",
+            },
+            columns: [
+                {
+                    data: 'classroom_name',
+                    name: 'classroom_name'
+                },
+                {
+                    data: 'classroom_description',
+                    name: 'classroom_description'
+                },
+                {
+                    data: 'action',
+                    name: 'action',
+                    orderable: false,
+                    searchable: false
+                },
+            ]
+        });
+
+        $('.create_classroom').click(function() {
+
+            var serialize = $("#addclassroom_form").serializeArray();
+            $.ajax({
+                url: "{{route('backend.save-classroom')}}",
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                type: 'post',
+                data: serialize,
+                success: function(data) {
+                    $('#addclassroom-modal').modal('hide');
+                    $('.classroomlist_datatable').DataTable().ajax.reload();
+                },error: function(response) {
+                    $('.classroom_name_error').text(response.responseJSON.errors.classroom_name);
+                    $('.classroom_description_error').text(response.responseJSON.errors.classroom_description);
+                }
+            })
+
+        });
+
+        $(document).delegate('.classroom_edit', 'click', function() {
+
+            var id = $(this).data('id');
+            $.ajax({
+                url: "{{route('backend.edit-classroom')}}",
+                data: {
+                    id: id
+                },
+                dataType: 'json',
+                success: function(data) {
+                    $('#classroom_id').val(data.id);
+                    $('.classroom_name').val(data.classroom_name);
+                    $('.classroom_description').val(data.classroom_description);
+                }
+            })
+        });
+
+        $('.update_classroom').click(function() {
+
+            var serialize = $("#updateclassroom_form").serializeArray();
+            $.ajax({
+                url: "{{route('backend.update-classroom')}}",
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                type: 'post',
+                data: serialize,
+                success: function(data) {
+                    $('#updateclassroom-modal').modal('hide');
+                    $('.classroomlist_datatable').DataTable().ajax.reload();
+                }, error: function(response) {
+                    $('.classroom_name_error').text(response.responseJSON.errors.classroom_name);
+                    $('.classroom_description_error').text(response.responseJSON.errors.classroom_description);
+                }
+            })
+
         });
 
         //delete sweetalert
-        $(document).on('click', '#delete', function(e) {
+        $(document).on('click', '.classroom_delete', function(e) {
             e.preventDefault();
-            var Id = $(this).attr('href');
 
             swal({
                     title: "Are you sure?",
@@ -71,23 +192,25 @@
                 })
                 .then((willDelete) => {
                     if (willDelete) {
-                        
-                        iziToast.success({
-                            message: 'Successfully restored recorded!',
-                            position: 'topRight', // bottomRight, bottomLeft, topRight, topLeft, topCenter, bottomCenter
-                        })
 
-                        window.location.href = Id;
+                        var id = $(this).data('id');
+                        $.ajax({
+                            url: "{{route('backend.delete-classroom')}}",
+                            data: {
+                                id: id
+                            },
+                            success: function(data) {
+                                $('.classroomlist_datatable').DataTable().ajax.reload();
+                                iziToast.success({
+                                    message: 'Successfully deleted recorded!',
+                                    position: 'topRight', // bottomRight, bottomLeft, topRight, topLeft, topCenter, bottomCenter
+                                })
+                            }
+                        })
 
                     }
 
                 });
-        });
-
-        $('.dropify').dropify();
-        $("#datetime-datepicker").flatpickr({
-            enableTime: !0,
-            dateFormat: "Y-m-d H:i"
         });
     });
 </script>

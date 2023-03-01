@@ -10,6 +10,7 @@
                         @endforeach
                     <th>GPA</th>
                     <th>STATUS</th>
+                    <th>Action</th>
                 </tr>
             </thead>
             <tbody>
@@ -23,21 +24,65 @@
                     <td>{{$student['roll_no']}}</td>
 
                     @foreach($get_student_subject as $key=> $row)
+                    @php
+                        $grade_fail_flag=0;
+                    @endphp
                         @if(isset($student['student_mark_new'][$key])) 
                             <td>
-                                @foreach($result_rules as $result_rule)   
-                                   @if(($student['student_mark_new'][$key]['mark'] >= $result_rule->min_mark) && ($student['student_mark_new'][$key]['mark'] <= $result_rule->max_mark))
-                                    
-                                    {{$result_rule->name}}
-                                    
-                                    @php
-                                     if($result_rule->name == 'F'){
-                                        $pass_fail_flag=1;
-                                      }   
-                                    $gpa = $gpa+$result_rule->gpa;
-                                    @endphp
+                                @foreach($result_rules as $result_rule)
 
-                                   @endif              
+                                    @foreach($subjectclasses as $subjectclass)
+                                        @if($student['student_mark_new'][$key]['subject_id'] == $subjectclass->subject_id)
+                                            @if($subjectclass->mintheory_mark !='')
+                                                @if($student['student_mark_new'][$key]['theory_mark'] < $subjectclass->mintheory_mark)
+                                                    @php
+                                                        $grade_fail_flag = 1;
+                                                    @endphp
+                                                @endif
+                                            @endif
+                                            @if($subjectclass->minpractical_mark !='')
+                                                @if($student['student_mark_new'][$key]['practical_mark'] < $subjectclass->minpractical_mark)
+                                                    @php
+                                                        $grade_fail_flag = 1;
+                                                    @endphp
+                                                @endif
+                                            @endif
+                                            @if($subjectclass->mincity_exam_mark !='')
+                                                @if($student['student_mark_new'][$key]['city_exam_mark'] < $subjectclass->mincity_exam_mark)
+                                                    @php
+                                                        $grade_fail_flag = 1;
+                                                    @endphp
+                                                @endif
+                                            @endif
+                                            @if($subjectclass->mindiary !='')
+                                                @if($student['student_mark_new'][$key]['diary'] < $subjectclass->mindiary)
+                                                    @php
+                                                        $grade_fail_flag = 1;
+                                                    @endphp
+                                                @endif
+                                            @endif
+                                        @endif
+                                    @endforeach
+
+                                    @if(($student['student_mark_new'][$key]['mark'] >= $result_rule->min_mark) && ($student['student_mark_new'][$key]['mark'] <= $result_rule->max_mark))
+
+                                        @if($grade_fail_flag == 0)
+                                            {{$result_rule->name}}
+                                        @else
+                                            @php
+                                                $pass_fail_flag=1
+                                            @endphp
+                                            <span class="badge bg-danger">FAILED</span>
+                                        @endif
+                                        
+                                        @php
+                                            if($result_rule->name == 'F'){
+                                                $pass_fail_flag=1;
+                                            }   
+                                            $gpa = $gpa+$result_rule->gpa;
+                                        @endphp
+                                    @endif
+
                                 @endforeach 
                             </td>    
                         @else
@@ -65,6 +110,9 @@
                         @else
                             <span class="badge bg-danger">FAILED</span> 
                         @endif
+                    </td>
+                    <td>
+                       <a href="javascript:void(0)" class="btn btn-primary btn-sm view-details" data-studentid="{{ $student['user_id'] }}">Details</a>
                     </td>
                 </tr>
                 @endforeach

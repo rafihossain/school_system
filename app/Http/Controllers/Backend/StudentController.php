@@ -31,11 +31,13 @@ class StudentController extends Controller
 {
     use UserRollPermissionTrait;
 
+    protected $Parent;
     protected $Student;
     protected $student;
 
     public function __construct()
     {
+        $this->Parent = 'App\Models\AdditionalInfo'.Session::get('session_name');
         $this->Student = 'App\Models\Student'.Session::get('session_name');
         $this->student = 'students_'.Session::get('session_name');
     }
@@ -267,7 +269,7 @@ class StudentController extends Controller
         User::find($request->user_id)->update($student);
 
         $parent = $request->only('father_occupation', 'father_cnic', 'mother_name', 'mother_occupation');
-        AdditionalInfo::where('user_id',$request->parent_id)->update($parent);
+        $this->Parent::where('user_id',$request->parent_id)->update($parent);
 
         return redirect()->route('backend.student.index')->with('success', 'Successfully Updated');
     }

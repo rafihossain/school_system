@@ -80,25 +80,25 @@
                                 <p><strong>Name</strong></p>
                             </div>
                             <div class="col-6 ">
-                                <p> {{$student->getParent->father_name}} </p>
+                                <p> {{$student->getParent->name}} </p>
                             </div>
                             <div class="col-6 text-end">
                                 <p><strong>Email</strong></p>
                             </div>
                             <div class="col-6 ">
-                                <p> {{$student->getParent->getUser->email}} </p>
+                                <p> {{$student->getParent->email}} </p>
                             </div>
                             <div class="col-6 text-end">
                                 <p><strong>Phone</strong></p>
                             </div>
                             <div class="col-6 ">
-                                <p> {{$student->getParent->getUser->mobile}} </p>
+                                <p> {{$student->getParent->mobile}} </p>
                             </div>
                             <div class="col-6 text-end">
                                 <p><strong>Gender</strong></p>
                             </div>
                             <div class="col-6 ">
-                                <p> {{$student->getParent->getUser->gender}} </p>
+                                <p> {{$student->getParent->gender}} </p>
                             </div>
                             <div class="col-6 text-end">
                                 <p><strong>Occupation</strong></p>

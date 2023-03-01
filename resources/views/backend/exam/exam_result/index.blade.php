@@ -2,7 +2,6 @@
 @section('title', 'Exam Result')
 @section('content')
 
-
 <div class="card">
     <div class="card-header">
         <div class="row justify-content-center">
@@ -28,14 +27,11 @@
             <div class="col-md-3 show_section" style="display:none">
                 <select name="section_id" id="section_id" class="form-control">
                     <option value="">Select Section</option>
-              
                 </select>
             </div>
 
             <div class="col show_button" style="display:none">
-
                 <button type="button" class="btn btn-primary get_exam_result">Get Exam Result</button>
-
             </div> 
         </div>
     </div>
@@ -44,10 +40,44 @@
     </div>
 </div>
 
+<!-- Add ClassRoom -->
+<div id="resultDetailsModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="standard-modalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="standard-modalLabel">View Result</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body response_result_data"></div>
+        </div>
+    </div>
+</div>
+<!--End ClassRoom -->
+
 
 
 <script>
     $(document).ready(function() {
+
+        $(document).delegate('.view-details', 'click', function() {
+            var student_id = $(this).data('studentid');
+            // console.log(student_id);
+
+            $.ajax({
+                url: "{{route('backend.view-result-details')}}",
+                data: {
+                    'class_id': $('#class_id').val(),
+                    'student_id': student_id,
+                },
+                success: function(data) {
+                    $('.response_result_data').html(data);
+                    $('#resultDetailsModal').modal('show');
+                }
+            })
+
+            // var html = '<table class="table"><thead><th>Subject Name</th></thead><tbody><td></td></tbody></table>';
+        })
+
         $("#exam_id").on('change', function(e) {
             $(".show_class").css('display','block');
         });
@@ -71,9 +101,7 @@
                     //console.log(data);
                     $("#section_id").html(data);
                 }
-            
-
-                })
+            })
         }); 
 
         $('.get_exam_result').click(function(e){

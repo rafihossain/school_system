@@ -18,9 +18,9 @@ class Student2021 extends Model
     {
         return $this->belongsTo(User::class,'user_id','id');
     }
-    public function getStudentBasicInfo()
+    public function subject_class()
     {
-        return $this->belongsTo(StudentBasicInfo::class,'user_id','user_id');
+        return $this->belongsTo(Subjectclass::class,'user_id','user_id');
     }
     public function getStdAdditionalInfo()
     {

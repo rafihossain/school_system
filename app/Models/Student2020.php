@@ -18,10 +18,10 @@ class Student2020 extends Model
     {
         return $this->belongsTo(User::class,'user_id','id');
     }
-    // public function getStudentBasicInfo()
-    // {
-    //     return $this->belongsTo(StudentBasicInfo::class,'user_id','user_id');
-    // }
+    public function subject_class()
+    {
+        return $this->belongsTo(Subjectclass::class,'user_id','user_id');
+    }
     public function getStdAdditionalInfo()
     {
         return $this->belongsTo(StudentAdditionalInfo::class,'user_id','user_id');

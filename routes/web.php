@@ -30,27 +30,6 @@ Route::get('language/{language}', [LanguageController::class, 'switch'])->name('
 
 Route::group(['namespace' => 'App\Http\Controllers\Frontend', 'as' => 'frontend.'], function () {
     Route::get('/', 'FrontendController@index')->name('index');
-    Route::get('home', 'FrontendController@index')->name('home');
-    Route::get('privacy', 'FrontendController@privacy')->name('privacy');
-    Route::get('terms', 'FrontendController@terms')->name('terms');
-
-    Route::group(['middleware' => ['auth']], function () {
-        /*
-        *
-        *  Users Routes
-        *
-        * ---------------------------------------------------------------------
-        */
-        $module_name = 'users';
-        $controller_name = 'UserController';
-        Route::get('profile/{id}', ['as' => "$module_name.profile", 'uses' => "$controller_name@profile"]);
-        Route::get('profile/{id}/edit', ['as' => "$module_name.profileEdit", 'uses' => "$controller_name@profileEdit"]);
-        Route::patch('profile/{id}/edit', ['as' => "$module_name.profileUpdate", 'uses' => "$controller_name@profileUpdate"]);
-        Route::get('profile/changePassword/{username}', ['as' => "$module_name.changePassword", 'uses' => "$controller_name@changePassword"]);
-        Route::patch('profile/changePassword/{username}', ['as' => "$module_name.changePasswordUpdate", 'uses' => "$controller_name@changePasswordUpdate"]);
-        Route::get("$module_name/emailConfirmationResend/{id}", ['as' => "$module_name.emailConfirmationResend", 'uses' => "$controller_name@emailConfirmationResend"]);
-        Route::delete("$module_name/userProviderDestroy", ['as' => "$module_name.userProviderDestroy", 'uses' => "$controller_name@userProviderDestroy"]);
-    });
 });
 
 /*
@@ -63,10 +42,6 @@ Route::group(['namespace' => 'App\Http\Controllers\Frontend', 'as' => 'frontend.
 Route::group(['namespace' => 'App\Http\Controllers\Backend', 'prefix' => 'admin', 'as' => 'backend.','middleware' => 
 ['auth', 'permission:view_backend']], function () {
 
-    /**
-     * Backend Dashboard
-     * Namespaces indicate folder structure.
-     */
     Route::get('/', 'BackendController@index')->name('home');
     Route::get('dashboard', 'BackendController@index')->name('dashboard');
 
@@ -149,126 +124,127 @@ Route::group(['namespace' => 'App\Http\Controllers\Backend', 'prefix' => 'admin'
     =================================================================*/
     
     //session
-    Route::get('session/list', ['as' => "manage-session", 'uses' => "SettingController@manage_session"]);
-    Route::get('session/add', ['as' => "add-session", 'uses' => "SettingController@add_session"]);
-    Route::post('session/save', ['as' => "save-session", 'uses' => "SettingController@save_session"]);
-    Route::get('session/edit/{id}', ['as' => "edit-session", 'uses' => "SettingController@edit_session"]);
-    Route::post('session/update', ['as' => "update-session", 'uses' => "SettingController@update_session"]);
-    Route::get('session/delete/{id}', ['as' => "delete-session", 'uses' => "SettingController@delete_session"]);
+    Route::get('session/list', "AcademicController@manage_session")->name('manage-session');
+    Route::get('session/add', "AcademicController@add_session")->name('add-session');
+    Route::post('session/save', "AcademicController@save_session")->name('save-session');
+    Route::get('session/edit', "AcademicController@edit_session")->name('edit-session');
+    Route::post('session/update', "AcademicController@update_session")->name('update-session');
+    Route::get('session/delete', "AcademicController@delete_session")->name('delete-session');
 
     //class
-    Route::get('class/list', ['as' => "manage-class", 'uses' => "SettingController@manage_class"]);
-    Route::get('class/add', ['as' => "add-class", 'uses' => "SettingController@add_class"]);
-    Route::post('class/save', ['as' => "save-class", 'uses' => "SettingController@save_class"]);
-    Route::get('class/edit/{id}', ['as' => "edit-class", 'uses' => "SettingController@edit_class"]);
-    Route::post('class/update', ['as' => "update-class", 'uses' => "SettingController@update_class"]);
-    Route::get('class/delete/{id}', ['as' => "delete-class", 'uses' => "SettingController@delete_class"]);
-    Route::get('class/archive/list', ['as' => "class-archive-list", 'uses' => "SettingController@class_archive_list"]);
+    Route::get('class/list', "AcademicController@manage_class")->name('manage-class');
+    Route::get('class/add', "AcademicController@add_class")->name('add-class');
+    Route::post('class/save', "AcademicController@save_class")->name('save-class');
+    Route::get('class/edit', "AcademicController@edit_class")->name('edit-class');
+    Route::post('class/update', "AcademicController@update_class")->name('update-class');
+    Route::get('class/delete', "AcademicController@delete_class")->name('delete-class');
+    Route::get('class/archive/list', "AcademicController@class_archive_list")->name('class-archive-list');
     
-    Route::get('class/restore/{id}', ['as' => "class-restore", 'uses' => "SettingController@class_restore"]);
+    Route::get('class/restore/{id}', "AcademicController@class_restore")->name('class-restore');
 
     //section
-    Route::get('section/list', ['as' => "manage-section", 'uses' => "SettingController@manage_section"]);
-    Route::get('section/add', ['as' => "add-section", 'uses' => "SettingController@add_section"]);
-    Route::post('section/save', ['as' => "save-section", 'uses' => "SettingController@save_section"]);
-    Route::get('section/edit/{id}', ['as' => "edit-section", 'uses' => "SettingController@edit_section"]);
-    Route::post('section/update', ['as' => "update-section", 'uses' => "SettingController@update_section"]);
-    Route::get('section/delete/{id}', ['as' => "delete-section", 'uses' => "SettingController@delete_section"]);
+    Route::get('section/list', "AcademicController@manage_section")->name('manage-section');
+    Route::get('section/add', "AcademicController@add_section")->name('add-section');
+    Route::post('section/save', "AcademicController@save_section")->name('save-section');
+    Route::get('section/edit', "AcademicController@edit_section")->name('edit-section');
+    Route::post('section/update', "AcademicController@update_section")->name('update-section');
+    Route::get('section/delete', "AcademicController@delete_section")->name('delete-section');
 
     //classroom
-    Route::get('classroom/list', ['as' => "manage-classroom", 'uses' => "SettingController@manage_classroom"]);
-    Route::get('classroom/add', ['as' => "add-classroom", 'uses' => "SettingController@add_classroom"]);
-    Route::post('classroom/save', ['as' => "save-classroom", 'uses' => "SettingController@save_classroom"]);
-    Route::get('classroom/edit/{id}', ['as' => "edit-classroom", 'uses' => "SettingController@edit_classroom"]);
-    Route::post('classroom/update', ['as' => "update-classroom", 'uses' => "SettingController@update_classroom"]);
-    Route::get('classroom/delete/{id}', ['as' => "delete-classroom", 'uses' => "SettingController@delete_classroom"]);
+    Route::get('classroom/list', "AcademicController@manage_classroom")->name('manage-classroom');
+    Route::get('classroom/add', "AcademicController@add_classroom")->name('add-classroom');
+    Route::post('classroom/save', "AcademicController@save_classroom")->name('save-classroom');
+    Route::get('classroom/edit', "AcademicController@edit_classroom")->name('edit-classroom');
+    Route::post('classroom/update', "AcademicController@update_classroom")->name('update-classroom');
+    Route::get('classroom/delete', "AcademicController@delete_classroom")->name('delete-classroom');
 
     //subject
-    Route::get('subject/list', ['as' => "manage-subject", 'uses' => "SettingController@manage_subject"]);
-    Route::get('subject/add', ['as' => "add-subject", 'uses' => "SettingController@add_subject"]);
-    Route::post('subject/save', ['as' => "save-subject", 'uses' => "SettingController@save_subject"]);
-    Route::get('subject/edit/{id}', ['as' => "edit-subject", 'uses' => "SettingController@edit_subject"]);
-    Route::post('subject/update', ['as' => "update-subject", 'uses' => "SettingController@update_subject"]);
-    Route::get('subject/delete/{id}', ['as' => "delete-subject", 'uses' => "SettingController@delete_subject"]);
+    Route::get('subject/list', "AcademicController@manage_subject")->name('manage-subject');
+    Route::get('subject/add', "AcademicController@add_subject")->name('add-subject');
+    Route::post('subject/save', "AcademicController@save_subject")->name('save-subject');
+    Route::get('subject/edit', "AcademicController@edit_subject")->name('edit-subject');
+    Route::post('subject/update', "AcademicController@update_subject")->name('update-subject');
+    Route::get('subject/delete', "AcademicController@delete_subject")->name('delete-subject');
 
     //subject-class
-    Route::get('subject/class/list', ['as' => "manage-subject-class", 'uses' => "SettingController@manage_subject_class"]);
-    Route::get('subject/class/add', ['as' => "add-subject-class", 'uses' => "SettingController@add_subject_class"]);
-    Route::post('subject/class/save', ['as' => "save-subject-class", 'uses' => "SettingController@save_subject_class"]);
-    Route::get('subject/class/edit/{class_id}/{section_id}', ['as' => "edit-subject-class", 'uses' => "SettingController@edit_subject_class"]);
-    Route::post('subject/class/update', ['as' => "update-subject-class", 'uses' => "SettingController@update_subject_class"]);
-    Route::get('subject/class/delete/{id}', ['as' => "delete-subject-class", 'uses' => "SettingController@delete_subject_class"]);
+    Route::get('subject/class/list', "AcademicController@manage_subject_class")->name('manage-subject-class');
+    Route::get('subject/class/add', "AcademicController@add_subject_class")->name('add-subject-class');
+    Route::post('subject/class/save', "AcademicController@save_subject_class")->name('save-subject-class');
+    Route::get('subject/class/edit/{class_id}/{section_id}', "AcademicController@edit_subject_class")->name('edit-subject-class');
+    Route::post('subject/class/update', "AcademicController@update_subject_class")->name('update-subject-class');
+    Route::get('subject/class/delete/{id}', "AcademicController@delete_subject_class")->name('delete-subject-class');
 
-    Route::post('get-section-info', ['as' => "get-section-info", 'uses' => "SettingController@get_section_info"]);
-    Route::post('get-subject-info', ['as' => "get-subject-info", 'uses' => "SettingController@get_subject_info"]);
-    Route::post('subject-list', ['as' => "subject-list", 'uses' => "SettingController@subject_info"]);
+    Route::post('get-section-info', "AcademicController@get_section_info")->name('get-section-info');
+    Route::post('get-subject-info', "AcademicController@get_subject_info")->name('get-subject-info');
+    Route::post('subject-list', "AcademicController@subject_info")->name('subject-list');
     
     //class-teacher
-    Route::get('class/teacher/list', ['as' => "manage-class-teacher", 'uses' => "SettingController@manage_class_teacher"]);
-    Route::get('class/teacher/add', ['as' => "add-class-teacher", 'uses' => "SettingController@add_class_teacher"]);
-    Route::post('class/teacher/save', ['as' => "save-class-teacher", 'uses' => "SettingController@save_class_teacher"]);
-    Route::get('class/teacher/edit/{id}', ['as' => "edit-class-teacher", 'uses' => "SettingController@edit_class_teacher"]);
-    Route::post('class/teacher/update', ['as' => "update-class-teacher", 'uses' => "SettingController@update_class_teacher"]);
-    Route::get('class/teacher/delete/{id}', ['as' => "delete-class-teacher", 'uses' => "SettingController@delete_class_teacher"]);
+    Route::get('class/teacher/list', "AcademicController@manage_class_teacher")->name('manage-class-teacher');
+    Route::get('class/teacher/add', "AcademicController@add_class_teacher")->name('add-class-teacher');
+    Route::post('class/teacher/save', "AcademicController@save_class_teacher")->name('save-class-teacher');
+    Route::get('class/teacher/edit', "AcademicController@edit_class_teacher")->name('edit-class-teacher');
+    Route::post('class/teacher/update', "AcademicController@update_class_teacher")->name('update-class-teacher');
+    Route::get('class/teacher/delete', "AcademicController@delete_class_teacher")->name('delete-class-teacher');
     
     //class-routine
-    Route::get('class/routine/list', ['as' => "manage-class-routine", 'uses' => "SettingController@manage_class_routine"]);
-    Route::post('class-routine-save', ['as' => "save-class-routine", 'uses' => "SettingController@save_class_routine"]);
+    Route::get('class/routine/list', "AcademicController@manage_class_routine")->name('manage-class-routine');
+    Route::post('class-routine-save', "AcademicController@save_class_routine")->name('save-class-routine');
 
-    Route::post('class-routine-delete', ['as' => "delete-class-routine", 'uses' => "SettingController@delete_class_routine"]);
-    Route::post('show-subject-routine', ['as' => "show-subject-routine", 'uses' => "SettingController@show_subject_routine"]);
-    Route::get('preview-subject-routine', ['as' => "preview-subject-routine", 'uses' => "SettingController@preview_subject_routine"]);
-    Route::post('routine-overwrite-check', ['as' => "routine-overwrite-check", 'uses' => "SettingController@routine_overwrite_check"]);
+    Route::post('class-routine-delete', "AcademicController@delete_class_routine")->name('delete-class-routine');
+    Route::post('show-subject-routine', "AcademicController@show_subject_routine")->name('show-subject-routine');
+    Route::get('preview-subject-routine', "AcademicController@preview_subject_routine")->name('preview-subject-routine');
+    Route::post('routine-overwrite-check', "AcademicController@routine_overwrite_check")->name('routine-overwrite-check');
 
-    Route::get('class-routine-edit', ['as' => "edit-class-routine", 'uses' => "SettingController@edit_class_routine"]);
-    Route::post('class-routine-update', ['as' => "update-class-routine", 'uses' => "SettingController@update_class_routine"]);
-    Route::post('routine-overwrite-check-update', ['as' => "routine-overwrite-check-update", 'uses' => "SettingController@routine_overwrite_check_update"]);
+    Route::get('class-routine-edit', "AcademicController@edit_class_routine")->name('edit-class-routine');
+    Route::post('class-routine-update', "AcademicController@update_class_routine")->name('update-class-routine');
+    Route::post('routine-overwrite-check-update', "AcademicController@routine_overwrite_check_update")->name('routine-overwrite-check-update');
     
     /*===============================================================
                     Setting Section
     =================================================================*/
     //designation
-    Route::get('designation/list', ['as' => "manage-designation", 'uses' => "SettingController@manage_designation"]);
-    Route::get('designation/add', ['as' => "add-designation", 'uses' => "SettingController@add_designation"]);
-    Route::post('designation/save', ['as' => "save-designation", 'uses' => "SettingController@save_designation"]);
-    Route::get('designation/edit/{id}', ['as' => "edit-designation", 'uses' => "SettingController@edit_designation"]);
-    Route::post('designation/update', ['as' => "update-designation", 'uses' => 'SettingController@update_designation']);
-    Route::get('designation/delete/{id}', ['as' => "delete-designation", 'uses' => "SettingController@delete_designation"]);
+    Route::get('designation/list', "AcademicController@manage_designation")->name('manage-designation');
+    Route::get('designation/add', "AcademicController@add_designation")->name('add-designation');
+    Route::post('designation/save', "AcademicController@save_designation")->name('save-designation');
+    Route::get('designation/edit', "AcademicController@edit_designation")->name('edit-designation');
+    Route::post('designation/update', 'AcademicController@update_designation')->name('update-designation');
+    Route::get('designation/delete', "AcademicController@delete_designation")->name('delete-designation');
 
-    Route::get('designation/archive/list', ['as' => "designation-archive-list", 'uses' => "SettingController@designation_archive_list"]);
+    Route::get('designation/archive/list', "AcademicController@designation_archive_list")->name('designation-archive-list');
     
-    Route::get('designation/restore/{id}', ['as' => "designation-restore", 'uses' => "SettingController@designation_restore"]);
+    Route::get('designation/restore/{id}', "AcademicController@designation_restore")->name('designation-restore');
 
     //department
-    Route::get('department/list', ['as' => "manage-department", 'uses' => "SettingController@manage_department"]);
-    Route::get('department/add', ['as' => "add-department", 'uses' => "SettingController@add_department"]);
-    Route::post('department/save', ['as' => "save-department", 'uses' => "SettingController@save_department"]);
-    Route::get('department/edit/{id}', ['as' => "edit-department", 'uses' => "SettingController@edit_department"]);
-    Route::post('department/update', ['as' => "update-department", 'uses' => "SettingController@update_department"]);
-    Route::get('department/delete/{id}', ['as' => "delete-department", 'uses' => "SettingController@delete_department"]);
+    Route::get('department/list', "AcademicController@manage_department")->name('manage-department');
+    Route::get('department/add', "AcademicController@add_department")->name('add-department');
+    Route::post('department/save', "AcademicController@save_department")->name('save-department');
+    Route::get('department/edit', "AcademicController@edit_department")->name('edit-department');
+    Route::post('department/update', "AcademicController@update_department")->name('update-department');
+    Route::get('department/delete', "AcademicController@delete_department")->name('delete-department');
 
-    Route::get('department/archive/list', ['as' => "department-archive-list", 'uses' => "SettingController@department_archive_list"]);
-    
-    Route::get('department/restore/{id}', ['as' => "department-restore", 'uses' => "SettingController@department_restore"]);
+    Route::get('view-department-image', "AcademicController@view_department_image")->name('view-department-image');
+
+    Route::get('department/archive/list', "AcademicController@department_archive_list")->name('department-archive-list');
+    Route::get('department/restore/{id}', "AcademicController@department_restore")->name('department-restore');
 
     //syllabus
-    Route::get('syllabus/list', ['as' => "manage-syllabus", 'uses' => "SettingController@manage_syllabus"]);
-    Route::get('syllabus/add', ['as' => "add-syllabus", 'uses' => "SettingController@add_syllabus"]);
-    Route::post('syllabus/save', ['as' => "save-syllabus", 'uses' => "SettingController@save_syllabus"]);
-    Route::get('syllabus/edit/{id}', ['as' => "edit-syllabus", 'uses' => "SettingController@edit_syllabus"]);
-    Route::post('syllabus/update', ['as' => "update-syllabus", 'uses' => "SettingController@update_syllabus"]);
-    Route::get('syllabus/delete/{id}', ['as' => "delete-syllabus", 'uses' => "SettingController@delete_syllabus"]);
+    Route::get('syllabus/list', "AcademicController@manage_syllabus")->name('manage-syllabus');
+    Route::get('syllabus/add', "AcademicController@add_syllabus")->name('add-syllabus');
+    Route::post('syllabus/save', "AcademicController@save_syllabus")->name('save-syllabus');
+    Route::get('syllabus/edit', "AcademicController@edit_syllabus")->name('edit-syllabus');
+    Route::post('syllabus/update', "AcademicController@update_syllabus")->name('update-syllabus');
+    Route::get('syllabus/delete', "AcademicController@delete_syllabus")->name('delete-syllabus');
 
-    Route::post('delete-syllabus-image', ['as' => "delete-syllabus-image", 'uses' => "SettingController@delete_syllabus_image"]);
+    Route::post('delete-syllabus-image',  "AcademicController@delete_syllabus_image")->name('delete-syllabus-image');
     
     //Homework------------------------
-    Route::get('homework', "SettingController@manage_homeWork")->name("manage-homework");
-    Route::post('homework-save', "SettingController@homeWorkSave")->name("homework-save");
+    Route::get('homework', "AcademicController@manage_homeWork")->name("manage-homework");
+    Route::post('homework-save', "AcademicController@homeWorkSave")->name("homework-save");
 
-    Route::post('show-student-homework', "SettingController@show_student_homework")->name("show-student-homework");
-    Route::get('edit-student-homework', "SettingController@edit_student_homework")->name("edit-student-homework");
-    Route::post('update-student-homework', "SettingController@update_student_homework")->name("update-student-homework");
-    Route::post('delete-student-homework', "SettingController@delete_student_homework")->name("delete-student-homework");
+    Route::post('show-student-homework', "AcademicController@show_student_homework")->name("show-student-homework");
+    Route::get('edit-student-homework', "AcademicController@edit_student_homework")->name("edit-student-homework");
+    Route::post('update-student-homework', "AcademicController@update_student_homework")->name("update-student-homework");
+    Route::post('delete-student-homework', "AcademicController@delete_student_homework")->name("delete-student-homework");
     
     
     /*===============================================================
@@ -276,40 +252,44 @@ Route::group(['namespace' => 'App\Http\Controllers\Backend', 'prefix' => 'admin'
     =================================================================*/
 
     //fee-type
-    Route::get('feetype/list', ['as' => "manage-feetype", 'uses' => "AccountController@manage_feetype"]);
-    Route::get('feetype/add', ['as' => "add-feetype", 'uses' => "AccountController@add_feetype"]);
-    Route::post('feetype/save', ['as' => "save-feetype", 'uses' => "AccountController@save_feetype"]);
-    Route::get('feetype/edit/{id}', ['as' => "edit-feetype", 'uses' => "AccountController@edit_feetype"]);
-    Route::post('feetype/update', ['as' => "update-feetype", 'uses' => "AccountController@update_feetype"]);
-    Route::get('feetype/delete/{id}', ['as' => "delete-feetype", 'uses' => "AccountController@delete_feetype"]);
+    Route::get('feetype/list', "AccountController@manage_feetype")->name('manage-feetype');
+    Route::get('feetype/add', "AccountController@add_feetype")->name('add-feetype');
+    Route::post('feetype/save', "AccountController@save_feetype")->name('save-feetype');
+    Route::get('feetype/edit', "AccountController@edit_feetype")->name('edit-feetype');
+    Route::post('feetype/update', "AccountController@update_feetype")->name('update-feetype');
+    Route::get('feetype/delete', "AccountController@delete_feetype")->name('delete-feetype');
+
+    Route::get('view-feetype-image', "AccountController@view_feetype_image")->name('view-feetype-image');
 
     //fee
-    Route::get('fee/list', ['as' => "manage-fee", 'uses' => "AccountController@manage_fee"]);
-    Route::get('fee/add', ['as' => "add-fee", 'uses' => "AccountController@add_fee"]);
-    Route::post('fee/save', ['as' => "save-fee", 'uses' => "AccountController@save_fee"]);
-    Route::get('fee/edit/{id}', ['as' => "edit-fee", 'uses' => "AccountController@edit_fee"]);
-    Route::post('fee/update', ['as' => "update-fee", 'uses' => "AccountController@update_fee"]);
+    Route::get('fee/list', "AccountController@manage_fee")->name('manage-fee');
+    Route::get('fee/add', "AccountController@add_fee")->name('add-fee');
+    Route::post('fee/save', "AccountController@save_fee")->name('save-fee');
+    Route::get('fee/edit/{id}', "AccountController@edit_fee")->name('edit-fee');
+    Route::post('fee/update', "AccountController@update_fee")->name('update-fee');
 
-    Route::post('get-fees-list', ['as' => "get-fees-list", 'uses' => "AccountController@get_fees_list"]);
-    Route::post('set-fee-mark-paid', ['as' => "set-fee-mark-paid", 'uses' => "AccountController@set_fee_mark_paid"]);
-    Route::post('fee/delete', ['as' => "delete-fee", 'uses' => "AccountController@delete_fee"]);
+    Route::post('get-fees-list', "AccountController@get_fees_list")->name('get-fees-list');
+    Route::post('set-fee-mark-paid', "AccountController@set_fee_mark_paid")->name('set-fee-mark-paid');
+    Route::post('fee/delete', "AccountController@delete_fee")->name('delete-fee');
 
 
     //expense-type
-    Route::get('expense/type/list', ['as' => "manage-expense-type", 'uses' => "AccountController@manage_expense_type"]);
-    Route::get('expense/type/add', ['as' => "add-expense-type", 'uses' => "AccountController@add_expense_type"]);
-    Route::post('expense/type/save', ['as' => "save-expense-type", 'uses' => "AccountController@save_expense_type"]);
-    Route::get('expense/type/edit/{id}', ['as' => "edit-expense-type", 'uses' => "AccountController@edit_expense_type"]);
-    Route::post('expense/type/update', ['as' => "update-expense-type", 'uses' => "AccountController@update_expense_type"]);
-    Route::get('expense/type/delete/{id}', ['as' => "delete-expense-type", 'uses' => "AccountController@delete_expense_type"]);
+    Route::get('expense/type/list', "AccountController@manage_expense_type")->name('manage-expense-type');
+    Route::get('expense/type/add', "AccountController@add_expense_type")->name('add-expense-type');
+    Route::post('expense/type/save', "AccountController@save_expense_type")->name('save-expense-type');
+    Route::get('expense/type/edit', "AccountController@edit_expense_type")->name('edit-expense-type');
+    Route::post('expense/type/update', "AccountController@update_expense_type")->name('update-expense-type');
+    Route::get('expense/type/delete', "AccountController@delete_expense_type")->name('delete-expense-type');
+
+    Route::get('view-expensetype-image', "AccountController@view_expensetype_image")->name('view-expensetype-image');
 
     //expense-list
-    Route::get('expense/list', ['as' => "manage-expense", 'uses' => "AccountController@manage_expense"]);
-    Route::get('expense/add', ['as' => "add-expense", 'uses' => "AccountController@add_expense"]);
-    Route::post('expense/save', ['as' => "save-expense", 'uses' => "AccountController@save_expense"]);
-    Route::get('expense/edit/{id}', ['as' => "edit-expense", 'uses' => "AccountController@edit_expense"]);
-    Route::post('expense/update', ['as' => "update-expense", 'uses' => "AccountController@update_expense"]);
-    Route::get('expense/delete/{id}', ['as' => "delete-expense", 'uses' => "AccountController@delete_expense"]);
+    Route::get('expense/list', "AccountController@manage_expense")->name('manage-expense');
+    Route::get('expense/add', "AccountController@add_expense")->name('add-expense');
+    Route::post('expense/save', "AccountController@save_expense")->name('save-expense');
+    Route::get('expense/edit', "AccountController@edit_expense")->name('edit-expense');
+    Route::post('expense/update', "AccountController@update_expense")->name('update-expense');
+    Route::get('expense/delete', "AccountController@delete_expense")->name('delete-expense');
     
     /*===============================================================
                     Announcement Section
@@ -333,29 +313,29 @@ Route::group(['namespace' => 'App\Http\Controllers\Backend', 'prefix' => 'admin'
                     Users Section
     =================================================================*/
 
-    Route::get('users/add', ['as' => "create-users", 'uses' => "UserManageController@createUsers"]);
-    Route::get('users/list', ['as' => "manage-users", 'uses' => "UserManageController@manageUsers"]);
-    Route::post('users/save', ['as' => 'save-users', 'uses' => 'UserManageController@saveUsers']);
-    Route::get('users/edit/{id}', ['as' => 'edit-users', 'uses' => 'UserManageController@editUsers']);
-    Route::post('users/update', ['as' => 'update-users', 'uses' => 'UserManageController@updateUsers']);
-    Route::get('users/delete/{id}', ['as' => 'delete-users', 'uses' => 'UserManageController@deleteUsers']);
-    Route::get('users/details/{id}', ['as' => "usersdetails", 'uses' => "UserManageController@usersdetails"]);
-    Route::get('users/datetime/{id}', ['as' => "user_datetime", 'uses' => "UserManageController@user_datetime"]);
-    Route::post('users/timezone/save/{id}', ['as' => "user_timezone_save", 'uses' => "UserManageController@user_timezone_save"]);
+    Route::get('users/add', 'UserManageController@createUsers')->name('create-users');
+    Route::get('users/list', 'UserManageController@manageUsers')->name('manage-users');
+    Route::post('users/save', 'UserManageController@saveUsers')->name('save-users');
+    Route::get('users/edit/{id}', 'UserManageController@editUsers')->name('edit-users');
+    Route::post('users/update', 'UserManageController@updateUsers')->name('update-users');
+    Route::get('users/delete/{id}', 'UserManageController@deleteUsers')->name('delete-users');
+    Route::get('users/details/{id}', 'UserManageController@usersdetails')->name('usersdetails');
+    Route::get('users/datetime/{id}', 'UserManageController@user_datetime')->name('user_datetime');
+    Route::post('users/timezone/save/{id}', 'UserManageController@user_timezone_save')->name('user_timezone_save');
 
     //Parents------------------
-    Route::get('parents', ['as' => "parents.index", 'uses' => "ParentsController@parentIndex"]);
-    Route::get('add/parents', ['as' => "add.parents", 'uses' => "ParentsController@addParents"]);
-    Route::post('save/parents', ['as' => "save.parents", 'uses' => "ParentsController@saveParents"]);
-    Route::get('edit/parents/{id}', ['as' => "edit.parent", 'uses' => "ParentsController@editParents"]);
-    Route::post('update/parents/basic/info', ['as' => "parent.basic_info_update", 'uses' => "ParentsController@updateBasicInfoParents"]);
-    Route::post('update/parents/additional/info', ['as' => "parent.additional_info_update", 'uses' => "ParentsController@updateAdditionalInfoParents"]);
-    Route::post('update/parent/document/checklist', ['as' => "parent.parent_document_checklist_update", 'uses' => "ParentsController@parent_document_checklist_update"]);
-    Route::get('parents/delete/{id}', ['as' => "parent.delete", 'uses' => "ParentsController@parentDelete"]);
-    Route::get('parents/search', ['as' => "parent.parent_search", 'uses' => "ParentsController@parentSearch"]);
-    Route::get('parents/parent_additional_info_get', ['as' => "parent_additional_info", 'uses' => "ParentsController@parent_additional_info_get"]);
-    Route::get('get_section', ['as' => "get_section", 'uses' => "ParentsController@get_section"]);
-    Route::get('get_student', ['as' => "get_student", 'uses' => "ParentsController@get_student"]);
+    Route::get('parents', "ParentsController@parentIndex")->name('parents.index');
+    Route::get('add/parents', "ParentsController@addParents")->name('add.parents');
+    Route::post('save/parents', "ParentsController@saveParents")->name('save.parents');
+    Route::get('edit/parents/{id}', "ParentsController@editParents")->name('edit.parent');
+    Route::post('update/parents/basic/info', "ParentsController@updateBasicInfoParents")->name('parent.basic_info_update');
+    Route::post('update/parents/additional/info', "ParentsController@updateAdditionalInfoParents")->name('parent.additional_info_update');
+    Route::post('update/parent/document/checklist', "ParentsController@parent_document_checklist_update")->name('parent.parent_document_checklist_update');
+    Route::get('parents/delete/{id}', "ParentsController@parentDelete")->name('parent.delete');
+    Route::get('parents/search', "ParentsController@parentSearch")->name('parent.parent_search');
+    Route::get('parents/parent_additional_info_get', "ParentsController@parent_additional_info_get")->name('parent_additional_info');
+    Route::get('get_section', "ParentsController@get_section")->name('get_section');
+    Route::get('get_student', "ParentsController@get_student")->name('get_student');
 
     Route::post('save-parent-csv', "ParentsController@save_parent_csv")->name("save-parent-csv");
 
@@ -409,11 +389,11 @@ Route::group(['namespace' => 'App\Http\Controllers\Backend', 'prefix' => 'admin'
                     Exam Section 
     =================================================================*/
     
-    Route::get('exam/list', ['as' => "exam.list", 'uses' => "ExamController@examList"]);
-    Route::post('exam/create', ['as' => "create.exam", 'uses' => "ExamController@createExam"]);
-    Route::get('exam/edit', ['as' => "edit.exam", 'uses' => "ExamController@editExam"]);
-    Route::post('exam/update', ['as' => "update.exam", 'uses' => "ExamController@updateExam"]);
-    Route::get('exam/delete', ['as' => "delete.exam", 'uses' => "ExamController@deleteExam"]);
+    Route::get('exam/list', "ExamController@examList")->name('exam.list');
+    Route::post('exam/create', "ExamController@createExam")->name('create.exam');
+    Route::get('exam/edit', "ExamController@editExam")->name('edit.exam');
+    Route::post('exam/update', "ExamController@updateExam")->name('update.exam');
+    Route::get('exam/delete', "ExamController@deleteExam")->name('delete.exam');
     
    //Schedule-------------------------
     Route::get('exam/schedule', ['as' => "schedule.index", 'uses' => "ExamController@scheduleIndex"]);
@@ -441,6 +421,8 @@ Route::group(['namespace' => 'App\Http\Controllers\Backend', 'prefix' => 'admin'
     //Exam Result---------------------
     Route::get('exam/result',['as' =>"exam.result", 'uses' => "ExamController@examResult"]);
     Route::get('get_student_exam_result',['as' =>"get_student_exam_result", 'uses' => "ExamController@get_student_exam_result"]);
+
+    Route::get('view-result-details',"ExamController@view_result_details")->name('view-result-details');
     
     //Promotion---------------------
     Route::get('promotion',['as' =>"exam.promotion", 'uses' => "ExamController@examPromotion"]);
@@ -487,18 +469,18 @@ Route::group(['namespace' => 'App\Http\Controllers\Backend', 'prefix' => 'admin'
       /*===============================================================
                     System Setting Section
     =================================================================*/
-    Route::get('system/setting/list', 'SystemsettingController@system_setting_list')->name('system-setting-list');
+    Route::get('system/setting/list', 'SettingController@system_setting_list')->name('system-setting-list');
     //basic
-    Route::post('basic-form-serialize', 'SystemsettingController@basic_form_serialize')->name('basic-form-serialize');
+    Route::post('basic-form-serialize', 'SettingController@basic_form_serialize')->name('basic-form-serialize');
     //system
-    Route::post('system-form-serialize', 'SystemsettingController@system_form_serialize')->name('system-form-serialize');
-    //Route::post('theme-form-serialize', 'SystemsettingController@theme_form_serialize')->name('theme-form-serialize');
+    Route::post('system-form-serialize', 'SettingController@system_form_serialize')->name('system-form-serialize');
+    //Route::post('theme-form-serialize', 'SettingController@theme_form_serialize')->name('theme-form-serialize');
 
     //payment
-    Route::post('paypal-payment-form', 'SystemsettingController@paypal_payment_form')->name('paypal-payment-form');
-    Route::post('stripe-payment-form', 'SystemsettingController@stripe_payment_form')->name('stripe-payment-form');
-    Route::post('razorpay-payment-form', 'SystemsettingController@razorpay_payment_form')->name('razorpay-payment-form');
-    Route::post('paystack-payment-form', 'SystemsettingController@paystack_payment_form')->name('paystack-payment-form');
+    Route::post('paypal-payment-form', 'SettingController@paypal_payment_form')->name('paypal-payment-form');
+    Route::post('stripe-payment-form', 'SettingController@stripe_payment_form')->name('stripe-payment-form');
+    Route::post('razorpay-payment-form', 'SettingController@razorpay_payment_form')->name('razorpay-payment-form');
+    Route::post('paystack-payment-form', 'SettingController@paystack_payment_form')->name('paystack-payment-form');
     
 
     /*
@@ -509,7 +491,7 @@ Route::group(['namespace' => 'App\Http\Controllers\Backend', 'prefix' => 'admin'
      */
     Route::group(['middleware' => ['permission:edit_settings']], function () {
         $module_name = 'settings';
-        $controller_name = 'SettingController';
+        $controller_name = 'AcademicController';
         Route::get("$module_name", "$controller_name@index")->name("$module_name");
         Route::post("$module_name", "$controller_name@store")->name("$module_name.store");
     });

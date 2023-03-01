@@ -3,29 +3,18 @@
 namespace App\Traits;
 
 use App\Events\Backend\UserCreated;
-use App\Models\ClassModal;
 use App\Models\Permission;
 use App\Models\Role;
-use App\Models\Section;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Str;
-
-use App\Models\AdditionalInfo;
 use App\Models\ParentDocumentChecklist;
-
-use App\Models\Student;
-use App\Models\StudentBasicInfo;
 use App\Models\StudentAdditionalInfo;
 use App\Models\StudentDocumentChecklist;
-
-use App\Models\TeacherAdditionalInfo;
 use App\Models\TeacherDocumentChecklist;
-
 use App\Models\StaffDocumentChecklist;
-
 use App\Models\OperatorAdditionalInfo;
 use App\Models\OperatorDocumentChecklist;
 
@@ -189,7 +178,7 @@ trait UserRollPermissionTrait {
         $user->user_role = 4;
         $user->save();
 
-        $AdditionalInfo = new AdditionalInfo();
+        $AdditionalInfo = new $this->Parent();
         $AdditionalInfo->user_id = $user->id;
         $AdditionalInfo->save();
 

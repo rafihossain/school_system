@@ -6,72 +6,202 @@
     <div class="card-body">
         <h4 class="m-0 header-title text-end float-end">
             <a href="{{ route('backend.class-archive-list') }}" class="btn btn-warning "></i>Archive List</a>
-            <a href="{{ route('backend.add-class') }}" class="btn btn-primary "><i class="mdi mdi-plus"></i>Add Class</a>
+            <a href="javascript:void(0)" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addclass-modal">
+                <i class="mdi mdi-plus"></i>Add Class
+            </a>
         </h4>
     </div>
 </div>
 
-@if(Session::has('success'))
-    <div class="alert alert-success">
-        {{ Session::get('success') }}
-    </div>
-@endif
-
 <div class="card">
     <div class="card-body">
         
-		<table id="datatable" class="table table-bordered dt-responsive table-responsive nowrap">
+		<table class="table table-bordered dt-responsive table-responsive nowrap classlist_datatable">
             <thead>
-            <tr>
-                <th>Name</th>
-                <th>Session Name</th>
-                <th>Class Numeric</th>
-                <th>Class Status</th>
-                <th>Action</th>
-            </tr>
+                <tr>
+                    <th>Name</th>
+                    <th>Session Name</th>
+                    <th>Class Numeric</th>
+                    <th>Action</th>
+                </tr>
             </thead>
             <tbody>
-                @foreach($classes as $class)
-                <tr>
-                    <td>{{$class->class_name}}</td>
-                    <td>{{$class->session->session_name}}</td>
-                    <td>{{$class->class_numeric}}</td>
 
-                    @if($class->class_status == 1)
-                    <td><span class="badge bg-success rounded-pill">Active</span></td> 
-                    @else
-                    <td><span class="badge bg-danger rounded-pill">Inactive</span></td> 
-                    @endif
-
-                    <td>
-                        <a href="{{ route('backend.edit-class', ['id'=>$class->id]) }}" class="btn btn-sm btn-success">
-                            <i class="mdi mdi-file-edit-outline"></i>
-                        </a>
-                        <a href="{{ route('backend.delete-class', ['id'=>$class->id]) }}" id="delete" class="btn btn-sm btn-danger">
-                            <i class="mdi mdi-trash-can-outline"></i>
-                        </a>
-                    </td>
-                </tr>
-                @endforeach
             </tbody>
         </table>
     </div>
 </div>
+
+<!-- Standard modal content -->
+<div id="addclass-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="addclass-modalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="addclass-modalLabel">Create Class</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="addclass_form">
+                <div class="modal-body">
+                    
+                    <div class="mb-2">
+                        <label>Class Name</label>
+                        <input type="text" class="form-control class_name" name="class_name">
+                        <span class="text-danger class_name_error"></span>
+                    </div>
+                    <div class="mb-2">
+                        <label>Class Numeric</label>
+                        <input type="number" class="form-control class_numeric" name="class_numeric">
+                        <span class="text-danger class_numeric_error"></span>
+                    </div>
+                    <div class="form-check form-switch mb-2">
+                        <input type="hidden" name="class_status" value="0">
+                        <input type="checkbox" class="form-check-input" id="customSwitch1" name="class_status" value="1">
+                        <label class="form-check-label" for="customSwitch1">Active</label>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary create_class">Save</button>
+                </div>
+            </form>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+<!-- Edit Exam Modal -->
+<div id="updateclass-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="updateclass-modalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="updateclass-modalLabel">Update Class</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="updateclass_form">
+                <input type="hidden" name="class_id" id="class_id">
+                <div class="modal-body">
+                    <div class="mb-2">
+                        <label>Class Name</label>
+                        <input type="text" class="form-control class_name" name="class_name">
+                        <span class="text-danger class_name_error"></span>
+                    </div>
+                    <div class="mb-2">
+                        <label>Class Numeric</label>
+                        <input type="number" class="form-control class_numeric" name="class_numeric">
+                        <span class="text-danger class_numeric_error"></span>
+                    </div>
+                    <div class="form-check form-switch mb-2">
+                        <input type="hidden" name="class_status" value="0">
+                        <input type="checkbox" class="form-check-input" id="customSwitch1" name="class_status" value="1">
+                        <label class="form-check-label" for="customSwitch1">Active</label>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary update_class">Save</button>
+                </div>
+            </form>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
 @endsection
 
 
 @section('script')
 <script type="text/javascript">
     $(document).ready(function() {
-        $('#datatable').DataTable();
-        $('#addtask').on("click", function() {
-            $('#addTaskModal').modal("show");
+
+        var table = $('.classlist_datatable').DataTable({
+            processing: true,
+            serverSide: true,
+            ajax: {
+                url: "{{ route('backend.manage-class') }}",
+            },
+            columns: [
+                {
+                    data: 'class_name',
+                    name: 'class_name'
+                },
+                {
+                    data: 'session.session_name',
+                    name: 'session.session_name'
+                },
+                {
+                    data: 'class_numeric',
+                    name: 'class_numeric'
+                },
+                {
+                    data: 'action',
+                    name: 'action',
+                    orderable: false,
+                    searchable: false
+                },
+            ]
+        });
+
+        $('.create_class').click(function() {
+
+            var serialize = $("#addclass_form").serializeArray();
+            $.ajax({
+                url: "{{route('backend.save-class')}}",
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                type: 'post',
+                data: serialize,
+                success: function(data) {
+                    $('#addclass-modal').modal('hide');
+                    $('.classlist_datatable').DataTable().ajax.reload();
+                },error: function(response) {
+                    $('.class_name_error').text(response.responseJSON.errors.class_name);
+                    $('.class_numeric_error').text(response.responseJSON.errors.class_numeric);
+                }
+            })
+
+        });
+
+        $(document).delegate('.class_edit', 'click', function() {
+
+            var id = $(this).data('id');
+            $.ajax({
+                url: "{{route('backend.edit-class')}}",
+                data: {
+                    id: id
+                },
+                dataType: 'json',
+                success: function(data) {
+                    console.log(data);
+
+                    $('#class_id').val(data.id);
+                    $('.class_name').val(data.class_name);
+                    $('.class_numeric').val(data.class_numeric);
+                }
+            })
+        });
+
+        $('.update_class').click(function() {
+
+            var serialize = $("#updateclass_form").serializeArray();
+            $.ajax({
+                url: "{{route('backend.update-class')}}",
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                type: 'post',
+                data: serialize,
+                success: function(data) {
+                    $('#updateclass-modal').modal('hide');
+                    $('.classlist_datatable').DataTable().ajax.reload();
+                }, error: function(response) {
+                    $('.class_name_error').text(response.responseJSON.errors.class_name);
+                    $('.class_numeric_error').text(response.responseJSON.errors.class_numeric);
+                }
+            })
+
         });
 
         //delete sweetalert
-        $(document).on('click', '#delete', function(e) {
+        $(document).on('click', '.class_delete', function(e) {
             e.preventDefault();
-            var Id = $(this).attr('href');
 
             swal({
                     title: "Are you sure?",
@@ -83,22 +213,26 @@
                 .then((willDelete) => {
                     if (willDelete) {
 
-                        iziToast.success({
-                            message: 'Successfully restored recorded!',
-                            position: 'topRight', // bottomRight, bottomLeft, topRight, topLeft, topCenter, bottomCenter
+                        var id = $(this).data('id');
+                        $.ajax({
+                            url: "{{route('backend.delete-class')}}",
+                            data: {
+                                id: id
+                            },
+                            success: function(data) {
+                                $('.classlist_datatable').DataTable().ajax.reload();
+                                iziToast.success({
+                                    message: 'Successfully deleted recorded!',
+                                    position: 'topRight', // bottomRight, bottomLeft, topRight, topLeft, topCenter, bottomCenter
+                                })
+                            }
                         })
-                        window.location.href = Id;
 
                     }
 
                 });
         });
 
-        $('.dropify').dropify();
-        $("#datetime-datepicker").flatpickr({
-            enableTime: !0,
-            dateFormat: "Y-m-d H:i"
-        });
     });
 </script>
 @endsection

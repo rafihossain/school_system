@@ -5,9 +5,7 @@ namespace App\Http\Controllers\Backend;
 use App\Http\Controllers\Controller;
 use App\Models\ClassModal;
 use App\Models\ClassRoutine;
-use App\Models\Expense;
 use App\Models\ExpenseType;
-use App\Models\Fee;
 use App\Models\FeeType;
 use App\Models\Section;
 use App\Models\Student;
@@ -18,23 +16,42 @@ use Illuminate\Support\Facades\DB;
 use Intervention\Image\Facades\Image;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\URL;
+use Yajra\DataTables\DataTables;
 
 class AccountController extends Controller
 {
+    protected $Fee;
     protected $students;
+    protected $Expense;
     public function __construct()
     {
         $this->students = 'students_'.Session::get('session_name');
+        $this->Fee = 'App\Models\Fee'.Session::get('session_name');
+        $this->Expense = 'App\Models\Expense'.Session::get('session_name');
     }
 
-    //freetype
-    public function manage_feetype(){
-        $feetypes = FeeType::get();
+    //feetype
+    public function manage_feetype(Request $request){
         //dd($syllabus);
 
-        return view('backend.accounting.manage_feetype', [
-            'feetypes' => $feetypes
-        ]);
+        if ($request->ajax()) {
+            $feetypes = FeeType::all();
+
+            return Datatables::of($feetypes)->addIndexColumn()
+                ->addColumn('photo', function ($row) {
+                    return '<a href="javascript:void(0)" class="viewfeetype_image" data-id="'.$row->id.'" data-bs-toggle="modal" data-bs-target="#feetypeimage-modal"><img src="'.URL::to("/").'/images/accounting/feetype_image/thumbnail/'.$row->feetype_image.'" width="100px" height="100px"></a></a>';
+                })
+                ->addColumn('action', function ($row) {
+                    $btn = '<a type="button" data-id="' . $row->id . '" class="btn btn-sm btn-primary waves-effect waves-light feetype_edit" data-bs-toggle="modal" data-bs-target="#updatefeetype-modal"><i class="mdi mdi-square-edit-outline"></i></a>
+                    <a type="button" data-id="' . $row->id . '" class="btn btn-sm btn-danger waves-effect waves-light feetype_delete"><i class="mdi mdi-trash-can-outline"></i></a>';
+                    return $btn;
+                })
+                ->rawColumns(['photo','action'])
+                ->make(true);
+        }
+
+        return view('backend.accounting.manage_feetype');
     }
     public function add_feetype(){
         return view('backend.accounting.add_feetype');
@@ -48,7 +65,13 @@ class AccountController extends Controller
         $imageUrl = $directory . $imageName;
         $image->save($imageUrl);
 
-        return $imageUrl;
+        $thumbnail = $directory . "thumbnail/" . $imageName;
+        $image->resize(600, 600, function ($constraint) {
+            $constraint->aspectRatio();
+        });
+        $image->save($thumbnail);
+
+        return $imageName;
     }
     public function save_feetype(Request $request){
 
@@ -56,24 +79,20 @@ class AccountController extends Controller
             'feetype_name' => 'required',
             // 'syllabus_image' => 'required|mimes:doc,docx,pdf',
         ]);
-
-        // dd($_POST);
-        
         $feeType = new FeeType();
         $feeType->feetype_name = $request->feetype_name;
         $feeType->feetype_image = $this->feetypeImageUpload($request);
         $feeType->save();
 
-        return redirect()->route('backend.manage-feetype')->with('success', 'Feetype has been added successfully !!');
+        return response()->json(['success'=> 'Feetype has been added successfully !!']);
     }
-    public function edit_feetype($id){
-
-        $feetype = FeeType::find($id);
-        // dd($feetype);
-
-        return view('backend.accounting.edit_feetype', [
-            'feetype' => $feetype,
-        ]);
+    public function edit_feetype(Request $request){
+        $feetype = FeeType::find($request->id);
+        return response()->json($feetype);
+    }
+    public function view_feetype_image(Request $request){
+        $feetype = FeeType::find($request->id);
+        return response()->json($feetype);
     }
     public function feetypeBasicInfo($request, $feeType, $imageUrl = null){
         $feeType->feetype_name = $request->feetype_name;
@@ -104,13 +123,12 @@ class AccountController extends Controller
             $this->feetypeBasicInfo($request, $feeType);
         }
 
-        return redirect()->route('backend.manage-feetype')->with('success', 'Feetype has been updated successfully !!');
+        return response()->json(['success'=> 'Feetype has been updated successfully !!']);
     }
-    public function delete_feetype($id){
-        FeeType::find($id)->delete();
-        return redirect()->route('backend.manage-feetype')->with('success', 'Feetype has been deleted successfully !!');
+    public function delete_feetype(Request $request){
+        FeeType::find($request->id)->delete();
+        return response()->json(['success'=> 'Feetype has been deleted successfully !!']);
     }
-
     //free
     public function manage_fee(){
         $classes = ClassModal::get();
@@ -134,7 +152,7 @@ class AccountController extends Controller
 
     protected function feeBasicInfoSave($request, $student){
 
-        $fee = new Fee();
+        $fee = new $this->Fee();
         $fee->student_id = $student->user_id;
         $fee->txn_number = Str::random(13);
         $fee->invoice_type = $request->invoice_type;
@@ -188,7 +206,7 @@ class AccountController extends Controller
         return redirect()->route('backend.manage-fee')->with('success', 'Fee has been added successfully !!');
     }
     public function edit_fee($id){
-        $fee = Fee::find($id);
+        $fee = $this->Fee::find($id);
 
         $feetypes = FeeType::get();
         $classes = ClassModal::get();
@@ -224,14 +242,14 @@ class AccountController extends Controller
             'fee_description' => 'required',
         ]);
 
-        $fee = Fee::find($request->id);
+        $fee = $this->Fee::find($request->id);
         $this->feeBasicInfo($request, $fee);
 
         return redirect()->route('backend.manage-fee')->with('success', 'Fee has been updated successfully !!');
     }
     public function delete_fee(Request $request){
         // dd($request->delete_id);
-        Fee::find($request->delete_id)->delete();
+        $this->Fee::find($request->delete_id)->delete();
         echo 1;
     }
 
@@ -273,7 +291,7 @@ class AccountController extends Controller
 
     public function get_fees_list(Request $request){
 
-        $fees = Fee::with('student')->where([
+        $fees = $this->Fee::with('student')->where([
             'class_id'=> $request->class_id,
             'section_id' => $request->section_id,
             'feetype_id' => $request->feetype_id,
@@ -291,22 +309,35 @@ class AccountController extends Controller
     }
 
     public function set_fee_mark_paid(Request $request){
-        $fee = Fee::find($request->fee_id);
+        $fee = $this->Fee::find($request->fee_id);
         $fee->fee_status = 1;
         $fee->save();
         echo 1;
     }
     
     //expense-type
-    public function manage_expense_type(){
-        $expensetypes = ExpenseType::get();
-        return view('backend.accounting.expense-type.manage_expense_type', [
-            'expensetypes' => $expensetypes
-        ]);
+    public function manage_expense_type(Request $request){
+
+        if ($request->ajax()) {
+            $expensetypes = ExpenseType::get();
+
+            return Datatables::of($expensetypes)->addIndexColumn()
+                ->addColumn('photo', function ($row) {
+                    return '<a href="javascript:void(0)" class="viewexpensetype_image" data-id="'.$row->id.'" data-bs-toggle="modal" data-bs-target="#expensetypeimage-modal"><img src="'.URL::to("/").'/images/expanse_image/thumbnail/'.$row->expense_image.'" width="100px" height="100px"></a></a>';
+                })
+                ->addColumn('action', function ($row) {
+                    $btn = '<a type="button" data-id="' . $row->id . '" class="btn btn-sm btn-primary waves-effect waves-light expensetype_edit" data-bs-toggle="modal" data-bs-target="#updateexpensetype-modal"><i class="mdi mdi-square-edit-outline"></i></a>
+                    <a type="button" data-id="' . $row->id . '" class="btn btn-sm btn-danger waves-effect waves-light expensetype_delete"><i class="mdi mdi-trash-can-outline"></i></a>';
+                    return $btn;
+                })
+                ->rawColumns(['photo','action'])
+                ->make(true);
+        }
+        return view('backend.accounting.expense-type.manage_expense_type');
     }
-    public function add_expense_type(){
-        return view('backend.accounting.expense-type.add_expense_type');
-    }
+    // public function add_expense_type(){
+    //     return view('backend.accounting.expense-type.add_expense_type');
+    // }
     protected function expenseTypeImageUpload($request){
         $expanseImage = $request->file('expense_image');
         $image = Image::make($expanseImage);
@@ -316,7 +347,13 @@ class AccountController extends Controller
         $imageUrl = $directory . $imageName;
         $image->save($imageUrl);
 
-        return $imageUrl;
+        $thumbnail = $directory . "thumbnail/" . $imageName;
+        $image->resize(600, 600, function ($constraint) {
+            $constraint->aspectRatio();
+        });
+        $image->save($thumbnail);
+
+        return $imageName;
     }
     public function save_expense_type(Request $request){
 
@@ -326,21 +363,20 @@ class AccountController extends Controller
             // 'syllabus_image' => 'required|mimes:doc,docx,pdf',
         ]);
 
-        
         $expenseType = new ExpenseType();
         $expenseType->expense_name = $request->expense_name;
         $expenseType->expense_image = $this->expenseTypeImageUpload($request);
-
-        // dd($expenseType);
-
         $expenseType->save();
-        return redirect()->route('backend.manage-expense-type')->with('success', 'Expense type has been added successfully !!');
+
+        return response()->json(['success'=> 'Expense type has been added successfully !!']);
     }
-    public function edit_expense_type($id){
-        $expensetype = ExpenseType::find($id);
-        return view('backend.accounting.expense-type.edit_expense_type', [
-            'expensetype' => $expensetype,
-        ]);
+    public function edit_expense_type(Request $request){
+        $expensetype = ExpenseType::find($request->id);
+        return response()->json($expensetype);
+    }
+    public function view_expensetype_image(Request $request){
+        $expensetype = ExpenseType::find($request->id);
+        return response()->json($expensetype);
     }
     public function expenseTypeBasicInfo($request, $expenseType, $imageUrl = null){
         $expenseType->expense_name = $request->expense_name;
@@ -370,29 +406,38 @@ class AccountController extends Controller
         }else{
             $this->expenseTypeBasicInfo($request, $expenseType);
         }
-
-        return redirect()->route('backend.manage-expense-type')->with('success', 'Expense type has been updated successfully !!');
+        return response()->json(['success'=> 'Expense type has been updated successfully !!']);
     }
-    public function delete_expense_type($id){
-        ExpenseType::find($id)->delete();
-        return redirect()->route('backend.manage-expense-type')->with('success', 'Expense type has been deleted successfully !!');
+    public function delete_expense_type(Request $request){
+        ExpenseType::find($request->id)->delete();
+        return response()->json(['success'=> 'Expense type has been deleted successfully !!']);
     }
 
     //expense
-    public function manage_expense(){
-        $expenses = Expense::with('expensetype')->get();
-        // dd($expenses);
+    public function manage_expense(Request $request){
+        $expensetypes = ExpenseType::all();
+        if ($request->ajax()) {
+            $expenses = $this->Expense::with('expensetype')->get();
 
+            return Datatables::of($expenses)->addIndexColumn()
+                ->addColumn('action', function ($row) {
+                    $btn = '<a type="button" data-id="' . $row->id . '" class="btn btn-sm btn-primary waves-effect waves-light expense_edit" data-bs-toggle="modal" data-bs-target="#updateexpense-modal"><i class="mdi mdi-square-edit-outline"></i></a>
+                    <a type="button" data-id="' . $row->id . '" class="btn btn-sm btn-danger waves-effect waves-light expense_delete"><i class="mdi mdi-trash-can-outline"></i></a>';
+                    return $btn;
+                })
+                ->rawColumns(['action'])
+                ->make(true);
+        }
         return view('backend.accounting.expense.manage_expense', [
-            'expenses' => $expenses
-        ]);
-    }
-    public function add_expense(){
-        $expensetypes = ExpenseType::get();
-        return view('backend.accounting.expense.add_expense', [
             'expensetypes' => $expensetypes
         ]);
     }
+    // public function add_expense(){
+    //     $expensetypes = ExpenseType::get();
+    //     return view('backend.accounting.expense.add_expense', [
+    //         'expensetypes' => $expensetypes
+    //     ]);
+    // }
     public function save_expense(Request $request){
 
         $request->validate([
@@ -401,23 +446,17 @@ class AccountController extends Controller
             'expense_description' => 'required',
         ]);
 
-        // dd($_POST);
-        
-        $expense = new Expense();
+        $expense = new $this->Expense();
         $expense->expensetype_id = $request->expensetype_id;
         $expense->expense_ammount = $request->expense_ammount;
         $expense->expense_description = $request->expense_description;
         $expense->save();
 
-        return redirect()->route('backend.manage-expense')->with('success', 'Expense has been added successfully !!');
+        return response()->json(['success'=> 'Expense has been added successfully !!']);
     }
-    public function edit_expense($id){
-        $expense = Expense::find($id);
-        $expensetypes = ExpenseType::get();
-        return view('backend.accounting.expense.edit_expense', [
-            'expense' => $expense,
-            'expensetypes' => $expensetypes
-        ]);
+    public function edit_expense(Request $request){
+        $expense = $this->Expense::find($request->id);
+        return response()->json($expense);
     }
     public function update_expense(Request $request){
 
@@ -427,17 +466,17 @@ class AccountController extends Controller
             'expense_description' => 'required',
         ]);
 
-        $expense = Expense::find($request->id);
+        $expense = $this->Expense::find($request->id);
         $expense->expensetype_id = $request->expensetype_id;
         $expense->expense_ammount = $request->expense_ammount;
         $expense->expense_description = $request->expense_description;
         $expense->save();
 
-        return redirect()->route('backend.manage-expense')->with('success', 'Expense has been updated successfully !!');
+        return response()->json(['success'=> 'Expense has been updated successfully !!']);
     }
-    public function delete_expense($id){
-        Expense::find($id)->delete();
-        return redirect()->route('backend.manage-expense')->with('success', 'Expense has been deleted successfully !!');
+    public function delete_expense(Request $request){
+        $this->Expense::find($request->id)->delete();
+        return response()->json(['success'=> 'Expense has been deleted successfully !!']);
     }
 
     

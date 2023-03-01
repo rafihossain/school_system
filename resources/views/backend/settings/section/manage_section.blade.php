@@ -5,22 +5,17 @@
 <div class="card">
     <div class="card-body">
         <h4 class="m-0 header-title text-end float-end">
-             <a href="{{ route('backend.manage-class') }}" class="btn btn-primary">List Class</a>
-             <a href="{{ route('backend.add-section') }}" class="btn btn-primary "><i class="mdi mdi-plus"></i>Add Section</a>
+            <a href="javascript:void(0)" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addsection-modal">
+                <i class="mdi mdi-plus"></i>Add Section
+            </a>
         </h4>
     </div>
 </div>
 
-@if(Session::has('success'))
-    <div class="alert alert-success">
-        {{ Session::get('success') }}
-    </div>
-@endif
-
 <div class="card">
     <div class="card-body">
         
-		<table id="datatable" class="table table-bordered dt-responsive table-responsive nowrap">
+		<table class="table table-bordered dt-responsive table-responsive nowrap sectionlist_datatable">
             <thead>
             <tr>
                 <th>Section Name</th>
@@ -30,7 +25,7 @@
             </tr>
             </thead>
             <tbody>
-                @foreach($sections as $section)
+                {{-- @foreach($sections as $section)
                 <tr>
                     <td>{{$section->section_name}}</td>
                     <td>{{$section->section_capacity}}</td>
@@ -44,11 +39,95 @@
                         </a>
                     </td>
                 </tr>
-                @endforeach
+                @endforeach --}}
             </tbody>
         </table>
     </div>
 </div>
+
+<!-- Standard modal content -->
+<div id="addsection-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="addsection-modalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="addsection-modalLabel">Create Class</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="addsection_form">
+                <div class="modal-body">
+                    
+                    <div class="mb-2">
+                        <label>Class Name</label>
+                        <select name="class_id" class="form-control class_name">
+                            <option value="">Select Name</option>
+                            @foreach($classes as $class)
+                                <option value="{{ $class->id }}">{{ $class->class_name }}</option>
+                            @endforeach
+                        </select>
+                        <span class="text-danger class_name_error"></span>
+                    </div>
+                    <div class="mb-2">
+                        <label>Section Name</label>
+                        <input type="text" class="form-control section_name" name="section_name">
+                        <span class="text-danger section_name_error"></span>
+                    </div>
+                    <div class="mb-2">
+                        <label>Section Capacity</label>
+                        <input type="number" class="form-control section_capacity" name="section_capacity">
+                        <span class="text-danger section_capacity_error"></span>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary create_section">Save</button>
+                </div>
+            </form>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+<!-- Edit Exam Modal -->
+<div id="updatesection-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="updatesection-modalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="updatesection-modalLabel">Update Section</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="updatesection_form">
+                <input type="hidden" name="id" id="section_id">
+                <div class="modal-body">
+
+                    <div class="mb-2">
+                        <label>Class Name</label>
+                        <select name="class_id" class="form-control class_name">
+                            <option value="">Select Name</option>
+                            @foreach($classes as $class)
+                                <option value="{{ $class->id }}">{{ $class->class_name }}</option>
+                            @endforeach
+                        </select>
+                        <span class="text-danger class_name_error"></span>
+                    </div>
+                    <div class="mb-2">
+                        <label>Section Name</label>
+                        <input type="text" class="form-control section_name" name="section_name">
+                        <span class="text-danger section_name_error"></span>
+                    </div>
+                    <div class="mb-2">
+                        <label>Section Capacity</label>
+                        <input type="number" class="form-control section_capacity" name="section_capacity">
+                        <span class="text-danger section_capacity_error"></span>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary update_section">Save</button>
+                </div>
+            </form>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
 @endsection
 
 
@@ -56,14 +135,99 @@
 <script type="text/javascript">
     $(document).ready(function() {
 
-        $('#addtask').on("click", function() {
-            $('#addTaskModal').modal("show");
+        var table = $('.sectionlist_datatable').DataTable({
+            processing: true,
+            serverSide: true,
+            ajax: {
+                url: "{{ route('backend.manage-section') }}",
+            },
+            columns: [
+                {
+                    data: 'section_name',
+                    name: 'section_name'
+                },
+                {
+                    data: 'section_capacity',
+                    name: 'section_capacity'
+                },
+                {
+                    data: 'class.class_name',
+                    name: 'class.class_name'
+                },
+                {
+                    data: 'action',
+                    name: 'action',
+                    orderable: false,
+                    searchable: false
+                },
+            ]
+        });
+
+        $('.create_section').click(function() {
+
+            var serialize = $("#addsection_form").serializeArray();
+            $.ajax({
+                url: "{{route('backend.save-section')}}",
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                type: 'post',
+                data: serialize,
+                success: function(data) {
+                    $('#addsection-modal').modal('hide');
+                    $('.sectionlist_datatable').DataTable().ajax.reload();
+                },error: function(response) {
+                    $('.class_name_error').text(response.responseJSON.errors.class_id);
+                    $('.section_name_error').text(response.responseJSON.errors.section_name);
+                    $('.section_capacity_error').text(response.responseJSON.errors.section_capacity);
+                }
+            })
+
+        });
+
+        $(document).delegate('.section_edit', 'click', function() {
+
+            var id = $(this).data('id');
+            $.ajax({
+                url: "{{route('backend.edit-section')}}",
+                data: {
+                    id: id
+                },
+                dataType: 'json',
+                success: function(data) {
+                    $('#section_id').val(data.id);
+                    $('.class_name').val(data.class_id);
+                    $('.section_name').val(data.section_name);
+                    $('.section_capacity').val(data.section_capacity);
+                }
+            })
+        });
+
+        $('.update_section').click(function() {
+
+            var serialize = $("#updatesection_form").serializeArray();
+            $.ajax({
+                url: "{{route('backend.update-section')}}",
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                type: 'post',
+                data: serialize,
+                success: function(data) {
+                    $('#updatesection-modal').modal('hide');
+                    $('.sectionlist_datatable').DataTable().ajax.reload();
+                }, error: function(response) {
+                    $('.class_name_error').text(response.responseJSON.errors.class_id);
+                    $('.section_name_error').text(response.responseJSON.errors.section_name);
+                    $('.section_capacity_error').text(response.responseJSON.errors.section_capacity);
+                }
+            })
+
         });
 
         //delete sweetalert
-        $(document).on('click', '#delete', function(e) {
+        $(document).on('click', '.section_delete', function(e) {
             e.preventDefault();
-            var Id = $(this).attr('href');
 
             swal({
                     title: "Are you sure?",
@@ -74,24 +238,27 @@
                 })
                 .then((willDelete) => {
                     if (willDelete) {
-                        
-                        iziToast.success({
-                            message: 'Successfully restored recorded!',
-                            position: 'topRight', // bottomRight, bottomLeft, topRight, topLeft, topCenter, bottomCenter
-                        })
 
-                        window.location.href = Id;
+                        var id = $(this).data('id');
+                        $.ajax({
+                            url: "{{route('backend.delete-section')}}",
+                            data: {
+                                id: id
+                            },
+                            success: function(data) {
+                                $('.sectionlist_datatable').DataTable().ajax.reload();
+                                iziToast.success({
+                                    message: 'Successfully deleted recorded!',
+                                    position: 'topRight', // bottomRight, bottomLeft, topRight, topLeft, topCenter, bottomCenter
+                                })
+                            }
+                        })
 
                     }
 
                 });
         });
 
-        $('.dropify').dropify();
-        $("#datetime-datepicker").flatpickr({
-            enableTime: !0,
-            dateFormat: "Y-m-d H:i"
-        });
     });
 </script>
 @endsection

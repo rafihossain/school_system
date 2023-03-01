@@ -12,7 +12,6 @@ use App\Models\Classroom;
 use App\Models\ClassRoutine;
 use App\Models\ExamList;
 use App\Models\ExamSchedule;
-use App\Models\Fee;
 use App\Models\FeeType;
 use App\Models\SessionModel;
 use App\Models\Student;

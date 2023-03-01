@@ -11,6 +11,10 @@ class Subject extends Model
     protected $table = "subjects";
     protected $fillable = ['section_id','class_id','subject_name','subject_code'];
 
+    public function class()
+    {
+        return $this->belongsTo(ClassModal::class,'class_id','id');
+    }
     public function student_mark_new()
     {
         return $this->belongsTo(StudentMark::class,'subject_id','id');

@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Fee extends Model
 {
     use HasFactory;
-
+    protected $table = "fees";
     public function student(){
         return $this->belongsTo(User::class,'student_id');
     }

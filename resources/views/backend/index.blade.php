@@ -319,8 +319,8 @@
                     </div>
                 </div>
                 <div id="AttendenceStudent">
-                    <div class="row justify-content-center mb-3">
-                        <form id="get_student_list_form">
+                    <form id="get_student_list_form">
+                        <div class="row justify-content-center mb-3">
                             <div class="col-md-3">
                                 <input type="date" name="attendence_date" class="form-control attendence_date" value="{{date('Y-m-d')}}">
                                 <span class="text-danger stdatd_attendence_date_error"></span>
@@ -329,13 +329,13 @@
                                 <select name="class_id" id="class_id" class="form-control">
                                     <option value="">Select Class</option>
                                     @foreach($classes as $classe)
-                                    <option value="{{$classe->id}}">{{$classe->class_name}}</option>
+                                        <option value="{{$classe->id}}">{{$classe->class_name}}</option>
                                     @endforeach
                                 </select>
                                 <span class="text-danger stdatd_class_name_error"></span>
                             </div>
                             <div class="col-md-3 show_section">
-                                <select name="section_id" id="section_id" class="form-control">
+                                <select name="section_id" class="form-control section_name">
                                     <option value="">Select Section</option>
                                 </select>
                                 <span class="text-danger stdatd_section_name_error"></span>
@@ -343,8 +343,8 @@
                             <div class="col-md-3 show_button">
                                 <button type="button" class="btn btn-primary get_student_list">Get Student List</button>
                             </div>
-                        </form>
-                    </div>
+                        </div>
+                    </form>
                     <form id="save_student_attendance">
                         <div id="student_attendance_response_list"></div>
                     </form>
@@ -587,7 +587,7 @@
                                 <select name="section_id" id="getInfo" class="form-control">
                                     <option value="">Select Section</option>
                                     @foreach($sections as $section)
-                                    <option value="{{ $section->id }}">{{ $section->section_name }}</option>
+                                        <option value="{{ $section->id }}">{{ $section->section_name }}</option>
                                     @endforeach
                                 </select>
                                 <span class="text-danger section_name_error"></span>
@@ -1129,7 +1129,7 @@
 
         let fromData = $("#parentFrom").serializeArray();
         return asyncHandler("{{route('backend.admin-save-parent')}}", "POST", (res) =>{
-            $('#add_user_modal_data').html(data);
+            $('#add_user_modal_data').html(res);
             $('#parent_content').hide();
             $('#student_content').show();
             $('#addparent').modal('hide');
@@ -1160,7 +1160,7 @@
 
         let fromData = $("#formClass").serializeArray();
         return asyncHandler("{{route('backend.admin-save-class')}}", "POST", (res) =>{
-            $('#add_user_modal_data').html(data);
+            $('#add_user_modal_data').html(res);
             $('#parent_content').hide();
             $('#student_content').show();
             $('#addClass').modal('hide');
@@ -1184,7 +1184,7 @@
 
         let fromData = $("#formClass").serializeArray();
         return asyncHandler("{{route('backend.add-routine-class')}}", "POST", (res) =>{
-            $('#routine_response_modal_data').html(data);
+            $('#routine_response_modal_data').html(res);
             $('#addClass').modal('hide');
             $('#createRoutineModal').modal('show');
             $('#addClass').find('.NewClassRoutineSubmit').addClass('submitClass');
@@ -1241,7 +1241,7 @@
 
         let fromData = $("#formClass").serializeArray();
         return asyncHandler("{{route('backend.admin-routine-class')}}", "POST", (res) =>{
-            $('#section_response_data').html(data);
+            $('#section_response_data').html(res);
             $('#addClass').modal('hide');
             $('#addSection').modal('show');
             $('#addClass').find('.submitRoutineClass').addClass('submitClass');
@@ -1258,7 +1258,7 @@
 
         let fromData = $("#formSection").serializeArray();
         return asyncHandler("{{route('backend.add-routine-section')}}", "POST", (res) =>{
-            $('#routine_response_modal_data').html(data);
+            $('#routine_response_modal_data').html(res);
 
             $('#addSection').modal('hide');
             $('#createRoutineModal').modal('show');
@@ -1339,7 +1339,7 @@
 
         let fromData = $("#formSection").serializeArray();
         return asyncHandler("{{route('backend.admin-save-section')}}", "POST", (res) =>{
-            $('#add_user_modal_data').html(data);
+            $('#add_user_modal_data').html(res);
             $('#parent_content').hide();
             $('#student_content').show();
             $('#addSection').modal('hide');
@@ -1370,7 +1370,7 @@
 
         let fromData = $("#formClass").serializeArray();
         return asyncHandler("{{route('backend.user-save-class')}}", "POST", (res) =>{
-            $('#section_response_data').html(data);
+            $('#section_response_data').html(res);
             $('#addSection').modal('show');
             $('#addClass').modal('hide');
             $('#addClass').find('.NewClassSactionSubmit').addClass('submitClass');
@@ -1403,7 +1403,7 @@
 
         let fromData = $("#formSubject").serializeArray();
         return asyncHandler("{{route('backend.admin-save-subject')}}", "POST", (res) =>{
-            $('#routine_response_modal_data').html(data);
+            $('#routine_response_modal_data').html(res);
             $('#AddSubject').modal('hide');
             $('#createRoutineModal').modal('show');
         }, (err) => {
@@ -1423,7 +1423,7 @@
 
         let fromData = $("#formClassroom").serializeArray();
         return asyncHandler("{{route('backend.admin-save-classroom')}}", "POST", (res) =>{
-            $('#routine_response_modal_data').html(data);
+            $('#routine_response_modal_data').html(res);
             $('#createRoutineModal').modal('show');
             $('#AddClassRoom').modal('hide');
         }, (err) => {
@@ -1443,7 +1443,7 @@
 
         let fromData = $("#routine_addteacher").serializeArray();
         return asyncHandler("{{route('backend.routine-save-teacher')}}", "POST", (res) =>{
-            $('#routine_response_modal_data').html(data);
+            $('#routine_response_modal_data').html(res);
             $('#Addteacher').modal('hide');
             $('#createRoutineModal').modal('show');
         }, (err) => {
@@ -1466,7 +1466,7 @@
 
         let fromData = $("#create_exam_save").serializeArray();
         return asyncHandler("{{route('backend.exam-save-examschedule')}}", "POST", (res) =>{
-            $('#exam_schedule_response_modal_data').html(data);
+            $('#exam_schedule_response_modal_data').html(res);
             $('#AddExamSchedule').modal('show');
             $('#addExam').modal('hide');
         }, (err) => {
@@ -1489,7 +1489,7 @@
 
         let fromData = $("#formClass").serializeArray();
         return asyncHandler("{{route('backend.class-save-examschedule')}}", "POST", (res) =>{
-            $('#exam_schedule_response_modal_data').html(data);
+            $('#exam_schedule_response_modal_data').html(res);
             $('#AddExamSchedule').modal('show');
             $('#addClass').modal('hide');
             $('#addClass').find('.NewClassExamSubmit').addClass('submitClass');
@@ -1540,7 +1540,7 @@
 
         let fromData = $("#formClass").serializeArray();
         return asyncHandler("{{route('backend.exam-schedule-class')}}", "POST", (res) =>{
-            $('#section_response_data').html(data);
+            $('#section_response_data').html(res);
             $('#addClass').modal('hide');
             $('#addSection').modal('show');
             $('#addSection').find('.submitExamSectionClass').addClass('submitExamSectionData');
@@ -1557,7 +1557,7 @@
         
         let fromData = $("#formSection").serializeArray();
         return asyncHandler("{{route('backend.save-examschedule-section')}}", "POST", (res) =>{
-            $('#exam_schedule_response_modal_data').html(data);
+            $('#exam_schedule_response_modal_data').html(res);
             $('#AddExamSchedule').modal('show');
             $('#addSection').modal('hide');
             $('#addSection').find('.submitExamSectionData').addClass('submitSection');
@@ -1576,7 +1576,7 @@
 
         let fromData = $("#formClassroom").serializeArray();
         return asyncHandler("{{route('backend.classroom-save-examschedule')}}", "POST", (res) =>{
-            $('#exam_schedule_response_modal_data').html(data);
+            $('#exam_schedule_response_modal_data').html(res);
             $('#AddExamSchedule').modal('hide');
             $('#AddClassRoom').modal('show');
             $('#AddClassRoom').find('.submitClassroom').addClass('submitExamClassroom');
@@ -1605,7 +1605,7 @@
 
         let fromData = $("#formSubject").serializeArray();
         return asyncHandler("{{route('backend.save-examschedule-subject')}}", "POST", (res) =>{
-            $('#routine_response_modal_data').html(data);
+            $('#routine_response_modal_data').html(res);
             $('#AddSubject').modal('hide');
             $('#AddExamSchedule').modal('show');
             $('#AddSubject').find('.AddExamSubjectSubmit').addClass('AddSubjectSubmit');
@@ -1629,7 +1629,7 @@
 
         let fromData = $("#formClass").serializeArray();
         return asyncHandler("{{route('backend.save-syllabus-class')}}", "POST", (res) =>{
-            $('#syllabus_response_modal_data').html(data);
+            $('#syllabus_response_modal_data').html(res);
             $('#addSyllabus').modal('show');
             $('#addClass').modal('hide');
             $('#addClass').find('.submitSyllabusClass').addClass('submitClass');
@@ -1664,7 +1664,7 @@
 
         let fromData = $("#formSection").serializeArray();
         return asyncHandler("{{route('backend.save-syllabus-section')}}", "POST", (res) =>{
-            $('#syllabus_response_modal_data').html(data);
+            $('#syllabus_response_modal_data').html(res);
             $('#addSection').modal('hide');
             $('#addSyllabus').modal('show');
             $('#addSection').find('.submitSyllabusSection').addClass('submitSection');
@@ -1697,7 +1697,7 @@
 
         let fromData = $("#formClass").serializeArray();
         return asyncHandler("{{route('backend.add-syllabus-class')}}", "POST", (res) =>{
-            $('#section_response_data').html(data);
+            $('#section_response_data').html(res);
             $('#addSection').modal('show');
             $('#addClass').modal('hide');
             $('#addClass').find('.submitSyllabusSectionClass').addClass('addSyllabusSectionClass');
@@ -1722,7 +1722,7 @@
 
         let fromData = $("#formSubject").serializeArray();
         return asyncHandler("{{route('backend.save-syllabus-subject')}}", "POST", (res) =>{
-            $('#syllabus_response_modal_data').html(data);
+            $('#syllabus_response_modal_data').html(res);
             $('#AddSubject').modal('hide');
             $('#addSyllabus').modal('show');
             $('#AddSubject').find('.submitSyllabusSubjectClass').addClass('AddSubjectSubmit');
@@ -1788,7 +1788,7 @@
 
         let fromData = $("#formClass").serializeArray();
         return asyncHandler("{{route('backend.save-fee-class')}}", "POST", (res) =>{
-            $('#fee_response_modal_data').html(data);
+            $('#fee_response_modal_data').html(res);
             $('#addFee').modal('show');
             $('#addClass').modal('hide');
             $('#addClass').find('.submitfeeClass').addClass('submitClass');
@@ -1822,7 +1822,7 @@
 
         let fromData = $("#formSection").serializeArray();
         return asyncHandler("{{route('backend.save-fee-section')}}", "POST", (res) =>{
-            $('#fee_response_modal_data').html(data);
+            $('#fee_response_modal_data').html(res);
             $('#addSection').modal('hide');
             $('#addFee').modal('show');
             $('#addSection').find('.submitFeeSection').addClass('submitSection');
@@ -1855,7 +1855,7 @@
 
         let fromData = $("#formClass").serializeArray();
         return asyncHandler("{{route('backend.add-fee-class')}}", "POST", (res) =>{
-            $('#section_response_data').html(data);
+            $('#section_response_data').html(res);
             $('#addSection').modal('show');
             $('#addClass').modal('hide');
             $('#addClass').find('.submitfeeClasss').addClass('submitClass');
@@ -2303,7 +2303,8 @@
         $(document).delegate('.get_student_list', 'click', function() {
 
             let fromData = $("#get_student_list_form").serializeArray();
-            return asyncHandler("{{route('backend.admin-showstudent-attendencelist')}}", "POST", (res) => $('#student_attendance_response_list').html(data), (err) => {
+            return asyncHandler("{{route('backend.admin-showstudent-attendencelist')}}", "POST", (res) => $('#student_attendance_response_list').html(res),
+            (err) => {
                 return errorHandler([
                     {name: '.stdatd_class_name_error', data: err.responseJSON.errors.class_id},
                     {name: '.stdatd_section_name_error', data: err.responseJSON.errors.section_id},
